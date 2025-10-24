@@ -12,6 +12,7 @@ import (
 type Config struct {
 	Server   ServerConfig
 	Database DatabaseConfig
+	Logging  LoggingConfig
 }
 
 // ServerConfig configures the HTTP server runtime behavior.
@@ -26,6 +27,11 @@ type DatabaseConfig struct {
 	MaxOpenConns    int
 	ConnMaxLifetime time.Duration
 	ConnMaxIdleTime time.Duration
+}
+
+// LoggingConfig controls application logging behavior.
+type LoggingConfig struct {
+	Level string
 }
 
 // Load inspects the environment and builds a Config value.
@@ -50,6 +56,13 @@ func Load() (Config, error) {
 		MaxOpenConns:    parseIntWithDefault(os.Getenv("DATABASE_MAX_OPEN_CONNS"), 25),
 		ConnMaxLifetime: parseDurationWithDefault(os.Getenv("DATABASE_CONN_MAX_LIFETIME"), 30*time.Minute),
 		ConnMaxIdleTime: parseDurationWithDefault(os.Getenv("DATABASE_CONN_MAX_IDLE_TIME"), 5*time.Minute),
+	}
+
+	cfg.Logging = LoggingConfig{
+		Level: firstNonEmpty(
+			os.Getenv("LOG_LEVEL"),
+			"info",
+		),
 	}
 
 	if strings.TrimSpace(cfg.Server.Addr) == "" {
