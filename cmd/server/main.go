@@ -1,29 +1,37 @@
 package main
 
 import (
+	"context"
 	"errors"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"perfugo/internal/config"
+	applog "perfugo/internal/log"
 	"perfugo/internal/server"
 )
 
 func main() {
 	cfg, err := config.Load()
 	if err != nil {
-		log.Fatalf("failed to load configuration: %v", err)
+		applog.Error(context.Background(), "failed to load configuration", "error", err)
+		os.Exit(1)
+	}
+
+	if err := applog.SetLevel(cfg.Logging.Level); err != nil {
+		applog.Error(context.Background(), "invalid log level configuration", "level", cfg.Logging.Level, "error", err)
+		os.Exit(1)
 	}
 
 	srv := server.New(server.Config{Addr: cfg.Server.Addr})
 
 	go func() {
-		log.Printf("starting http server on %s", cfg.Server.Addr)
+		applog.Info(context.Background(), "starting http server", "addr", cfg.Server.Addr)
 		if err := srv.Start(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Fatalf("server encountered an error: %v", err)
+			applog.Error(context.Background(), "server encountered an error", "error", err)
+			os.Exit(1)
 		}
 	}()
 
@@ -31,8 +39,9 @@ func main() {
 	signal.Notify(sigCh, syscall.SIGTERM, syscall.SIGINT)
 	<-sigCh
 
-	log.Println("shutting down http server")
+	applog.Info(context.Background(), "shutting down http server")
 	if err := srv.Stop(); err != nil {
-		log.Fatalf("graceful shutdown failed: %v", err)
+		applog.Error(context.Background(), "graceful shutdown failed", "error", err)
+		os.Exit(1)
 	}
 }
