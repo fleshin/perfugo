@@ -1,0 +1,18 @@
+# Binaries
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Build output
+/dist
+/build
+
+# Go coverage
+*.out
+
+# IDE files
+.vscode/
+.idea/
