@@ -3,7 +3,7 @@ module perfugo
 go 1.25
 
 require (
-	github.com/a-h/templ v0.2.747
+	github.com/a-h/templ v0.3.960
 	github.com/alexedwards/scs/v2 v2.9.0
 	github.com/coreos/go-oidc/v3 v3.16.0
 	golang.org/x/oauth2 v0.28.0
