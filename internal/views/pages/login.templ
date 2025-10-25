@@ -1,12 +1,9 @@
 package pages
 
-import (
-        "perfugo/internal/views/layout"
-        "perfugo/internal/views/theme"
-)
+import "perfugo/internal/views/layout"
 
 templ Login(message string, email string) {
-        @layout.Layout("Login • Perfugo", templ.Component(nil), loginContent(message, email), false, theme.DefaultKey)
+        @layout.Layout("Login • Perfugo", templ.Component(nil), loginContent(message, email), false)
 }
 
 templ LoginPartial(message string, email string) {

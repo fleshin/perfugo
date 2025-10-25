@@ -4,8 +4,6 @@ package pages
 import (
         "fmt"
         "time"
-
-        "perfugo/internal/views/theme"
 )
 
 type ReportCard struct {
@@ -41,30 +39,30 @@ func formatAuditDate(value string) string {
 templ IngredientManagement(snapshot WorkspaceSnapshot) {
         <section class="space-y-8" data-module="ingredients" data-module-key="ingredients">
                 <div class="grid gap-6 lg:grid-cols-3">
-                        <div class="lg:col-span-2 space-y-6 rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-8 shadow-[0_30px_70px_rgba(0,0,0,0.35)] backdrop-blur-xl workspace-surface">
+                        <div class="lg:col-span-2 space-y-6 rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-8 shadow-[0_30px_70px_rgba(0,0,0,0.35)] backdrop-blur-xl">
                                 <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                                         <div>
-                                                <h3 class="text-lg workspace-heading">Formula Ingredient</h3>
-                                                <p class="text-sm uppercase tracking-[0.4em] workspace-subtle">Mock CRUD powered by the in-memory database.</p>
+                                                <h3 class="text-lg text-white">Formula Ingredient</h3>
+                                                <p class="text-sm uppercase tracking-[0.4em] text-white/50">Mock CRUD powered by the in-memory database.</p>
                                         </div>
-                                        <span class="rounded-full border border-white/15 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] workspace-subtle">Mock DB Active</span>
+                                        <span class="rounded-full border border-white/15 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/50">Mock DB Active</span>
                                 </header>
                                 <form class="grid gap-5 md:grid-cols-2" data-action="create">
-                                        <label class="space-y-2 text-[0.65rem] uppercase tracking-[0.45em] workspace-muted">
+                                        <label class="space-y-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60">
                                                 Formula
-                                                <select name="formulaId" required data-formula-select class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm workspace-heading focus:border-white/40 focus:outline-none"></select>
+                                                <select name="formulaId" required data-formula-select class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/40 focus:outline-none"></select>
                                         </label>
-                                        <label class="space-y-2 text-[0.65rem] uppercase tracking-[0.45em] workspace-muted">
+                                        <label class="space-y-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60">
                                                 Aroma Chemical
-                                                <select name="aromaChemicalId" required data-chemical-select class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm workspace-heading focus:border-white/40 focus:outline-none"></select>
+                                                <select name="aromaChemicalId" required data-chemical-select class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/40 focus:outline-none"></select>
                                         </label>
-                                        <label class="space-y-2 text-[0.65rem] uppercase tracking-[0.45em] workspace-muted">
+                                        <label class="space-y-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60">
                                                 Amount
-                                                <input type="number" step="0.01" min="0" name="amount" required placeholder="12.5" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm workspace-heading placeholder:text-white/30 focus:border-white/40 focus:outline-none"/>
+                                                <input type="number" step="0.01" min="0" name="amount" required placeholder="12.5" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"/>
                                         </label>
-                                        <label class="space-y-2 text-[0.65rem] uppercase tracking-[0.45em] workspace-muted">
+                                        <label class="space-y-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60">
                                                 Unit
-                                                <select name="unit" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm workspace-heading focus:border-white/40 focus:outline-none">
+                                                <select name="unit" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/40 focus:outline-none">
                                                         <option value="g">g</option>
                                                         <option value="kg">kg</option>
                                                         <option value="ml">ml</option>
@@ -72,23 +70,23 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
                                                 </select>
                                         </label>
                                         <div class="md:col-span-2 flex flex-wrap items-center justify-end gap-3">
-                                                <button type="reset" class="rounded-full border border-white/15 px-6 py-2 text-[0.65rem] uppercase tracking-[0.45em] workspace-muted transition hover:border-white/30 hover:text-white">Reset</button>
+                                                <button type="reset" class="rounded-full border border-white/15 px-6 py-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60 transition hover:border-white/30 hover:text-white">Reset</button>
                                                 <button type="submit" class="rounded-full bg-white px-6 py-2 text-[0.65rem] uppercase tracking-[0.45em] text-[#050509] shadow-[0_18px_45px_rgba(255,255,255,0.22)] transition hover:bg-white/90">Add Ingredient</button>
                                         </div>
                                 </form>
                         </div>
-                        <aside class="space-y-4 rounded-3xl border border-white/10 bg-black/35 p-6 text-sm workspace-muted backdrop-blur-xl workspace-surface-soft">
-                                <h4 class="text-base workspace-heading">Workspace Snapshot</h4>
+                        <aside class="space-y-4 rounded-3xl border border-white/10 bg-black/35 p-6 text-sm text-white/60 backdrop-blur-xl">
+                                <h4 class="text-base text-white">Workspace Snapshot</h4>
                                 <p>The mock connection ships with curated data: { len(snapshot.Formulas) } formulas, { len(snapshot.FormulaIngredients) } ingredients, and { len(snapshot.AromaChemicals) } aroma chemicals.</p>
                                 <p>All mutations stay on the client so you can preview flows without touching production services.</p>
                         </aside>
                 </div>
-                <div class="rounded-3xl border border-white/10 bg-black/35 backdrop-blur-xl workspace-surface">
-                        <header class="flex flex-col gap-3 px-6 pt-6 text-sm uppercase tracking-[0.45em] workspace-subtle sm:flex-row sm:items-center sm:justify-between">
+                <div class="rounded-3xl border border-white/10 bg-black/35 backdrop-blur-xl">
+                        <header class="flex flex-col gap-3 px-6 pt-6 text-sm uppercase tracking-[0.45em] text-white/50 sm:flex-row sm:items-center sm:justify-between">
                                 <span>Ledger</span>
                                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-                                        <input type="search" data-filter-search placeholder="Search ingredient or formula" class="w-full rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs workspace-heading placeholder:text-white/30 focus:border-white/40 focus:outline-none"/>
-                                        <select data-filter-status class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs workspace-heading focus:border-white/40 focus:outline-none">
+                                        <input type="search" data-filter-search placeholder="Search ingredient or formula" class="w-full rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"/>
+                                        <select data-filter-status class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white focus:border-white/40 focus:outline-none">
                                                 <option value="all">All sources</option>
                                                 <option value="Aroma Chemical">Aroma chemical</option>
                                                 <option value="Sub-Formula">Sub-formula</option>
@@ -96,8 +94,8 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
                                 </div>
                         </header>
                         <div class="mt-4 overflow-hidden rounded-3xl border border-white/10">
-                                <table class="min-w-full divide-y divide-white/10 text-left text-sm workspace-muted">
-                                        <thead class="bg-white/5 text-[0.6rem] uppercase tracking-[0.45em] workspace-subtle">
+                                <table class="min-w-full divide-y divide-white/10 text-left text-sm text-white/70">
+                                        <thead class="bg-white/5 text-[0.6rem] uppercase tracking-[0.45em] text-white/45">
                                                 <tr>
                                                         <th class="px-5 py-4 font-medium">Ingredient</th>
                                                         <th class="px-5 py-4 font-medium">Formula</th>
@@ -108,23 +106,23 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
                                         </thead>
                                         <tbody data-list class="divide-y divide-white/10">
                                                 for _, ingredient := range snapshot.FormulaIngredients {
-                                                        <tr data-id={ ingredient.ID } class="bg-black/25 workspace-heading">
+                                                        <tr data-id={ ingredient.ID } class="bg-black/25 text-white/80">
                                                                 <td class="px-5 py-4">
-                                                                        <div class="font-medium workspace-heading">{ IngredientDisplayName(ingredient) }</div>
-                                                                        <div class="text-xs uppercase tracking-[0.35em] workspace-subtle">{ IngredientSourceKind(ingredient) }</div>
+                                                                        <div class="font-medium text-white">{ IngredientDisplayName(ingredient) }</div>
+                                                                        <div class="text-xs uppercase tracking-[0.35em] text-white/40">{ IngredientSourceKind(ingredient) }</div>
                                                                 </td>
                                                                 <td class="px-5 py-4">
                                                                         if ingredient.Formula != nil {
                                                                                 { ingredient.Formula.Name }
                                                                         } else {
-                                                                                <span class="workspace-subtle">Formula #{ ingredient.FormulaID }</span>
+                                                                                <span class="text-white/50">Formula #{ ingredient.FormulaID }</span>
                                                                         }
                                                                 </td>
                                                                 <td class="px-5 py-4">{ fmt.Sprintf("%.2f %s", ingredient.Amount, ingredient.Unit) }</td>
                                                                 <td class="px-5 py-4">{ ingredient.UpdatedAt.UTC().Format("02 Jan 2006") }</td>
                                                                 <td class="px-5 py-4">
                                                                         <div class="flex items-center gap-2">
-                                                                                <button type="button" data-action="edit" data-id={ ingredient.ID } class="rounded-full border border-white/20 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] workspace-muted transition hover:border-white/40 hover:text-white">Edit</button>
+                                                                                <button type="button" data-action="edit" data-id={ ingredient.ID } class="rounded-full border border-white/20 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/70 transition hover:border-white/40 hover:text-white">Edit</button>
                                                                                 <button type="button" data-action="delete" data-id={ ingredient.ID } class="rounded-full border border-rose-400/25 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-rose-200 transition hover:border-rose-300/40 hover:text-rose-100">Remove</button>
                                                                         </div>
                                                                 </td>
@@ -132,36 +130,36 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
                                                 }
                                         </tbody>
                                 </table>
-                                <div data-empty-state class="hidden px-6 py-16 text-center text-sm workspace-muted">No records yet. Add an ingredient above to populate the ledger.</div>
+                                <div data-empty-state class="hidden px-6 py-16 text-center text-sm text-white/60">No records yet. Add an ingredient above to populate the ledger.</div>
                         </div>
                 </div>
                 <div data-edit-panel class="fixed inset-0 z-40 hidden items-center justify-center bg-black/80 px-6 py-10 backdrop-blur">
-                        <div class="w-full max-w-lg space-y-5 rounded-3xl border border-white/10 bg-[#0a0a10] p-8 shadow-[0_40px_120px_rgba(0,0,0,0.55)] workspace-surface">
+                        <div class="w-full max-w-lg space-y-5 rounded-3xl border border-white/10 bg-[#0a0a10] p-8 shadow-[0_40px_120px_rgba(0,0,0,0.55)]">
                                 <header class="flex items-center justify-between">
                                         <div>
-                                                <h4 class="text-lg workspace-heading">Edit Ingredient</h4>
-                                                <p class="text-sm workspace-muted">Changes stay local to your browser session.</p>
+                                                <h4 class="text-lg text-white">Edit Ingredient</h4>
+                                                <p class="text-sm text-white/60">Changes stay local to your browser session.</p>
                                         </div>
-                                        <button type="button" data-role="close-panel" class="rounded-full border border-white/15 px-3 py-1 text-[0.55rem] uppercase tracking-[0.5em] workspace-subtle transition hover:border-white/30 hover:text-white">Close</button>
+                                        <button type="button" data-role="close-panel" class="rounded-full border border-white/15 px-3 py-1 text-[0.55rem] uppercase tracking-[0.5em] text-white/50 transition hover:border-white/30 hover:text-white">Close</button>
                                 </header>
                                 <form class="space-y-4" data-action="edit">
                                         <input type="hidden" name="id"/>
-                                        <label class="space-y-2 text-[0.6rem] uppercase tracking-[0.45em] workspace-muted">
+                                        <label class="space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60">
                                                 Formula
-                                                <select name="formulaId" required data-formula-select class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm workspace-heading focus:border-white/40 focus:outline-none"></select>
+                                                <select name="formulaId" required data-formula-select class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"></select>
                                         </label>
-                                        <label class="space-y-2 text-[0.6rem] uppercase tracking-[0.45em] workspace-muted">
+                                        <label class="space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60">
                                                 Aroma Chemical
-                                                <select name="aromaChemicalId" required data-chemical-select class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm workspace-heading focus:border-white/40 focus:outline-none"></select>
+                                                <select name="aromaChemicalId" required data-chemical-select class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"></select>
                                         </label>
                                         <div class="grid gap-4 sm:grid-cols-2">
-                                                <label class="space-y-2 text-[0.6rem] uppercase tracking-[0.45em] workspace-muted">
+                                                <label class="space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60">
                                                         Amount
-                                                        <input type="number" step="0.01" min="0" name="amount" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm workspace-heading focus:border-white/40 focus:outline-none"/>
+                                                        <input type="number" step="0.01" min="0" name="amount" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
                                                 </label>
-                                                <label class="space-y-2 text-[0.6rem] uppercase tracking-[0.45em] workspace-muted">
+                                                <label class="space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60">
                                                         Unit
-                                                        <select name="unit" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm workspace-heading focus:border-white/40 focus:outline-none">
+                                                        <select name="unit" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none">
                                                                 <option value="g">g</option>
                                                                 <option value="kg">kg</option>
                                                                 <option value="ml">ml</option>
@@ -170,7 +168,7 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
                                                 </label>
                                         </div>
                                         <div class="flex justify-end gap-3">
-                                                <button type="button" data-role="close-panel" class="rounded-full border border-white/15 px-5 py-2 text-[0.6rem] uppercase tracking-[0.45em] workspace-muted transition hover:border-white/30 hover:text-white">Cancel</button>
+                                                <button type="button" data-role="close-panel" class="rounded-full border border-white/15 px-5 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60 transition hover:border-white/30 hover:text-white">Cancel</button>
                                                 <button type="submit" class="rounded-full bg-white px-6 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-[#050509] shadow-[0_18px_50px_rgba(255,255,255,0.25)] transition hover:bg-white/90">Save</button>
                                         </div>
                                 </form>
@@ -183,13 +181,13 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
 templ FormulaManagement(snapshot WorkspaceSnapshot) {
         <section class="space-y-8" data-module="formulas" data-module-key="formulas">
                 <div class="grid gap-6 lg:grid-cols-3">
-                        <div class="lg:col-span-2 space-y-6 rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-8 shadow-[0_30px_70px_rgba(0,0,0,0.35)] backdrop-blur-xl workspace-surface">
+                        <div class="lg:col-span-2 space-y-6 rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-8 shadow-[0_30px_70px_rgba(0,0,0,0.35)] backdrop-blur-xl">
                                 <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                                         <div>
-                                                <h3 class="text-lg workspace-heading">Formula</h3>
-                                                <p class="text-sm uppercase tracking-[0.4em] workspace-subtle">Interact with the mock dataset built from real models.</p>
+                                                <h3 class="text-lg text-white">Formula</h3>
+                                                <p class="text-sm uppercase tracking-[0.4em] text-white/50">Interact with the mock dataset built from real models.</p>
                                         </div>
-                                        <span class="rounded-full border border-white/15 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] workspace-subtle">Seeded User: avery@perfugo.app</span>
+                                        <span class="rounded-full border border-white/15 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/50">Seeded User: avery@perfugo.app</span>
                                 </header>
                                 <form class="grid gap-5 md:grid-cols-2" data-action="create">
                                         <label class="space-y-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60">
@@ -378,39 +376,35 @@ templ ReportsOverview(cards []ReportCard, timeline []ReportEvent, leaders []Ingr
         </section>
 }
 
-templ PreferencesPanel(themeKey string, options []theme.Option) {
-        <section class="space-y-6" data-module="preferences" data-theme={ themeKey }>
-                <div class="space-y-5 rounded-3xl border border-white/10 bg-black/35 p-6 backdrop-blur-xl workspace-surface">
-                        <header class="flex flex-col gap-2 text-sm uppercase tracking-[0.4em] workspace-subtle">
+templ PreferencesPanel() {
+        <section class="space-y-6" data-module="preferences">
+                <div class="space-y-5 rounded-3xl border border-white/10 bg-black/35 p-6 backdrop-blur-xl">
+                        <header class="flex flex-col gap-2 text-sm uppercase tracking-[0.4em] text-white/50">
                                 <span>Studio Preferences</span>
-                                <p class="text-xs normal-case workspace-muted">Tweak notification, theme, and cadence defaults for the mock session.</p>
+                                <p class="text-xs normal-case text-white/60">Tweak notification, theme, and cadence defaults for the mock session.</p>
                         </header>
                         <form class="space-y-5" data-action="preferences">
                                 <div class="grid gap-4 md:grid-cols-2">
-                                        <label class="space-y-2 text-sm workspace-heading">
-                                                <span class="text-[0.6rem] uppercase tracking-[0.45em] workspace-subtle">Notifications</span>
-                                                <select class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm workspace-heading focus:border-white/40 focus:outline-none">
+                                        <label class="space-y-2 text-sm text-white">
+                                                <span class="text-[0.6rem] uppercase tracking-[0.45em] text-white/50">Notifications</span>
+                                                <select class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none">
                                                         <option>Product launches</option>
                                                         <option>Compliance</option>
                                                         <option>Inventory</option>
                                                 </select>
                                         </label>
-                                        <label class="space-y-2 text-sm workspace-heading">
-                                                <span class="text-[0.6rem] uppercase tracking-[0.45em] workspace-subtle">Theme</span>
-                                                <select name="theme" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm workspace-heading focus:border-white/40 focus:outline-none">
-                                                        for _, item := range options {
-                                                                <option value={ item.Value }
-                                                                        if item.Value == themeKey {
-                                                                                selected
-                                                                        }
-                                                                >{ item.Label }</option>
-                                                        }
+                                        <label class="space-y-2 text-sm text-white">
+                                                <span class="text-[0.6rem] uppercase tracking-[0.45em] text-white/50">Theme</span>
+                                                <select class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none">
+                                                        <option>Nocturne</option>
+                                                        <option>Atelier Ivory</option>
+                                                        <option>Midnight Draft</option>
                                                 </select>
                                         </label>
                                 </div>
                                 <div class="flex flex-wrap items-center justify-end gap-3">
                                         <button type="submit" class="rounded-full bg-white px-6 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-[#050509] shadow-[0_15px_40px_rgba(255,255,255,0.25)] transition hover:bg-white/90">Save Preferences</button>
-                                        <span data-success class="hidden text-xs uppercase tracking-[0.45em] text-emerald-400">Saved</span>
+                                        <span data-success class="hidden text-xs uppercase tracking-[0.45em] text-emerald-300">Saved</span>
                                 </div>
                         </form>
                 </div>
@@ -839,45 +833,12 @@ templ workspaceModulesScript() {
                         namespace.modules.preferences = function (root) {
                                 const form = root.querySelector('form[data-action="preferences"]');
                                 const success = root.querySelector('[data-success]');
-                                if (!form) {
-                                        return;
-                                }
-
-                                const setBusy = (busy) => {
-                                        const submit = form.querySelector('button[type="submit"]');
-                                        if (submit) {
-                                                submit.disabled = busy;
-                                                submit.classList.toggle('opacity-70', busy);
-                                        }
-                                };
-
-                                form.addEventListener('submit', async (event) => {
+                                if (!form) return;
+                                form.addEventListener('submit', (event) => {
                                         event.preventDefault();
-                                        setBusy(true);
-                                        const formData = new FormData(form);
-                                        try {
-                                                const response = await fetch('/app/preferences/update', {
-                                                        method: 'POST',
-                                                        body: formData,
-                                                        headers: {
-                                                                Accept: 'application/json',
-                                                        },
-                                                });
-                                                if (!response.ok) {
-                                                        throw new Error('Failed to save preferences');
-                                                }
-                                                const payload = await response.json();
-                                                if (payload && payload.theme) {
-                                                        document.body.setAttribute('data-theme', payload.theme);
-                                                }
-                                                if (success) {
-                                                        success.classList.remove('hidden');
-                                                        setTimeout(() => success.classList.add('hidden'), 1800);
-                                                }
-                                        } catch (error) {
-                                                console.error('Perfugo preferences update failed', error);
-                                        } finally {
-                                                setBusy(false);
+                                        if (success) {
+                                                success.classList.remove('hidden');
+                                                setTimeout(() => success.classList.add('hidden'), 1500);
                                         }
                                 });
                         };

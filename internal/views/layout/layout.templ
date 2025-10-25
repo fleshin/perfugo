@@ -1,13 +1,8 @@
 package layout
 
-import (
-        "fmt"
+import templpkg "github.com/a-h/templ"
 
-        templpkg "github.com/a-h/templ"
-        "perfugo/internal/views/theme"
-)
-
-templ Layout(title string, sidebar templpkg.Component, content templpkg.Component, showSidebar bool, themeKey string) {
+templ Layout(title string, sidebar templpkg.Component, content templpkg.Component, showSidebar bool) {
         <!DOCTYPE html>
         <html lang="en" class="h-full bg-[#050509]">
                 <head>
@@ -21,137 +16,18 @@ templ Layout(title string, sidebar templpkg.Component, content templpkg.Componen
                         <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
                         <script src="https://unpkg.com/hyperscript.org@0.9.12" defer></script>
                         <style>
-                                :root {
-                                        --workspace-bg: #050509;
-                                        --workspace-text: #f8fafc;
-                                        --workspace-muted: rgba(226, 232, 240, 0.75);
-                                        --workspace-subtle: rgba(148, 163, 184, 0.55);
-                                        --workspace-border-strong: rgba(148, 163, 184, 0.28);
-                                        --workspace-border-soft: rgba(148, 163, 184, 0.18);
-                                        --workspace-surface: rgba(15, 23, 42, 0.75);
-                                        --workspace-surface-soft: rgba(15, 23, 42, 0.55);
-                                        --workspace-accent: #38bdf8;
-                                        --workspace-shell-gradient: radial-gradient(circle at top, rgba(56, 189, 248, 0.15), transparent 55%), linear-gradient(135deg, rgba(2, 6, 23, 0.9), rgba(15, 23, 42, 0.85));
-                                }
-
                                 body {
                                         font-family: "Poppins", sans-serif;
                                         letter-spacing: 0.02em;
-                                        background: var(--workspace-bg);
-                                        color: var(--workspace-text);
                                 }
-
                                 h1, h2, h3, h4 {
                                         font-family: "Playfair Display", serif;
                                         letter-spacing: 0.18em;
                                         text-transform: uppercase;
                                 }
-
-                                body[data-theme="atelier_ivory"] {
-                                        --workspace-bg: #fdfbf4;
-                                        --workspace-text: #1c1917;
-                                        --workspace-muted: rgba(41, 37, 36, 0.7);
-                                        --workspace-subtle: rgba(68, 64, 60, 0.55);
-                                        --workspace-border-strong: rgba(87, 83, 78, 0.24);
-                                        --workspace-border-soft: rgba(120, 113, 108, 0.16);
-                                        --workspace-surface: rgba(255, 255, 255, 0.95);
-                                        --workspace-surface-soft: rgba(255, 255, 255, 0.85);
-                                        --workspace-accent: #c2410c;
-                                        --workspace-shell-gradient: linear-gradient(140deg, rgba(250, 244, 234, 0.92), rgba(255, 255, 255, 0.9));
-                                }
-
-                                body[data-theme="midnight_draft"] {
-                                        --workspace-bg: #030712;
-                                        --workspace-text: #e2e8f0;
-                                        --workspace-muted: rgba(148, 163, 184, 0.78);
-                                        --workspace-subtle: rgba(100, 116, 139, 0.55);
-                                        --workspace-border-strong: rgba(96, 165, 250, 0.26);
-                                        --workspace-border-soft: rgba(96, 165, 250, 0.16);
-                                        --workspace-surface: rgba(15, 23, 42, 0.82);
-                                        --workspace-surface-soft: rgba(15, 23, 42, 0.65);
-                                        --workspace-accent: #38bdf8;
-                                        --workspace-shell-gradient: radial-gradient(circle at top, rgba(56, 189, 248, 0.18), transparent 60%), linear-gradient(160deg, rgba(8, 47, 73, 0.9), rgba(15, 23, 42, 0.88));
-                                }
-
-                                .workspace-shell {
-                                        position: relative;
-                                        isolation: isolate;
-                                        min-height: 100vh;
-                                        background: var(--workspace-shell-gradient);
-                                        color: var(--workspace-text);
-                                }
-
-                                .workspace-shell::after {
-                                        content: "";
-                                        position: absolute;
-                                        inset: 0;
-                                        background: linear-gradient(180deg, rgba(15, 23, 42, 0.3), transparent 40%, rgba(15, 23, 42, 0.6));
-                                        pointer-events: none;
-                                }
-
-                                .workspace-surface {
-                                        background: var(--workspace-surface);
-                                        border-color: var(--workspace-border-strong);
-                                        color: var(--workspace-text);
-                                }
-
-                                .workspace-surface-soft {
-                                        background: var(--workspace-surface-soft);
-                                        border-color: var(--workspace-border-soft);
-                                        color: var(--workspace-text);
-                                }
-
-                                .workspace-heading {
-                                        color: var(--workspace-text);
-                                }
-
-                                .workspace-muted {
-                                        color: var(--workspace-muted);
-                                }
-
-                                .workspace-subtle {
-                                        color: var(--workspace-subtle);
-                                }
-
-                                .workspace-border-strong {
-                                        border-color: var(--workspace-border-strong);
-                                }
-
-                                .workspace-border-soft {
-                                        border-color: var(--workspace-border-soft);
-                                }
-
-                                .workspace-accent {
-                                        color: var(--workspace-accent);
-                                }
-
-                                body[data-theme="atelier_ivory"] .bg-black\/35,
-                                body[data-theme="atelier_ivory"] .bg-black\/40,
-                                body[data-theme="atelier_ivory"] .bg-black\/25 {
-                                        background-color: rgba(255, 255, 255, 0.9) !important;
-                                }
-
-                                body[data-theme="atelier_ivory"] .text-white,
-                                body[data-theme="atelier_ivory"] .text-white\/90,
-                                body[data-theme="atelier_ivory"] .text-white\/80,
-                                body[data-theme="atelier_ivory"] .text-white\/70,
-                                body[data-theme="atelier_ivory"] .text-white\/60,
-                                body[data-theme="atelier_ivory"] .text-white\/50,
-                                body[data-theme="atelier_ivory"] .text-white\/40 {
-                                        color: var(--workspace-muted) !important;
-                                }
-
-                                body[data-theme="midnight_draft"] .bg-black\/35,
-                                body[data-theme="midnight_draft"] .bg-black\/40 {
-                                        background-color: rgba(15, 23, 42, 0.75) !important;
-                                }
-
-                                body[data-theme="midnight_draft"] .text-white\/50 {
-                                        color: rgba(148, 163, 184, 0.65) !important;
-                                }
                         </style>
                 </head>
-                <body class={ fmt.Sprintf("%s antialiased", theme.Resolve(themeKey).BodyClass) } data-theme={ theme.Resolve(themeKey).Key } hx-boost="true">
+                <body class="h-full bg-[#050509] text-slate-100 antialiased" hx-boost="true">
                         <div class={ bodyWrapperClass(showSidebar) }>
                                 if showSidebar {
                                         <aside class="hidden lg:flex lg:flex-col lg:w-80 xl:w-96 border-r border-white/10 bg-black/70 backdrop-blur-xl">

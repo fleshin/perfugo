@@ -7,7 +7,6 @@ import (
         templpkg "github.com/a-h/templ"
         "perfugo/internal/views/components"
         "perfugo/internal/views/layout"
-        "perfugo/internal/views/theme"
 )
 
 const defaultWorkspaceSection = "ingredients"
@@ -21,23 +20,17 @@ type workspaceSectionMeta struct {
         MetricValue  string
 }
 
-templ Workspace(section string, snapshot WorkspaceSnapshot, themeKey string) {
+templ Workspace(section string, snapshot WorkspaceSnapshot) {
         @layout.Layout(
                 "Perfugo Atelier",
                 components.Sidebar(sidebarData(NormalizeWorkspaceSection(section))),
-                workspaceShell(NormalizeWorkspaceSection(section), snapshot, true, theme.Resolve(themeKey)),
+                workspaceShell(NormalizeWorkspaceSection(section), snapshot, true),
                 true,
-                themeKey,
         )
 }
 
-templ WorkspaceSection(section string, snapshot WorkspaceSnapshot, themeKey string) {
-        @workspaceInterior(
-                NormalizeWorkspaceSection(section),
-                workspaceMeta(NormalizeWorkspaceSection(section), snapshot),
-                snapshot,
-                theme.Resolve(themeKey),
-        )
+templ WorkspaceSection(section string, snapshot WorkspaceSnapshot) {
+        @workspaceInterior(NormalizeWorkspaceSection(section), workspaceMeta(NormalizeWorkspaceSection(section), snapshot), snapshot)
 }
 
 func sidebarData(active string) components.SidebarData {
@@ -56,15 +49,17 @@ func sidebarData(active string) components.SidebarData {
         }
 }
 
-templ workspaceShell(section string, snapshot WorkspaceSnapshot, includeSeeds bool, variant theme.WorkspaceTheme) {
-        <div class={ variant.ShellClass }>
-                <div class="relative z-10 mx-auto w-full max-w-7xl px-4 pb-16 pt-12 sm:px-6 lg:px-8 lg:pt-16">
-                        <div id="workspace-content" class="space-y-10"
+templ workspaceShell(section string, snapshot WorkspaceSnapshot, includeSeeds bool) {
+        <div class="relative isolate overflow-hidden bg-[#050509]">
+                <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.16),_rgba(5,5,9,0))] opacity-80"></div>
+                <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(5,5,9,0.92),rgba(12,12,18,0.78))]"></div>
+                <div class="relative z-10 mx-auto w-full max-w-6xl px-6 pb-20 pt-16 sm:px-8 lg:pt-20">
+                        <div id="workspace-content" class="space-y-14"
                                 if includeSeeds {
                                         data-seeds={ snapshot.SeedsJSON() }
                                 }
                         >
-                                @workspaceInterior(section, workspaceMeta(section, snapshot), snapshot, variant)
+                                @workspaceInterior(section, workspaceMeta(section, snapshot), snapshot)
                         </div>
                 </div>
                 if includeSeeds {
@@ -73,36 +68,36 @@ templ workspaceShell(section string, snapshot WorkspaceSnapshot, includeSeeds bo
         </div>
 }
 
-templ workspaceInterior(section string, meta workspaceSectionMeta, snapshot WorkspaceSnapshot, variant theme.WorkspaceTheme) {
-        <div class="space-y-8">
-                <section class={ fmt.Sprintf("%s rounded-3xl border px-8 py-8 shadow-xl", variant.PanelSurfaceClass) }>
+templ workspaceInterior(section string, meta workspaceSectionMeta, snapshot WorkspaceSnapshot) {
+        <div class="space-y-12">
+                <section class="rounded-[2.75rem] border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent px-8 py-10 shadow-[0_45px_120px_rgba(0,0,0,0.55)] backdrop-blur-2xl">
                         <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                                 <div class="space-y-4">
                                         if meta.Badge != "" {
-                                                <span class={ fmt.Sprintf("inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-[0.6rem] uppercase tracking-[0.5em] %s %s", variant.BorderSoftClass, variant.MutedTextClass) }>{ meta.Badge }</span>
+                                                <span class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/40 px-5 py-2 text-[0.6rem] uppercase tracking-[0.5em] text-white/50">{ meta.Badge }</span>
                                         }
                                         <div class="space-y-3">
-                                                <h1 class="text-3xl font-semibold uppercase tracking-[0.25em] sm:text-4xl">{ meta.Title }</h1>
+                                                <h1 class="text-3xl font-semibold uppercase tracking-[0.35em] text-white sm:text-4xl">{ meta.Title }</h1>
                                                 if meta.Subtitle != "" {
-                                                        <p class={ fmt.Sprintf("text-xs uppercase tracking-[0.45em] %s", variant.SubtleTextClass) }>{ meta.Subtitle }</p>
+                                                        <p class="text-sm uppercase tracking-[0.5em] text-white/50">{ meta.Subtitle }</p>
                                                 }
                                         </div>
                                         if meta.Description != "" {
-                                                <p class={ fmt.Sprintf("max-w-3xl text-sm leading-relaxed %s", variant.MutedTextClass) }>{ meta.Description }</p>
+                                                <p class="max-w-3xl text-sm text-white/60">{ meta.Description }</p>
                                         }
                                 </div>
                                 if meta.MetricValue != "" {
-                                        <div class={ fmt.Sprintf("rounded-2xl border px-6 py-5 text-right %s", variant.PanelSoftSurfaceClass) }>
+                                        <div class="rounded-3xl border border-white/15 bg-black/40 px-6 py-5 text-right text-white/80">
                                                 if meta.MetricLabel != "" {
-                                                        <p class={ fmt.Sprintf("text-[0.55rem] uppercase tracking-[0.45em] %s", variant.SubtleTextClass) }>{ meta.MetricLabel }</p>
+                                                        <p class="text-[0.6rem] uppercase tracking-[0.45em] text-white/40">{ meta.MetricLabel }</p>
                                                 }
-                                                <p class="mt-2 text-2xl font-semibold">{ meta.MetricValue }</p>
+                                                <p class="mt-2 text-2xl font-semibold text-white">{ meta.MetricValue }</p>
                                         </div>
                                 }
                         </div>
                 </section>
                 <div>
-                        @workspaceComponent(section, snapshot, variant)
+                        @workspaceComponent(section, snapshot)
                 </div>
         </div>
 }
@@ -148,14 +143,14 @@ func workspaceMeta(section string, snapshot WorkspaceSnapshot) workspaceSectionM
         }
 }
 
-func workspaceComponent(section string, snapshot WorkspaceSnapshot, variant theme.WorkspaceTheme) templpkg.Component {
+func workspaceComponent(section string, snapshot WorkspaceSnapshot) templpkg.Component {
         switch section {
         case "formulas":
                 return FormulaManagement(snapshot)
         case "reports":
                 return ReportsOverview(defaultReportCards(), defaultReportTimeline(), defaultReportLeaders())
         case "preferences":
-                return PreferencesPanel(variant.Key, theme.Options())
+                return PreferencesPanel()
         default:
                 return IngredientManagement(snapshot)
         }

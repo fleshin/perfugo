@@ -8,14 +8,9 @@ package layout
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"fmt"
+import templpkg "github.com/a-h/templ"
 
-	templpkg "github.com/a-h/templ"
-	"perfugo/internal/views/theme"
-)
-
-func Layout(title string, sidebar templpkg.Component, content templpkg.Component, showSidebar bool, themeKey string) templ.Component {
+func Layout(title string, sidebar templpkg.Component, content templpkg.Component, showSidebar bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -43,22 +38,22 @@ func Layout(title string, sidebar templpkg.Component, content templpkg.Component
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/layout.templ`, Line: 16, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/layout.templ`, Line: 11, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.12\" defer></script><script src=\"https://unpkg.com/hyperscript.org@0.9.12\" defer></script><style>\n                                :root {\n                                        --workspace-bg: #050509;\n                                        --workspace-text: #f8fafc;\n                                        --workspace-muted: rgba(226, 232, 240, 0.75);\n                                        --workspace-subtle: rgba(148, 163, 184, 0.55);\n                                        --workspace-border-strong: rgba(148, 163, 184, 0.28);\n                                        --workspace-border-soft: rgba(148, 163, 184, 0.18);\n                                        --workspace-surface: rgba(15, 23, 42, 0.75);\n                                        --workspace-surface-soft: rgba(15, 23, 42, 0.55);\n                                        --workspace-accent: #38bdf8;\n                                        --workspace-shell-gradient: radial-gradient(circle at top, rgba(56, 189, 248, 0.15), transparent 55%), linear-gradient(135deg, rgba(2, 6, 23, 0.9), rgba(15, 23, 42, 0.85));\n                                }\n\n                                body {\n                                        font-family: \"Poppins\", sans-serif;\n                                        letter-spacing: 0.02em;\n                                        background: var(--workspace-bg);\n                                        color: var(--workspace-text);\n                                }\n\n                                h1, h2, h3, h4 {\n                                        font-family: \"Playfair Display\", serif;\n                                        letter-spacing: 0.18em;\n                                        text-transform: uppercase;\n                                }\n\n                                body[data-theme=\"atelier_ivory\"] {\n                                        --workspace-bg: #fdfbf4;\n                                        --workspace-text: #1c1917;\n                                        --workspace-muted: rgba(41, 37, 36, 0.7);\n                                        --workspace-subtle: rgba(68, 64, 60, 0.55);\n                                        --workspace-border-strong: rgba(87, 83, 78, 0.24);\n                                        --workspace-border-soft: rgba(120, 113, 108, 0.16);\n                                        --workspace-surface: rgba(255, 255, 255, 0.95);\n                                        --workspace-surface-soft: rgba(255, 255, 255, 0.85);\n                                        --workspace-accent: #c2410c;\n                                        --workspace-shell-gradient: linear-gradient(140deg, rgba(250, 244, 234, 0.92), rgba(255, 255, 255, 0.9));\n                                }\n\n                                body[data-theme=\"midnight_draft\"] {\n                                        --workspace-bg: #030712;\n                                        --workspace-text: #e2e8f0;\n                                        --workspace-muted: rgba(148, 163, 184, 0.78);\n                                        --workspace-subtle: rgba(100, 116, 139, 0.55);\n                                        --workspace-border-strong: rgba(96, 165, 250, 0.26);\n                                        --workspace-border-soft: rgba(96, 165, 250, 0.16);\n                                        --workspace-surface: rgba(15, 23, 42, 0.82);\n                                        --workspace-surface-soft: rgba(15, 23, 42, 0.65);\n                                        --workspace-accent: #38bdf8;\n                                        --workspace-shell-gradient: radial-gradient(circle at top, rgba(56, 189, 248, 0.18), transparent 60%), linear-gradient(160deg, rgba(8, 47, 73, 0.9), rgba(15, 23, 42, 0.88));\n                                }\n\n                                .workspace-shell {\n                                        position: relative;\n                                        isolation: isolate;\n                                        min-height: 100vh;\n                                        background: var(--workspace-shell-gradient);\n                                        color: var(--workspace-text);\n                                }\n\n                                .workspace-shell::after {\n                                        content: \"\";\n                                        position: absolute;\n                                        inset: 0;\n                                        background: linear-gradient(180deg, rgba(15, 23, 42, 0.3), transparent 40%, rgba(15, 23, 42, 0.6));\n                                        pointer-events: none;\n                                }\n\n                                .workspace-surface {\n                                        background: var(--workspace-surface);\n                                        border-color: var(--workspace-border-strong);\n                                        color: var(--workspace-text);\n                                }\n\n                                .workspace-surface-soft {\n                                        background: var(--workspace-surface-soft);\n                                        border-color: var(--workspace-border-soft);\n                                        color: var(--workspace-text);\n                                }\n\n                                .workspace-heading {\n                                        color: var(--workspace-text);\n                                }\n\n                                .workspace-muted {\n                                        color: var(--workspace-muted);\n                                }\n\n                                .workspace-subtle {\n                                        color: var(--workspace-subtle);\n                                }\n\n                                .workspace-border-strong {\n                                        border-color: var(--workspace-border-strong);\n                                }\n\n                                .workspace-border-soft {\n                                        border-color: var(--workspace-border-soft);\n                                }\n\n                                .workspace-accent {\n                                        color: var(--workspace-accent);\n                                }\n\n                                body[data-theme=\"atelier_ivory\"] .bg-black\\/35,\n                                body[data-theme=\"atelier_ivory\"] .bg-black\\/40,\n                                body[data-theme=\"atelier_ivory\"] .bg-black\\/25 {\n                                        background-color: rgba(255, 255, 255, 0.9) !important;\n                                }\n\n                                body[data-theme=\"atelier_ivory\"] .text-white,\n                                body[data-theme=\"atelier_ivory\"] .text-white\\/90,\n                                body[data-theme=\"atelier_ivory\"] .text-white\\/80,\n                                body[data-theme=\"atelier_ivory\"] .text-white\\/70,\n                                body[data-theme=\"atelier_ivory\"] .text-white\\/60,\n                                body[data-theme=\"atelier_ivory\"] .text-white\\/50,\n                                body[data-theme=\"atelier_ivory\"] .text-white\\/40 {\n                                        color: var(--workspace-muted) !important;\n                                }\n\n                                body[data-theme=\"midnight_draft\"] .bg-black\\/35,\n                                body[data-theme=\"midnight_draft\"] .bg-black\\/40 {\n                                        background-color: rgba(15, 23, 42, 0.75) !important;\n                                }\n\n                                body[data-theme=\"midnight_draft\"] .text-white\\/50 {\n                                        color: rgba(148, 163, 184, 0.65) !important;\n                                }\n                        </style></head>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.12\" defer></script><script src=\"https://unpkg.com/hyperscript.org@0.9.12\" defer></script><style>\n                                body {\n                                        font-family: \"Poppins\", sans-serif;\n                                        letter-spacing: 0.02em;\n                                }\n                                h1, h2, h3, h4 {\n                                        font-family: \"Playfair Display\", serif;\n                                        letter-spacing: 0.18em;\n                                        text-transform: uppercase;\n                                }\n                        </style></head><body class=\"h-full bg-[#050509] text-slate-100 antialiased\" hx-boost=\"true\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 = []any{fmt.Sprintf("%s antialiased", theme.Resolve(themeKey).BodyClass)}
+		var templ_7745c5c3_Var3 = []any{bodyWrapperClass(showSidebar)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<body class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -71,47 +66,12 @@ func Layout(title string, sidebar templpkg.Component, content templpkg.Component
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" data-theme=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(theme.Resolve(themeKey).Key)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/layout.templ`, Line: 154, Col: 137}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" hx-boost=\"true\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var6 = []any{bodyWrapperClass(showSidebar)}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var6...)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var6).String())
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/layout.templ`, Line: 1, Col: 0}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if showSidebar {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<aside class=\"hidden lg:flex lg:flex-col lg:w-80 xl:w-96 border-r border-white/10 bg-black/70 backdrop-blur-xl\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<aside class=\"hidden lg:flex lg:flex-col lg:w-80 xl:w-96 border-r border-white/10 bg-black/70 backdrop-blur-xl\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -121,34 +81,34 @@ func Layout(title string, sidebar templpkg.Component, content templpkg.Component
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</aside>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</aside>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"flex-1 flex flex-col min-h-screen\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"flex-1 flex flex-col min-h-screen\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var8 = []any{mainClass(showSidebar)}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)
+		var templ_7745c5c3_Var5 = []any{mainClass(showSidebar)}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<main id=\"primary-content\" class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<main id=\"primary-content\" class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var9 string
-		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var8).String())
+		var templ_7745c5c3_Var6 string
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var5).String())
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/layout.templ`, Line: 1, Col: 0}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -156,7 +116,7 @@ func Layout(title string, sidebar templpkg.Component, content templpkg.Component
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</main><footer class=\"relative z-10 border-t border-white/10 bg-black/40\"><div class=\"mx-auto flex max-w-6xl flex-col gap-2 px-6 py-6 text-[0.65rem] uppercase tracking-[0.35em] text-white/40 sm:flex-row sm:items-center sm:justify-between\"><span>Perfugo Digital Atelier</span> <span class=\"hidden h-px w-16 bg-white/20 sm:block\"></span> <span>Where craft meets alchemy</span></div></footer></div></div><script>\n                                window.addEventListener('DOMContentLoaded', function () {\n                                        const namespace = window.PerfugoWorkspace || (window.PerfugoWorkspace = {});\n                                        namespace.modules = namespace.modules || {};\n\n                                        namespace.initModules = function (container) {\n                                                if (!container) {\n                                                        return;\n                                                }\n                                                const moduleRoot = container.querySelector('[data-module]');\n                                                if (!moduleRoot) {\n                                                        return;\n                                                }\n                                                const name = moduleRoot.dataset.module;\n                                                const init = namespace.modules[name];\n                                                if (typeof init === 'function') {\n                                                        init(moduleRoot);\n                                                }\n                                        };\n\n                                        namespace.highlightActiveLink = function (path) {\n                                                const current = (path.replace(/^\\/app\\/?/, '') || 'ingredients').split('/')[0];\n                                                document.querySelectorAll('[data-nav-section]').forEach(function (link) {\n                                                        link.dataset.state = link.dataset.navSection === current ? 'active' : 'inactive';\n                                                });\n                                        };\n\n                                        const assignSeeds = function (container) {\n                                                if (!container) {\n                                                        return;\n                                                }\n                                                if (namespace.seedsApplied) {\n                                                        return;\n                                                }\n                                                const seeds = container.dataset.seeds;\n                                                if (!seeds) {\n                                                        return;\n                                                }\n                                                try {\n                                                        window.PerfugoWorkspaceSeeds = window.PerfugoWorkspaceSeeds || JSON.parse(seeds);\n                                                        namespace.seedsApplied = true;\n                                                } catch (error) {\n                                                        console.warn('Perfugo workspace seeds parse error', error);\n                                                }\n                                        };\n\n                                        const container = document.getElementById('workspace-content');\n                                        if (container) {\n                                                assignSeeds(container);\n                                                namespace.initModules(container);\n                                                namespace.highlightActiveLink(window.location.pathname);\n                                        }\n\n                                        document.body.addEventListener('htmx:afterSwap', function (event) {\n                                                if (!event.detail || !event.detail.target) {\n                                                        return;\n                                                }\n                                                if (event.detail.target.id !== 'workspace-content') {\n                                                        return;\n                                                }\n                                                assignSeeds(event.detail.target);\n                                                namespace.initModules(event.detail.target);\n                                                const path = (event.detail.requestConfig && event.detail.requestConfig.path) || window.location.pathname;\n                                                namespace.highlightActiveLink(path);\n                                        });\n                                });\n                        </script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</main><footer class=\"relative z-10 border-t border-white/10 bg-black/40\"><div class=\"mx-auto flex max-w-6xl flex-col gap-2 px-6 py-6 text-[0.65rem] uppercase tracking-[0.35em] text-white/40 sm:flex-row sm:items-center sm:justify-between\"><span>Perfugo Digital Atelier</span> <span class=\"hidden h-px w-16 bg-white/20 sm:block\"></span> <span>Where craft meets alchemy</span></div></footer></div></div><script>\n                                window.addEventListener('DOMContentLoaded', function () {\n                                        const namespace = window.PerfugoWorkspace || (window.PerfugoWorkspace = {});\n                                        namespace.modules = namespace.modules || {};\n\n                                        namespace.initModules = function (container) {\n                                                if (!container) {\n                                                        return;\n                                                }\n                                                const moduleRoot = container.querySelector('[data-module]');\n                                                if (!moduleRoot) {\n                                                        return;\n                                                }\n                                                const name = moduleRoot.dataset.module;\n                                                const init = namespace.modules[name];\n                                                if (typeof init === 'function') {\n                                                        init(moduleRoot);\n                                                }\n                                        };\n\n                                        namespace.highlightActiveLink = function (path) {\n                                                const current = (path.replace(/^\\/app\\/?/, '') || 'ingredients').split('/')[0];\n                                                document.querySelectorAll('[data-nav-section]').forEach(function (link) {\n                                                        link.dataset.state = link.dataset.navSection === current ? 'active' : 'inactive';\n                                                });\n                                        };\n\n                                        const assignSeeds = function (container) {\n                                                if (!container) {\n                                                        return;\n                                                }\n                                                if (namespace.seedsApplied) {\n                                                        return;\n                                                }\n                                                const seeds = container.dataset.seeds;\n                                                if (!seeds) {\n                                                        return;\n                                                }\n                                                try {\n                                                        window.PerfugoWorkspaceSeeds = window.PerfugoWorkspaceSeeds || JSON.parse(seeds);\n                                                        namespace.seedsApplied = true;\n                                                } catch (error) {\n                                                        console.warn('Perfugo workspace seeds parse error', error);\n                                                }\n                                        };\n\n                                        const container = document.getElementById('workspace-content');\n                                        if (container) {\n                                                assignSeeds(container);\n                                                namespace.initModules(container);\n                                                namespace.highlightActiveLink(window.location.pathname);\n                                        }\n\n                                        document.body.addEventListener('htmx:afterSwap', function (event) {\n                                                if (!event.detail || !event.detail.target) {\n                                                        return;\n                                                }\n                                                if (event.detail.target.id !== 'workspace-content') {\n                                                        return;\n                                                }\n                                                assignSeeds(event.detail.target);\n                                                namespace.initModules(event.detail.target);\n                                                const path = (event.detail.requestConfig && event.detail.requestConfig.path) || window.location.pathname;\n                                                namespace.highlightActiveLink(path);\n                                        });\n                                });\n                        </script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
