@@ -10,7 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import templpkg "github.com/a-h/templ"
 
-func Layout(title string, sidebar templpkg.Component, content templpkg.Component) templ.Component {
+func Layout(title string, sidebar templpkg.Component, content templpkg.Component, showSidebar bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -41,15 +41,71 @@ func Layout(title string, sidebar templpkg.Component, content templpkg.Component
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><script src=\"https://cdn.tailwindcss.com?plugins=forms,typography\"></script><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap\" rel=\"stylesheet\"></head><body class=\"h-full text-slate-900 font-sans\"><div class=\"min-h-screen flex\"><aside class=\"hidden lg:flex lg:flex-col w-72 bg-slate-900 text-slate-100 shadow-xl\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><link href=\"https://cdn.jsdelivr.net/npm/tailwindcss@3.3.5/dist/tailwind.min.css\" rel=\"stylesheet\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.12\" defer></script><script src=\"https://unpkg.com/hyperscript.org@0.9.12\" defer></script></head><body class=\"h-full text-slate-900 font-sans\" hx-boost=\"true\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = sidebar.Render(ctx, templ_7745c5c3_Buffer)
+		var templ_7745c5c3_Var3 = []any{bodyWrapperClass(showSidebar)}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</aside><div class=\"flex-1 flex flex-col min-h-screen\"><main class=\"flex-1 bg-white lg:bg-transparent\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var3).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/layout.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if showSidebar {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside class=\"hidden lg:flex lg:flex-col w-72 bg-slate-900 text-slate-100 shadow-xl\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if sidebar != nil {
+				templ_7745c5c3_Err = sidebar.Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</aside>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex-1 flex flex-col min-h-screen\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 = []any{mainClass(showSidebar)}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main id=\"primary-content\" class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var6 string
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var5).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/layout.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -63,4 +119,18 @@ func Layout(title string, sidebar templpkg.Component, content templpkg.Component
 		}
 		return templ_7745c5c3_Err
 	})
+}
+
+func bodyWrapperClass(showSidebar bool) string {
+	if showSidebar {
+		return "min-h-screen flex"
+	}
+	return "min-h-screen flex flex-col bg-white"
+}
+
+func mainClass(showSidebar bool) string {
+	if showSidebar {
+		return "flex-1 bg-white lg:bg-transparent"
+	}
+	return "flex-1"
 }

@@ -7,12 +7,16 @@ import (
 )
 
 templ Dashboard() {
-        @layout.Layout("Perfugo Dashboard", components.Sidebar(navItems()), dashboardContent())
+        @layout.Layout("Perfugo Dashboard", components.Sidebar(navItems()), dashboardContent(), true)
+}
+
+templ DashboardPartial() {
+        @dashboardContent()
 }
 
 func navItems() []components.NavItem {
         return []components.NavItem{
-                {Label: "Dashboard", Icon: "📊", Path: "/", Active: true},
+                {Label: "Dashboard", Icon: "📊", Path: "/app", Active: true},
                 {Label: "Batches", Icon: "🧪", Path: "/batches"},
                 {Label: "Inventory", Icon: "📦", Path: "/inventory"},
                 {Label: "Quality", Icon: "🧬", Path: "/quality"},
