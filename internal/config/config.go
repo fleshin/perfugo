@@ -31,6 +31,7 @@ type DatabaseConfig struct {
 	MaxOpenConns    int
 	ConnMaxLifetime time.Duration
 	ConnMaxIdleTime time.Duration
+	UseMock         bool
 }
 
 // LoggingConfig controls application logging behavior.
@@ -76,12 +77,14 @@ func Load() (Config, error) {
 		MaxOpenConns:    parseIntWithDefault(os.Getenv("DATABASE_MAX_OPEN_CONNS"), 25),
 		ConnMaxLifetime: parseDurationWithDefault(os.Getenv("DATABASE_CONN_MAX_LIFETIME"), 30*time.Minute),
 		ConnMaxIdleTime: parseDurationWithDefault(os.Getenv("DATABASE_CONN_MAX_IDLE_TIME"), 5*time.Minute),
+		UseMock:         parseBoolWithDefault(os.Getenv("DATABASE_USE_MOCK"), false),
 	}
 
 	applog.Debug(context.Background(), "database configuration resolved",
 		"urlConfigured", strings.TrimSpace(cfg.Database.URL) != "",
 		"maxIdleConns", cfg.Database.MaxIdleConns,
 		"maxOpenConns", cfg.Database.MaxOpenConns,
+		"useMock", cfg.Database.UseMock,
 	)
 
 	cfg.Logging = LoggingConfig{

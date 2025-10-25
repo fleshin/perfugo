@@ -5,13 +5,10 @@ package layout
 
 //lint:file-ignore SA4006 This context is only used if a nested component is present.
 
-import (
-	"github.com/a-h/templ"
+import "github.com/a-h/templ"
+import templruntime "github.com/a-h/templ/runtime"
 
-	templpkg "github.com/a-h/templ"
-
-	templruntime "github.com/a-h/templ/runtime"
-)
+import templpkg "github.com/a-h/templ"
 
 func Layout(title string, sidebar templpkg.Component, content templpkg.Component, showSidebar bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -34,20 +31,20 @@ func Layout(title string, sidebar templpkg.Component, content templpkg.Component
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" class=\"h-full bg-slate-100\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" class=\"h-full bg-[#050509]\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/layout.templ`, Line: 9, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/layout.templ`, Line: 11, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.12\" defer></script><script src=\"https://unpkg.com/hyperscript.org@0.9.12\" defer></script></head><body class=\"h-full text-slate-900 font-sans\" hx-boost=\"true\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.12\" defer></script><script src=\"https://unpkg.com/hyperscript.org@0.9.12\" defer></script><style>\n                                body {\n                                        font-family: \"Poppins\", sans-serif;\n                                        letter-spacing: 0.02em;\n                                }\n                                h1, h2, h3, h4 {\n                                        font-family: \"Playfair Display\", serif;\n                                        letter-spacing: 0.18em;\n                                        text-transform: uppercase;\n                                }\n                        </style></head><body class=\"h-full bg-[#050509] text-slate-100 antialiased\" hx-boost=\"true\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -74,7 +71,7 @@ func Layout(title string, sidebar templpkg.Component, content templpkg.Component
 			return templ_7745c5c3_Err
 		}
 		if showSidebar {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<aside class=\"hidden lg:flex lg:flex-col w-72 bg-slate-900 text-slate-100 shadow-xl\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<aside class=\"hidden lg:flex lg:flex-col lg:w-80 xl:w-96 border-r border-white/10 bg-black/70 backdrop-blur-xl\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -119,7 +116,7 @@ func Layout(title string, sidebar templpkg.Component, content templpkg.Component
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</main><footer class=\"bg-white border-t border-slate-200 py-4\"><div class=\"max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-sm text-slate-500\">Built with ❤️ using templ and Tailwind.</div></footer></div></div></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</main><footer class=\"relative z-10 border-t border-white/10 bg-black/40\"><div class=\"mx-auto flex max-w-6xl flex-col gap-2 px-6 py-6 text-[0.65rem] uppercase tracking-[0.35em] text-white/40 sm:flex-row sm:items-center sm:justify-between\"><span>Perfugo Digital Atelier</span> <span class=\"hidden h-px w-16 bg-white/20 sm:block\"></span> <span>Where craft meets alchemy</span></div></footer></div></div><script>\n                                window.addEventListener('DOMContentLoaded', function () {\n                                        const namespace = window.PerfugoWorkspace || (window.PerfugoWorkspace = {});\n                                        namespace.modules = namespace.modules || {};\n\n                                        namespace.initModules = function (container) {\n                                                if (!container) {\n                                                        return;\n                                                }\n                                                const moduleRoot = container.querySelector('[data-module]');\n                                                if (!moduleRoot) {\n                                                        return;\n                                                }\n                                                const name = moduleRoot.dataset.module;\n                                                const init = namespace.modules[name];\n                                                if (typeof init === 'function') {\n                                                        init(moduleRoot);\n                                                }\n                                        };\n\n                                        namespace.highlightActiveLink = function (path) {\n                                                const current = (path.replace(/^\\/app\\/?/, '') || 'ingredients').split('/')[0];\n                                                document.querySelectorAll('[data-nav-section]').forEach(function (link) {\n                                                        link.dataset.state = link.dataset.navSection === current ? 'active' : 'inactive';\n                                                });\n                                        };\n\n                                        const assignSeeds = function (container) {\n                                                if (!container) {\n                                                        return;\n                                                }\n                                                if (namespace.seedsApplied) {\n                                                        return;\n                                                }\n                                                const seeds = container.dataset.seeds;\n                                                if (!seeds) {\n                                                        return;\n                                                }\n                                                try {\n                                                        window.PerfugoWorkspaceSeeds = window.PerfugoWorkspaceSeeds || JSON.parse(seeds);\n                                                        namespace.seedsApplied = true;\n                                                } catch (error) {\n                                                        console.warn('Perfugo workspace seeds parse error', error);\n                                                }\n                                        };\n\n                                        const container = document.getElementById('workspace-content');\n                                        if (container) {\n                                                assignSeeds(container);\n                                                namespace.initModules(container);\n                                                namespace.highlightActiveLink(window.location.pathname);\n                                        }\n\n                                        document.body.addEventListener('htmx:afterSwap', function (event) {\n                                                if (!event.detail || !event.detail.target) {\n                                                        return;\n                                                }\n                                                if (event.detail.target.id !== 'workspace-content') {\n                                                        return;\n                                                }\n                                                assignSeeds(event.detail.target);\n                                                namespace.initModules(event.detail.target);\n                                                const path = (event.detail.requestConfig && event.detail.requestConfig.path) || window.location.pathname;\n                                                namespace.highlightActiveLink(path);\n                                        });\n                                });\n                        </script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -129,14 +126,14 @@ func Layout(title string, sidebar templpkg.Component, content templpkg.Component
 
 func bodyWrapperClass(showSidebar bool) string {
 	if showSidebar {
-		return "min-h-screen flex"
+		return "relative isolate min-h-screen lg:flex"
 	}
-	return "min-h-screen flex flex-col bg-white"
+	return "min-h-screen flex flex-col"
 }
 
 func mainClass(showSidebar bool) string {
 	if showSidebar {
-		return "flex-1 bg-white lg:bg-transparent"
+		return "relative flex-1"
 	}
 	return "flex-1"
 }

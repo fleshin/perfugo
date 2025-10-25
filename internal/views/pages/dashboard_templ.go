@@ -9,12 +9,26 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"fmt"
+	"strings"
+
 	templpkg "github.com/a-h/templ"
 	"perfugo/internal/views/components"
 	"perfugo/internal/views/layout"
 )
 
-func Dashboard() templ.Component {
+const defaultWorkspaceSection = "ingredients"
+
+type workspaceSectionMeta struct {
+	Badge       string
+	Title       string
+	Subtitle    string
+	Description string
+	MetricLabel string
+	MetricValue string
+}
+
+func Workspace(section string, snapshot WorkspaceSnapshot) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -35,7 +49,12 @@ func Dashboard() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = layout.Layout("Perfugo Dashboard", components.Sidebar(navItems()), dashboardContent(), true).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layout.Layout(
+			"Perfugo Atelier",
+			components.Sidebar(sidebarData(NormalizeWorkspaceSection(section))),
+			workspaceShell(NormalizeWorkspaceSection(section), snapshot, true),
+			true,
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -43,7 +62,7 @@ func Dashboard() templ.Component {
 	})
 }
 
-func DashboardPartial() templ.Component {
+func WorkspaceSection(section string, snapshot WorkspaceSnapshot) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -64,7 +83,7 @@ func DashboardPartial() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = dashboardContent().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = workspaceInterior(NormalizeWorkspaceSection(section), workspaceMeta(NormalizeWorkspaceSection(section), snapshot), snapshot).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -72,33 +91,23 @@ func DashboardPartial() templ.Component {
 	})
 }
 
-func navItems() []components.NavItem {
-	return []components.NavItem{
-		{Label: "Dashboard", Icon: "📊", Path: "/app", Active: true},
-		{Label: "Batches", Icon: "🧪", Path: "/batches"},
-		{Label: "Inventory", Icon: "📦", Path: "/inventory"},
-		{Label: "Quality", Icon: "🧬", Path: "/quality"},
-		{Label: "Reports", Icon: "📑", Path: "/reports"},
+func sidebarData(active string) components.SidebarData {
+	normalized := NormalizeWorkspaceSection(active)
+	return components.SidebarData{
+		Active: normalized,
+		Features: []components.SidebarLink{
+			{Label: "Ingredients", Path: "/app/ingredients", Section: "ingredients", Icon: "🧴", UseHTMX: true},
+			{Label: "Formulas", Path: "/app/formulas", Section: "formulas", Icon: "🧪", UseHTMX: true},
+			{Label: "Reports", Path: "/app/reports", Section: "reports", Icon: "📊", UseHTMX: true},
+		},
+		Secondary: []components.SidebarLink{
+			{Label: "Preferences", Path: "/app/preferences", Section: "preferences", Icon: "⚙️", UseHTMX: true},
+			{Label: "Logout", Path: "/logout", Section: "logout", Icon: "⟡", SubtleTag: "safe exit"},
+		},
 	}
 }
 
-func activityEntries() []components.ActivityEntry {
-	return []components.ActivityEntry{
-		{Name: "Batch 8724", Reference: "MR-2024-09", Quantity: "1,200 L", Progress: "72", ProgressStyle: "72%", UpdatedAt: "2h ago", Status: "In Progress"},
-		{Name: "Batch 8725", Reference: "MR-2024-10", Quantity: "980 L", Progress: "54", ProgressStyle: "54%", UpdatedAt: "4h ago", Status: "On Hold"},
-		{Name: "Batch 8719", Reference: "MR-2024-04", Quantity: "1,450 L", Progress: "100", ProgressStyle: "100%", UpdatedAt: "1d ago", Status: "Completed"},
-	}
-}
-
-func kpiCards() []templpkg.Component {
-	return []templpkg.Component{
-		components.StatCard("Active Batches", "48", "+12%", "vs. last month"),
-		components.StatCard("Quality Checks", "96.4%", "+2.1%", "pass rate this week"),
-		components.StatCard("Inventory Turns", "5.4", "+0.8", "rolling 30 days"),
-	}
-}
-
-func dashboardContent() templ.Component {
+func workspaceShell(section string, snapshot WorkspaceSnapshot, includeSeeds bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -119,38 +128,320 @@ func dashboardContent() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"relative isolate overflow-hidden bg-[#050509]\"><div class=\"pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.16),_rgba(5,5,9,0))] opacity-80\"></div><div class=\"pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(5,5,9,0.92),rgba(12,12,18,0.78))]\"></div><div class=\"relative z-10 mx-auto w-full max-w-6xl px-6 pb-20 pt-16 sm:px-8 lg:pt-20\"><div id=\"workspace-content\" class=\"space-y-14\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Header("Manufacturing Overview", "Monitor production, quality, and inventory health in real time.").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"grid gap-6 lg:grid-cols-3\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		for _, card := range kpiCards() {
-			templ_7745c5c3_Err = card.Render(ctx, templ_7745c5c3_Buffer)
+		if includeSeeds {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " data-seeds=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(snapshot.SeedsJSON())
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 59, Col: 73}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"grid gap-6 lg:grid-cols-5\"><section class=\"lg:col-span-3 space-y-4\"><header class=\"flex items-center justify-between\"><div><h2 class=\"text-lg font-semibold text-slate-900\">Batch Progress</h2><p class=\"text-sm text-slate-500\">Key active batches and their current status.</p></div><button class=\"text-sm font-medium text-indigo-600 hover:text-indigo-500\">View all</button></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, ">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.ActivityTable(activityEntries()).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = workspaceInterior(section, workspaceMeta(section, snapshot), snapshot).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</section><aside class=\"space-y-4 lg:col-span-2\"><div class=\"rounded-2xl border border-slate-200 bg-white p-6 shadow-sm\"><h3 class=\"text-base font-semibold text-slate-900\">Quality Highlights</h3><ul class=\"mt-4 space-y-3 text-sm text-slate-600\"><li class=\"flex items-start gap-3\"><span class=\"mt-1 inline-flex h-2 w-2 flex-shrink-0 rounded-full bg-emerald-500\"></span> 98% of critical control points within tolerance.</li><li class=\"flex items-start gap-3\"><span class=\"mt-1 inline-flex h-2 w-2 flex-shrink-0 rounded-full bg-amber-400\"></span> 3 batches flagged for review due to temperature variance.</li><li class=\"flex items-start gap-3\"><span class=\"mt-1 inline-flex h-2 w-2 flex-shrink-0 rounded-full bg-sky-400\"></span> Trending stability improvements on release testing.</li></ul></div><div class=\"rounded-2xl border border-indigo-100 bg-indigo-50 p-6 text-indigo-900 shadow-sm\"><h3 class=\"text-base font-semibold\">Automation Insight</h3><p class=\"mt-3 text-sm leading-6 text-indigo-900/80\">Automated scheduling reduced manual interventions by 24% this quarter. Continue optimizing equipment changeovers to unlock more efficiency.</p><button class=\"mt-4 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500\">Review playbook <svg class=\"h-4 w-4\" viewBox=\"0 0 20 20\" fill=\"currentColor\" aria-hidden=\"true\"><path fill-rule=\"evenodd\" d=\"M5.22 14.78a.75.75 0 0 1 0-1.06L11.94 7H6.75a.75.75 0 0 1 0-1.5h6.5a.75.75 0 0 1 .75.75v6.5a.75.75 0 0 1-1.5 0V8.06l-6.72 6.72a.75.75 0 0 1-1.06 0Z\" clip-rule=\"evenodd\"></path></svg></button></div></aside></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if includeSeeds {
+			templ_7745c5c3_Err = workspaceModulesScript().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		return nil
 	})
+}
+
+func workspaceInterior(section string, meta workspaceSectionMeta, snapshot WorkspaceSnapshot) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"space-y-12\"><section class=\"rounded-[2.75rem] border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent px-8 py-10 shadow-[0_45px_120px_rgba(0,0,0,0.55)] backdrop-blur-2xl\"><div class=\"flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between\"><div class=\"space-y-4\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if meta.Badge != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<span class=\"inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/40 px-5 py-2 text-[0.6rem] uppercase tracking-[0.5em] text-white/50\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Badge)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 77, Col: 218}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</span>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"space-y-3\"><h1 class=\"text-3xl font-semibold uppercase tracking-[0.35em] text-white sm:text-4xl\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var7 string
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Title)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 80, Col: 146}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</h1>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if meta.Subtitle != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p class=\"text-sm uppercase tracking-[0.5em] text-white/50\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var8 string
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Subtitle)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 82, Col: 131}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</p>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if meta.Description != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<p class=\"max-w-3xl text-sm text-white/60\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var9 string
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Description)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 86, Col: 109}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</p>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if meta.MetricValue != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div class=\"rounded-3xl border border-white/15 bg-black/40 px-6 py-5 text-right text-white/80\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if meta.MetricLabel != "" {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<p class=\"text-[0.6rem] uppercase tracking-[0.45em] text-white/40\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var10 string
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(meta.MetricLabel)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 92, Col: 141}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</p>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<p class=\"mt-2 text-2xl font-semibold text-white\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var11 string
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(meta.MetricValue)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 94, Col: 116}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</p></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div></section><div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = workspaceComponent(section, snapshot).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func workspaceMeta(section string, snapshot WorkspaceSnapshot) workspaceSectionMeta {
+	switch section {
+	case "formulas":
+		return workspaceSectionMeta{
+			Badge:       "Creative Engine",
+			Title:       "Formula Atelier",
+			Subtitle:    "Design immersive narratives",
+			Description: "Architect accords, balance concentrations, and prepare production-ready briefs with precision.",
+			MetricLabel: "Studio narratives",
+			MetricValue: fmt.Sprintf("%d curated", len(snapshot.Formulas)),
+		}
+	case "reports":
+		return workspaceSectionMeta{
+			Badge:       "Insight Loom",
+			Title:       "Reports & Intelligence",
+			Subtitle:    "Interpret atelier performance",
+			Description: "Monitor launch cadence, ingredient momentum, and compliance readiness across the studio.",
+			MetricLabel: "Last refresh",
+			MetricValue: "12 Oct 2024",
+		}
+	case "preferences":
+		return workspaceSectionMeta{
+			Badge:       "Profile Rituals",
+			Title:       "Preferences",
+			Subtitle:    "Shape your working atmosphere",
+			Description: "Tailor notifications, visual ambience, and collaborative rhythms to your craft.",
+			MetricLabel: "Account tier",
+			MetricValue: "Perfugo Atelier",
+		}
+	default:
+		return workspaceSectionMeta{
+			Badge:       "Material Library",
+			Title:       "Ingredient Management",
+			Subtitle:    "Curate the atelier foundation",
+			Description: "Register, audit, and harmonise every essence that fuels the Perfugo experience.",
+			MetricLabel: "Active lots",
+			MetricValue: fmt.Sprintf("%d curated", len(snapshot.FormulaIngredients)),
+		}
+	}
+}
+
+func workspaceComponent(section string, snapshot WorkspaceSnapshot) templpkg.Component {
+	switch section {
+	case "formulas":
+		return FormulaManagement(snapshot)
+	case "reports":
+		return ReportsOverview(defaultReportCards(), defaultReportTimeline(), defaultReportLeaders())
+	case "preferences":
+		return PreferencesPanel()
+	default:
+		return IngredientManagement(snapshot)
+	}
+}
+
+func defaultReportCards() []ReportCard {
+	return []ReportCard{
+		{Title: "Production Velocity", Metric: "92%", Delta: "+6.3%", DeltaLabel: "vs prior run"},
+		{Title: "Compliance Readiness", Metric: "98.4%", Delta: "+1.1%", DeltaLabel: "safety dossiers"},
+		{Title: "Inventory Vitality", Metric: "74 days", Delta: "-8d", DeltaLabel: "average runway"},
+	}
+}
+
+func defaultReportTimeline() []ReportEvent {
+	return []ReportEvent{
+		{Title: "Batch 8726 Released", Timestamp: "2024-10-12", Summary: "Aurum Nocturne extrait passed cold filtration."},
+		{Title: "Formula Audit", Timestamp: "2024-10-09", Summary: "Lumen Céleste cleared the atelier sensory panel."},
+		{Title: "Inventory Replenishment", Timestamp: "2024-10-05", Summary: "Ambroxan stability lot refreshed for production."},
+	}
+}
+
+func defaultReportLeaders() []IngredientPerformance {
+	return []IngredientPerformance{
+		{Name: "Bergamot Essential", Velocity: "+18%", Trend: "Momentum"},
+		{Name: "Iris Pallida", Velocity: "+11%", Trend: "Steady"},
+		{Name: "Ambroxan", Velocity: "+9%", Trend: "Critical"},
+	}
+}
+
+func NormalizeWorkspaceSection(section string) string {
+	normalized := strings.ToLower(strings.TrimSpace(section))
+	if normalized == "" {
+		return defaultWorkspaceSection
+	}
+	if ValidWorkspaceSection(normalized) {
+		return normalized
+	}
+	return defaultWorkspaceSection
+}
+
+func ValidWorkspaceSection(section string) bool {
+	switch section {
+	case "ingredients", "formulas", "reports", "preferences":
+		return true
+	default:
+		return false
+	}
+}
+
+func DefaultWorkspaceSection() string {
+	return defaultWorkspaceSection
 }
 
 var _ = templruntime.GeneratedTemplate

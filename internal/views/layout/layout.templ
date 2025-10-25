@@ -1,53 +1,135 @@
 package layout
 
+import templpkg "github.com/a-h/templ"
+
 templ Layout(title string, sidebar templpkg.Component, content templpkg.Component, showSidebar bool) {
-	<!DOCTYPE html>
-	<html lang="en" class="h-full bg-slate-100">
-		<head>
-			<meta charset="utf-8"/>
-			<meta name="viewport" content="width=device-width, initial-scale=1"/>
-			<title>{ title }</title>
-			<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-			<link rel="preconnect" href="https://fonts.googleapis.com"/>
-			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-			<script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
-			<script src="https://unpkg.com/hyperscript.org@0.9.12" defer></script>
-		</head>
-		<body class="h-full text-slate-900 font-sans" hx-boost="true">
-			<div class={ bodyWrapperClass(showSidebar) }>
-				if showSidebar {
-					<aside class="hidden lg:flex lg:flex-col w-72 bg-slate-900 text-slate-100 shadow-xl">
-						if sidebar != nil {
-							@sidebar
-						}
-					</aside>
-				}
-				<div class="flex-1 flex flex-col min-h-screen">
-					<main id="primary-content" class={ mainClass(showSidebar) }>
-						@content
-					</main>
-					<footer class="bg-white border-t border-slate-200 py-4">
-						<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-sm text-slate-500">
-							Built with ❤️ using templ and Tailwind.
-						</div>
-					</footer>
-				</div>
-			</div>
-		</body>
-	</html>
+        <!DOCTYPE html>
+        <html lang="en" class="h-full bg-[#050509]">
+                <head>
+                        <meta charset="utf-8"/>
+                        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                        <title>{ title }</title>
+                        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+                        <link rel="preconnect" href="https://fonts.googleapis.com"/>
+                        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+                        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+                        <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+                        <script src="https://unpkg.com/hyperscript.org@0.9.12" defer></script>
+                        <style>
+                                body {
+                                        font-family: "Poppins", sans-serif;
+                                        letter-spacing: 0.02em;
+                                }
+                                h1, h2, h3, h4 {
+                                        font-family: "Playfair Display", serif;
+                                        letter-spacing: 0.18em;
+                                        text-transform: uppercase;
+                                }
+                        </style>
+                </head>
+                <body class="h-full bg-[#050509] text-slate-100 antialiased" hx-boost="true">
+                        <div class={ bodyWrapperClass(showSidebar) }>
+                                if showSidebar {
+                                        <aside class="hidden lg:flex lg:flex-col lg:w-80 xl:w-96 border-r border-white/10 bg-black/70 backdrop-blur-xl">
+                                                if sidebar != nil {
+                                                        @sidebar
+                                                }
+                                        </aside>
+                                }
+                                <div class="flex-1 flex flex-col min-h-screen">
+                                        <main id="primary-content" class={ mainClass(showSidebar) }>
+                                                @content
+                                        </main>
+                                        <footer class="relative z-10 border-t border-white/10 bg-black/40">
+                                                <div class="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-6 text-[0.65rem] uppercase tracking-[0.35em] text-white/40 sm:flex-row sm:items-center sm:justify-between">
+                                                        <span>Perfugo Digital Atelier</span>
+                                                        <span class="hidden h-px w-16 bg-white/20 sm:block"></span>
+                                                        <span>Where craft meets alchemy</span>
+                                                </div>
+                                        </footer>
+                                </div>
+                        </div>
+                        <script>
+                                window.addEventListener('DOMContentLoaded', function () {
+                                        const namespace = window.PerfugoWorkspace || (window.PerfugoWorkspace = {});
+                                        namespace.modules = namespace.modules || {};
+
+                                        namespace.initModules = function (container) {
+                                                if (!container) {
+                                                        return;
+                                                }
+                                                const moduleRoot = container.querySelector('[data-module]');
+                                                if (!moduleRoot) {
+                                                        return;
+                                                }
+                                                const name = moduleRoot.dataset.module;
+                                                const init = namespace.modules[name];
+                                                if (typeof init === 'function') {
+                                                        init(moduleRoot);
+                                                }
+                                        };
+
+                                        namespace.highlightActiveLink = function (path) {
+                                                const current = (path.replace(/^\/app\/?/, '') || 'ingredients').split('/')[0];
+                                                document.querySelectorAll('[data-nav-section]').forEach(function (link) {
+                                                        link.dataset.state = link.dataset.navSection === current ? 'active' : 'inactive';
+                                                });
+                                        };
+
+                                        const assignSeeds = function (container) {
+                                                if (!container) {
+                                                        return;
+                                                }
+                                                if (namespace.seedsApplied) {
+                                                        return;
+                                                }
+                                                const seeds = container.dataset.seeds;
+                                                if (!seeds) {
+                                                        return;
+                                                }
+                                                try {
+                                                        window.PerfugoWorkspaceSeeds = window.PerfugoWorkspaceSeeds || JSON.parse(seeds);
+                                                        namespace.seedsApplied = true;
+                                                } catch (error) {
+                                                        console.warn('Perfugo workspace seeds parse error', error);
+                                                }
+                                        };
+
+                                        const container = document.getElementById('workspace-content');
+                                        if (container) {
+                                                assignSeeds(container);
+                                                namespace.initModules(container);
+                                                namespace.highlightActiveLink(window.location.pathname);
+                                        }
+
+                                        document.body.addEventListener('htmx:afterSwap', function (event) {
+                                                if (!event.detail || !event.detail.target) {
+                                                        return;
+                                                }
+                                                if (event.detail.target.id !== 'workspace-content') {
+                                                        return;
+                                                }
+                                                assignSeeds(event.detail.target);
+                                                namespace.initModules(event.detail.target);
+                                                const path = (event.detail.requestConfig && event.detail.requestConfig.path) || window.location.pathname;
+                                                namespace.highlightActiveLink(path);
+                                        });
+                                });
+                        </script>
+                </body>
+        </html>
 }
 
 func bodyWrapperClass(showSidebar bool) string {
-	if showSidebar {
-		return "min-h-screen flex"
-	}
-	return "min-h-screen flex flex-col bg-white"
+        if showSidebar {
+                return "relative isolate min-h-screen lg:flex"
+        }
+        return "min-h-screen flex flex-col"
 }
 
 func mainClass(showSidebar bool) string {
-	if showSidebar {
-		return "flex-1 bg-white lg:bg-transparent"
-	}
-	return "flex-1"
+        if showSidebar {
+                return "relative flex-1"
+        }
+        return "flex-1"
 }

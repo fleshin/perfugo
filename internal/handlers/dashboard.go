@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
 
 	templpkg "github.com/a-h/templ"
 	applog "perfugo/internal/log"
 	"perfugo/internal/views/pages"
+	"perfugo/models"
 )
 
 // Dashboard renders the main application workspace once a user is authenticated.
@@ -16,20 +18,66 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	applog.Debug(r.Context(), "rendering dashboard", "htmx", isHTMX(r))
+	section := pages.NormalizeWorkspaceSection(workspaceSectionFromPath(r.URL.Path))
+	applog.Debug(r.Context(), "rendering workspace", "htmx", isHTMX(r), "section", section)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	snapshot := pages.EmptyWorkspaceSnapshot()
+	if database != nil {
+		formulas, ingredients, chemicals := loadWorkspaceData(r)
+		snapshot = pages.NewWorkspaceSnapshot(formulas, ingredients, chemicals)
+	}
 
 	var component templpkg.Component
 	if isHTMX(r) {
-		applog.Debug(r.Context(), "rendering HTMX dashboard partial")
-		component = pages.DashboardPartial()
+		applog.Debug(r.Context(), "rendering HTMX workspace partial")
+		component = pages.WorkspaceSection(section, snapshot)
 	} else {
-		applog.Debug(r.Context(), "rendering full dashboard page")
-		component = pages.Dashboard()
+		applog.Debug(r.Context(), "rendering full workspace page")
+		component = pages.Workspace(section, snapshot)
 	}
 
 	if err := component.Render(r.Context(), w); err != nil {
 		applog.Error(r.Context(), "failed to render dashboard", "error", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func loadWorkspaceData(r *http.Request) ([]models.Formula, []models.FormulaIngredient, []models.AromaChemical) {
+	ctx := r.Context()
+	formulas := []models.Formula{}
+	ingredients := []models.FormulaIngredient{}
+	chemicals := []models.AromaChemical{}
+
+	if err := database.WithContext(ctx).
+		Preload("Ingredients").
+		Preload("Ingredients.AromaChemical").
+		Preload("Ingredients.SubFormula").
+		Order("name asc").
+		Find(&formulas).Error; err != nil {
+		applog.Error(ctx, "failed to load formulas for workspace", "error", err)
+	}
+
+	if err := database.WithContext(ctx).
+		Preload("AromaChemical").
+		Preload("SubFormula").
+		Preload("Formula").
+		Order("formula_id asc").
+		Find(&ingredients).Error; err != nil {
+		applog.Error(ctx, "failed to load formula ingredients for workspace", "error", err)
+	}
+
+	if err := database.WithContext(ctx).
+		Order("ingredient_name asc").
+		Find(&chemicals).Error; err != nil {
+		applog.Error(ctx, "failed to load aroma chemicals for workspace", "error", err)
+	}
+
+	return formulas, ingredients, chemicals
+}
+
+func workspaceSectionFromPath(path string) string {
+	trimmed := strings.TrimPrefix(path, "/app")
+	trimmed = strings.Trim(trimmed, "/")
+	return trimmed
 }
