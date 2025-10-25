@@ -19,12 +19,15 @@ const (
 	sessionUserIDKey        = "auth:user:id"
 	sessionUserEmailKey     = "auth:user:email"
 	sessionUserNameKey      = "auth:user:name"
+	sessionUserThemeKey     = "auth:user:theme"
 )
 
 var (
 	sessionManager *scs.SessionManager
 	database       *gorm.DB
 )
+
+const defaultUserTheme = "nocturne"
 
 // Configure installs the shared dependencies used by the HTTP handlers.
 func Configure(sm *scs.SessionManager, db *gorm.DB) {
@@ -51,6 +54,7 @@ func createUser(r *http.Request, email, name, password string) (*models.User, er
 		Email:        strings.ToLower(email),
 		Name:         strings.TrimSpace(name),
 		PasswordHash: string(hashed),
+		Theme:        defaultUserTheme,
 	}
 
 	if err := database.WithContext(r.Context()).Create(user).Error; err != nil {
@@ -134,6 +138,11 @@ func establishSession(r *http.Request, user *models.User) error {
 	sessionManager.Put(r.Context(), sessionUserIDKey, int(user.ID))
 	sessionManager.Put(r.Context(), sessionUserEmailKey, user.Email)
 	sessionManager.Put(r.Context(), sessionUserNameKey, user.Name)
+	theme := strings.TrimSpace(user.Theme)
+	if theme == "" {
+		theme = defaultUserTheme
+	}
+	sessionManager.Put(r.Context(), sessionUserThemeKey, theme)
 	applog.Debug(r.Context(), "session established", "userID", user.ID)
 	return nil
 }
@@ -199,4 +208,48 @@ func ActiveSession(r *http.Request) bool {
 		return false
 	}
 	return sessionManager.GetBool(r.Context(), sessionAuthenticatedKey) && sessionManager.GetInt(r.Context(), sessionUserIDKey) > 0
+}
+
+func currentUserID(r *http.Request) uint {
+	if sessionManager == nil {
+		return 0
+	}
+	id := sessionManager.GetInt(r.Context(), sessionUserIDKey)
+	if id <= 0 {
+		return 0
+	}
+	return uint(id)
+}
+
+func currentUserTheme(r *http.Request) string {
+	if sessionManager == nil {
+		return defaultUserTheme
+	}
+	theme := strings.TrimSpace(sessionManager.GetString(r.Context(), sessionUserThemeKey))
+	if theme == "" {
+		return defaultUserTheme
+	}
+	return theme
+}
+
+func loadCurrentUser(r *http.Request) (*models.User, error) {
+	if database == nil {
+		return nil, gorm.ErrInvalidDB
+	}
+	id := currentUserID(r)
+	if id == 0 {
+		return nil, errors.New("no authenticated user in session")
+	}
+	user := &models.User{}
+	if err := database.WithContext(r.Context()).First(user, id).Error; err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func setSessionTheme(r *http.Request, theme string) {
+	if sessionManager == nil {
+		return
+	}
+	sessionManager.Put(r.Context(), sessionUserThemeKey, strings.TrimSpace(theme))
 }

@@ -28,13 +28,22 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 		snapshot = pages.NewWorkspaceSnapshot(formulas, ingredients, chemicals)
 	}
 
+	themeKey := currentUserTheme(r)
+	if user, err := loadCurrentUser(r); err == nil {
+		candidate := strings.TrimSpace(user.Theme)
+		if candidate != "" && candidate != themeKey {
+			themeKey = candidate
+			setSessionTheme(r, themeKey)
+		}
+	}
+
 	var component templpkg.Component
 	if isHTMX(r) {
 		applog.Debug(r.Context(), "rendering HTMX workspace partial")
-		component = pages.WorkspaceSection(section, snapshot)
+		component = pages.WorkspaceSection(section, snapshot, themeKey)
 	} else {
 		applog.Debug(r.Context(), "rendering full workspace page")
-		component = pages.Workspace(section, snapshot)
+		component = pages.Workspace(section, snapshot, themeKey)
 	}
 
 	if err := component.Render(r.Context(), w); err != nil {

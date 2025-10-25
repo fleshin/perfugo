@@ -8,4 +8,5 @@ type User struct {
 	Email        string `gorm:"uniqueIndex;not null"`
 	PasswordHash string `gorm:"not null"`
 	Name         string
+	Theme        string `gorm:"type:varchar(32);default:nocturne"`
 }
