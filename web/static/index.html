@@ -4,21 +4,120 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Perfugo</title>
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: 'Poppins', sans-serif;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: 'Playfair Display', serif;
+      }
+    </style>
   </head>
-  <body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center">
-    <main class="text-center space-y-4">
-      <h1 class="text-4xl font-semibold">Perfugo</h1>
-      <p class="text-lg max-w-lg">
-        Welcome to your new Go project. Build APIs under <code>internal/</code> and
-        web experiences in <code>web/</code> using Tailwind via the CDN.
-      </p>
-      <a
-        class="inline-flex items-center rounded-md bg-emerald-500 px-4 py-2 font-medium text-slate-900 hover:bg-emerald-400"
-        href="/healthz"
-      >
-        View health check
-      </a>
-    </main>
+  <body class="bg-black text-white min-h-screen">
+    <div class="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
+      <img
+        src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=2000&q=80"
+        alt="Luxurious abstract texture"
+        class="absolute inset-0 h-full w-full object-cover object-center"
+      />
+      <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/90"></div>
+
+      <header class="absolute top-0 left-0 right-0 flex justify-end gap-4 px-8 py-6 text-xs uppercase tracking-[0.35em]">
+        <nav class="flex items-center gap-3 rounded-full bg-white/10 px-5 py-2 backdrop-blur-sm">
+          <a
+            href="#"
+            class="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/30"
+            aria-label="Login"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-4 w-4">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-3.866 0-7 2.239-7 5v.5a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5V19c0-2.761-3.134-5-7-5Z"
+              />
+            </svg>
+          </a>
+          <a
+            href="#"
+            class="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/30"
+            aria-label="Instagram"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="h-4 w-4">
+              <path
+                fill-rule="evenodd"
+                d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm5 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm7-.25a1.25 1.25 0 1 0-2.5 0 1.25 1.25 0 0 0 2.5 0ZM12 10a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+          <a
+            href="#"
+            class="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/30"
+            aria-label="Twitter"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="h-4 w-4">
+              <path
+                d="M22 5.92a7.6 7.6 0 0 1-2.24.64 3.9 3.9 0 0 0 1.7-2.15 7.74 7.74 0 0 1-2.47.96 3.88 3.88 0 0 0-6.6 3.54A11 11 0 0 1 3.1 4.9a3.88 3.88 0 0 0 1.2 5.18 3.86 3.86 0 0 1-1.76-.49v.05a3.88 3.88 0 0 0 3.11 3.8 3.9 3.9 0 0 1-1.75.07 3.89 3.89 0 0 0 3.63 2.7A7.8 7.8 0 0 1 2 18.58a11 11 0 0 0 17-9.29c0-.17 0-.34-.01-.51A7.76 7.76 0 0 0 22 5.92Z"
+              />
+            </svg>
+          </a>
+        </nav>
+      </header>
+
+      <main class="relative z-10 flex w-full flex-col items-center px-6 text-center">
+        <span class="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[0.7rem] uppercase tracking-[0.5em] text-white/70">
+          Perfugo Atelier
+        </span>
+        <h1 class="max-w-3xl text-4xl font-semibold uppercase tracking-[0.4em] text-white/90 sm:text-5xl lg:text-6xl">
+          Crafted Experiences In Motion
+        </h1>
+        <p class="mt-6 max-w-xl text-sm text-white/70 sm:text-base">
+          Discover a symphony of digital craftsmanship where meticulous engineering meets couture aesthetics. Perfugo elevates your brand to a realm of quiet luxury and seamless performance.
+        </p>
+        <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row">
+          <a
+            href="/healthz"
+            class="group inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-white via-white/90 to-white/70 px-8 py-3 text-sm font-medium uppercase tracking-[0.4em] text-black transition duration-300 hover:from-white hover:via-white hover:to-white"
+          >
+            Enter Studio
+            <span class="flex h-6 w-6 items-center justify-center rounded-full border border-black/40 transition group-hover:translate-x-1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-3 w-3">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14m0 0-5-5m5 5-5 5" />
+              </svg>
+            </span>
+          </a>
+          <a
+            href="#"
+            class="inline-flex items-center gap-2 text-xs uppercase tracking-[0.4em] text-white/70 transition hover:text-white"
+          >
+            View Collections
+            <span class="h-px w-10 bg-white/30"></span>
+          </a>
+        </div>
+      </main>
+
+      <footer class="absolute bottom-8 flex flex-col items-center gap-2 text-[0.65rem] uppercase tracking-[0.4em] text-white/60 sm:flex-row sm:gap-8">
+        <span>EST. 2024</span>
+        <span class="hidden h-px w-12 bg-white/20 sm:block"></span>
+        <span>Perfugo Digital Maison</span>
+      </footer>
+    </div>
   </body>
 </html>
