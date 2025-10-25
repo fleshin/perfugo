@@ -22,10 +22,12 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 	applog.Debug(r.Context(), "rendering workspace", "htmx", isHTMX(r), "section", section)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
+	theme := loadCurrentUserTheme(r)
 	snapshot := pages.EmptyWorkspaceSnapshot()
+	snapshot.Theme = theme
 	if database != nil {
 		formulas, ingredients, chemicals := loadWorkspaceData(r)
-		snapshot = pages.NewWorkspaceSnapshot(formulas, ingredients, chemicals)
+		snapshot = pages.NewWorkspaceSnapshot(formulas, ingredients, chemicals, theme)
 	}
 
 	var component templpkg.Component

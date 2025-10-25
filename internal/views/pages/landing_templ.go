@@ -11,6 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	templpkg "github.com/a-h/templ"
 	"perfugo/internal/views/layout"
+	"perfugo/models"
 )
 
 func Landing() templ.Component {
@@ -34,7 +35,7 @@ func Landing() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = layout.Layout("Perfugo Perfumery Platform", templpkg.Component(nil), landingContent(), false).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layout.Layout("Perfugo Perfumery Platform", templpkg.Component(nil), landingContent(), false, layout.ThemeByID(models.DefaultTheme)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

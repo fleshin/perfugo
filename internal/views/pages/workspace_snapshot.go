@@ -12,10 +12,11 @@ type WorkspaceSnapshot struct {
 	Formulas           []models.Formula
 	FormulaIngredients []models.FormulaIngredient
 	AromaChemicals     []models.AromaChemical
+	Theme              string
 }
 
 // NewWorkspaceSnapshot normalises and sorts the data required by the workspace views.
-func NewWorkspaceSnapshot(formulas []models.Formula, ingredients []models.FormulaIngredient, chemicals []models.AromaChemical) WorkspaceSnapshot {
+func NewWorkspaceSnapshot(formulas []models.Formula, ingredients []models.FormulaIngredient, chemicals []models.AromaChemical, theme string) WorkspaceSnapshot {
 	sort.SliceStable(formulas, func(i, j int) bool {
 		return formulas[i].Name < formulas[j].Name
 	})
@@ -35,12 +36,13 @@ func NewWorkspaceSnapshot(formulas []models.Formula, ingredients []models.Formul
 		Formulas:           formulas,
 		FormulaIngredients: ingredients,
 		AromaChemicals:     chemicals,
+		Theme:              theme,
 	}
 }
 
 // EmptyWorkspaceSnapshot returns a zero-value snapshot to simplify call sites when no data is available.
 func EmptyWorkspaceSnapshot() WorkspaceSnapshot {
-	return WorkspaceSnapshot{}
+	return WorkspaceSnapshot{Theme: models.DefaultTheme}
 }
 
 // SeedsJSON encodes a subset of the snapshot so that the front-end modules can simulate CRUD interactions.

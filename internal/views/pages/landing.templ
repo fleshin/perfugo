@@ -3,10 +3,11 @@ package pages
 import (
         templpkg "github.com/a-h/templ"
         "perfugo/internal/views/layout"
+        "perfugo/models"
 )
 
 templ Landing() {
-        @layout.Layout("Perfugo Perfumery Platform", templpkg.Component(nil), landingContent(), false)
+        @layout.Layout("Perfugo Perfumery Platform", templpkg.Component(nil), landingContent(), false, layout.ThemeByID(models.DefaultTheme))
 }
 
 templ LandingPartial() {

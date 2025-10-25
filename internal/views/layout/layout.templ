@@ -2,9 +2,9 @@ package layout
 
 import templpkg "github.com/a-h/templ"
 
-templ Layout(title string, sidebar templpkg.Component, content templpkg.Component, showSidebar bool) {
+templ Layout(title string, sidebar templpkg.Component, content templpkg.Component, showSidebar bool, theme ThemeDefinition) {
         <!DOCTYPE html>
-        <html lang="en" class="h-full bg-[#050509]">
+        <html lang="en" class="h-full">
                 <head>
                         <meta charset="utf-8"/>
                         <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -16,34 +16,317 @@ templ Layout(title string, sidebar templpkg.Component, content templpkg.Componen
                         <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
                         <script src="https://unpkg.com/hyperscript.org@0.9.12" defer></script>
                         <style>
+                                :root {
+                                        --app-bg: #07090f;
+                                        --app-shell-bg: linear-gradient(180deg, rgba(12, 19, 33, 0.9), rgba(7, 9, 15, 0.95));
+                                        --app-surface: rgba(18, 24, 38, 0.85);
+                                        --app-border: rgba(148, 163, 184, 0.18);
+                                        --app-text: #e2e8f0;
+                                        --app-text-muted: rgba(203, 213, 225, 0.75);
+                                        --app-badge-bg: rgba(59, 130, 246, 0.18);
+                                        --app-badge-text: #bae6fd;
+                                        --app-sidebar-bg: rgba(10, 12, 21, 0.9);
+                                        --app-shadow: rgba(8, 15, 31, 0.4);
+                                        --app-button-bg: #38bdf8;
+                                        --app-button-text: #02101b;
+                                        --app-input-bg: rgba(15, 23, 42, 0.75);
+                                        --app-input-border: rgba(148, 163, 184, 0.35);
+                                        --app-input-focus: rgba(56, 189, 248, 0.65);
+                                        --app-input-focus-shadow: rgba(56, 189, 248, 0.28);
+                                        --app-footer-bg: rgba(7, 10, 18, 0.85);
+                                }
+
+                                body[data-theme="atelier_ivory"] {
+                                        --app-bg: #f8faf5;
+                                        --app-shell-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 245, 0.95));
+                                        --app-surface: rgba(255, 255, 255, 0.9);
+                                        --app-border: rgba(31, 41, 55, 0.15);
+                                        --app-text: #1f2937;
+                                        --app-text-muted: rgba(55, 65, 81, 0.65);
+                                        --app-badge-bg: rgba(253, 186, 116, 0.35);
+                                        --app-badge-text: #7c2d12;
+                                        --app-sidebar-bg: rgba(254, 252, 244, 0.96);
+                                        --app-shadow: rgba(15, 23, 42, 0.08);
+                                        --app-button-bg: #1f2937;
+                                        --app-button-text: #f8fafc;
+                                        --app-input-bg: rgba(255, 255, 255, 0.9);
+                                        --app-input-border: rgba(75, 85, 99, 0.18);
+                                        --app-input-focus: rgba(249, 115, 22, 0.5);
+                                        --app-input-focus-shadow: rgba(249, 115, 22, 0.25);
+                                        --app-footer-bg: rgba(248, 250, 252, 0.95);
+                                }
+
+                                body[data-theme="midnight_draft"] {
+                                        --app-bg: #0b1220;
+                                        --app-shell-bg: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(12, 20, 35, 0.94));
+                                        --app-surface: rgba(19, 28, 45, 0.9);
+                                        --app-border: rgba(148, 163, 184, 0.22);
+                                        --app-text: #f1f5f9;
+                                        --app-text-muted: rgba(186, 199, 224, 0.72);
+                                        --app-badge-bg: rgba(129, 140, 248, 0.25);
+                                        --app-badge-text: #dbeafe;
+                                        --app-sidebar-bg: rgba(11, 18, 30, 0.92);
+                                        --app-shadow: rgba(15, 23, 42, 0.35);
+                                        --app-button-bg: #818cf8;
+                                        --app-button-text: #111827;
+                                        --app-input-bg: rgba(30, 41, 59, 0.85);
+                                        --app-input-border: rgba(129, 140, 248, 0.35);
+                                        --app-input-focus: rgba(129, 140, 248, 0.65);
+                                        --app-input-focus-shadow: rgba(99, 102, 241, 0.35);
+                                        --app-footer-bg: rgba(11, 17, 30, 0.88);
+                                }
+
                                 body {
                                         font-family: "Poppins", sans-serif;
-                                        letter-spacing: 0.02em;
+                                        letter-spacing: 0.01em;
+                                        background-color: var(--app-bg);
                                 }
+
                                 h1, h2, h3, h4 {
                                         font-family: "Playfair Display", serif;
+                                        letter-spacing: 0.04em;
+                                }
+
+                                .app-root {
+                                        min-height: 100%;
+                                        background-color: var(--app-bg);
+                                        color: var(--app-text);
+                                        transition: background-color 180ms ease, color 180ms ease;
+                                }
+
+                                .app-shell {
+                                        background: var(--app-shell-bg);
+                                }
+
+                                .app-sidebar {
+                                        background-color: var(--app-sidebar-bg);
+                                        border-right: 1px solid var(--app-border);
+                                        color: var(--app-text);
+                                }
+
+                                .app-card {
+                                        background-color: var(--app-surface);
+                                        border: 1px solid var(--app-border);
+                                        border-radius: 1.25rem;
+                                        box-shadow: 0 18px 36px var(--app-shadow);
+                                }
+
+                                .app-card--flat {
+                                        box-shadow: none;
+                                }
+
+                                .app-badge {
+                                        display: inline-flex;
+                                        align-items: center;
+                                        gap: 0.5rem;
+                                        border-radius: 9999px;
+                                        padding: 0.35rem 0.85rem;
+                                        background-color: var(--app-badge-bg);
+                                        color: var(--app-badge-text);
+                                        font-size: 0.75rem;
+                                        font-weight: 500;
+                                        letter-spacing: 0.08em;
+                                        text-transform: uppercase;
+                                }
+
+                                .app-muted {
+                                        color: var(--app-text-muted);
+                                }
+
+                                .app-divider {
+                                        background-color: var(--app-border);
+                                }
+
+                                .app-button {
+                                        background-color: var(--app-button-bg);
+                                        color: var(--app-button-text);
+                                        border-radius: 9999px;
+                                        padding: 0.55rem 1.5rem;
+                                        font-size: 0.7rem;
+                                        letter-spacing: 0.16em;
+                                        text-transform: uppercase;
+                                        font-weight: 600;
+                                        transition: opacity 150ms ease, transform 150ms ease;
+                                }
+
+                                .app-button:hover {
+                                        opacity: 0.92;
+                                        transform: translateY(-1px);
+                                }
+
+                                .app-input {
+                                        background-color: var(--app-input-bg);
+                                        border: 1px solid var(--app-input-border);
+                                        border-radius: 0.9rem;
+                                        padding: 0.65rem 1rem;
+                                        color: inherit;
+                                        transition: border-color 150ms ease, box-shadow 150ms ease;
+                                }
+
+                                .app-input:focus {
+                                        border-color: var(--app-input-focus);
+                                        outline: none;
+                                        box-shadow: 0 0 0 2px var(--app-input-focus-shadow);
+                                }
+
+                                .app-footer {
+                                        background-color: var(--app-footer-bg);
+                                        border-top: 1px solid var(--app-border);
+                                }
+
+                                .app-nav-link {
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: space-between;
+                                        border-radius: 9999px;
+                                        padding: 0.65rem 1.1rem;
+                                        font-size: 0.68rem;
+                                        letter-spacing: 0.16em;
+                                        text-transform: uppercase;
+                                        border: 1px solid transparent;
+                                        color: inherit;
+                                        transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
+                                }
+
+                                .app-nav-link:hover {
+                                        border-color: var(--app-border);
+                                }
+
+                                .app-nav-link[data-state="active"] {
+                                        background-color: var(--app-button-bg);
+                                        color: var(--app-button-text);
+                                        box-shadow: 0 12px 24px var(--app-shadow);
+                                }
+
+                                .app-nav-link span[data-role="meta"] {
+                                        opacity: 0.4;
+                                        font-size: 0.55rem;
+                                        letter-spacing: 0.22em;
+                                }
+
+                                .app-nav-link[data-state="active"] span[data-role="meta"] {
+                                        opacity: 1;
+                                }
+
+                                .app-secondary-link {
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: space-between;
+                                        border-radius: 0.9rem;
+                                        padding: 0.6rem 1rem;
+                                        font-size: 0.65rem;
+                                        letter-spacing: 0.15em;
+                                        text-transform: uppercase;
+                                        border: 1px solid var(--app-border);
+                                        color: var(--app-text-muted);
+                                        transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+                                }
+
+                                .app-secondary-link:hover {
+                                        border-color: var(--app-button-bg);
+                                        color: var(--app-text);
+                                }
+
+                                .app-secondary-link[data-state="active"] {
+                                        border-color: var(--app-button-bg);
+                                        color: var(--app-text);
+                                }
+
+                                .app-secondary-tag {
+                                        border-radius: 9999px;
+                                        border: 1px solid var(--app-border);
+                                        padding: 0.25rem 0.75rem;
+                                        font-size: 0.55rem;
                                         letter-spacing: 0.18em;
                                         text-transform: uppercase;
+                                        color: inherit;
+                                }
+
+                                .app-theme-option {
+                                        border-radius: 1rem;
+                                        border: 1px solid var(--app-border);
+                                        background-color: transparent;
+                                        padding: 1rem;
+                                        text-align: left;
+                                        color: inherit;
+                                        transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+                                }
+
+                                .app-theme-option:hover {
+                                        border-color: var(--app-button-bg);
+                                        transform: translateY(-2px);
+                                }
+
+                                .app-theme-option[data-state="active"] {
+                                        border-color: var(--app-button-bg);
+                                        box-shadow: 0 12px 24px var(--app-shadow);
+                                }
+
+                                .workspace-shell form[data-action] input,
+                                .workspace-shell form[data-action] select,
+                                .workspace-shell form[data-action] textarea {
+                                        background-color: var(--app-input-bg);
+                                        border: 1px solid var(--app-input-border);
+                                        border-radius: 0.9rem;
+                                        padding: 0.65rem 1rem;
+                                        color: inherit;
+                                        transition: border-color 150ms ease, box-shadow 150ms ease;
+                                }
+
+                                .workspace-shell form[data-action] input:focus,
+                                .workspace-shell form[data-action] select:focus,
+                                .workspace-shell form[data-action] textarea:focus {
+                                        border-color: var(--app-input-focus);
+                                        outline: none;
+                                        box-shadow: 0 0 0 2px var(--app-input-focus-shadow);
+                                }
+
+                                .workspace-shell .bg-black\/35,
+                                .workspace-shell .bg-black\/40,
+                                .workspace-shell .bg-black\/25,
+                                .workspace-shell .bg-gradient-to-br {
+                                        background-color: var(--app-surface) !important;
+                                        background-image: none !important;
+                                }
+
+                                .workspace-shell .border-white\/10,
+                                .workspace-shell .border-white\/15,
+                                .workspace-shell .border-white\/20,
+                                .workspace-shell .border-white\/30,
+                                .workspace-shell .border-white\/40 {
+                                        border-color: var(--app-border) !important;
+                                }
+
+                                .workspace-shell .text-white {
+                                        color: var(--app-text) !important;
+                                }
+
+                                .workspace-shell .text-white\/40,
+                                .workspace-shell .text-white\/50,
+                                .workspace-shell .text-white\/60,
+                                .workspace-shell .text-white\/70,
+                                .workspace-shell .text-white\/80 {
+                                        color: var(--app-text-muted) !important;
                                 }
                         </style>
                 </head>
-                <body class="h-full bg-[#050509] text-slate-100 antialiased" hx-boost="true">
+                <body class="h-full antialiased app-root" data-theme={ theme.ID } hx-boost="true">
                         <div class={ bodyWrapperClass(showSidebar) }>
                                 if showSidebar {
-                                        <aside class="hidden lg:flex lg:flex-col lg:w-80 xl:w-96 border-r border-white/10 bg-black/70 backdrop-blur-xl">
+                                        <aside class="app-sidebar hidden lg:flex lg:w-72 xl:w-80 lg:flex-col">
                                                 if sidebar != nil {
                                                         @sidebar
                                                 }
                                         </aside>
                                 }
-                                <div class="flex-1 flex flex-col min-h-screen">
+                                <div class="flex min-h-screen flex-1 flex-col">
                                         <main id="primary-content" class={ mainClass(showSidebar) }>
                                                 @content
                                         </main>
-                                        <footer class="relative z-10 border-t border-white/10 bg-black/40">
-                                                <div class="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-6 text-[0.65rem] uppercase tracking-[0.35em] text-white/40 sm:flex-row sm:items-center sm:justify-between">
+                                        <footer class="app-footer">
+                                                <div class="mx-auto flex max-w-6xl flex-col gap-1 px-6 py-6 text-xs uppercase tracking-[0.25em] app-muted sm:flex-row sm:items-center sm:justify-between">
                                                         <span>Perfugo Digital Atelier</span>
-                                                        <span class="hidden h-px w-16 bg-white/20 sm:block"></span>
+                                                        <span class="hidden h-px w-16 app-divider sm:block"></span>
                                                         <span>Where craft meets alchemy</span>
                                                 </div>
                                         </footer>
@@ -74,6 +357,13 @@ templ Layout(title string, sidebar templpkg.Component, content templpkg.Componen
                                                 document.querySelectorAll('[data-nav-section]').forEach(function (link) {
                                                         link.dataset.state = link.dataset.navSection === current ? 'active' : 'inactive';
                                                 });
+                                        };
+
+                                        namespace.updateTheme = function (identifier) {
+                                                if (typeof identifier !== 'string' || !identifier.trim()) {
+                                                        return;
+                                                }
+                                                document.body.dataset.theme = identifier.trim();
                                         };
 
                                         const assignSeeds = function (container) {
@@ -122,9 +412,9 @@ templ Layout(title string, sidebar templpkg.Component, content templpkg.Componen
 
 func bodyWrapperClass(showSidebar bool) string {
         if showSidebar {
-                return "relative isolate min-h-screen lg:flex"
+                return "min-h-screen lg:flex app-shell"
         }
-        return "min-h-screen flex flex-col"
+        return "min-h-screen flex flex-col app-shell"
 }
 
 func mainClass(showSidebar bool) string {
