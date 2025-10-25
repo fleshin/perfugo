@@ -25,7 +25,27 @@ func main() {
 		os.Exit(1)
 	}
 
-	srv := server.New(server.Config{Addr: cfg.Server.Addr})
+	srv, err := server.New(server.Config{
+		Addr: cfg.Server.Addr,
+		Session: server.SessionConfig{
+			Lifetime:     cfg.Auth.Session.Lifetime,
+			CookieName:   cfg.Auth.Session.CookieName,
+			CookieDomain: cfg.Auth.Session.CookieDomain,
+			CookieSecure: cfg.Auth.Session.CookieSecure,
+		},
+		OIDC: server.OIDCConfig{
+			ProviderName: cfg.Auth.OIDC.ProviderName,
+			Issuer:       cfg.Auth.OIDC.Issuer,
+			ClientID:     cfg.Auth.OIDC.ClientID,
+			ClientSecret: cfg.Auth.OIDC.ClientSecret,
+			RedirectURL:  cfg.Auth.OIDC.RedirectURL,
+			Scopes:       cfg.Auth.OIDC.Scopes,
+		},
+	})
+	if err != nil {
+		applog.Error(context.Background(), "failed to initialize http server", "error", err)
+		os.Exit(1)
+	}
 
 	go func() {
 		applog.Info(context.Background(), "starting http server", "addr", cfg.Server.Addr)

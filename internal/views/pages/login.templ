@@ -1,47 +1,60 @@
 package pages
 
 import (
-        templpkg "github.com/a-h/templ"
+        templ "github.com/a-h/templ"
         "perfugo/internal/views/layout"
 )
 
-templ Login(message string) {
-        @layout.Layout("Login • Perfugo", templpkg.Component(nil), loginContent(message), false)
+type LoginOption struct {
+        Title       string
+        Description string
+        URL         string
 }
 
-templ LoginPartial(message string) {
-        @loginContent(message)
+templ Login(message string, options []LoginOption) {
+        @layout.Layout("Login • Perfugo", templ.Component(nil), loginContent(message, options), false)
 }
 
-templ loginContent(message string) {
+templ LoginPartial(message string, options []LoginOption) {
+        @loginContent(message, options)
+}
+
+templ loginContent(message string, options []LoginOption) {
         <div class="flex min-h-[calc(100vh-6rem)] items-center justify-center bg-gradient-to-br from-slate-100 via-white to-indigo-50 px-6 py-16 sm:px-8 lg:px-10">
                 <div class="w-full max-w-md rounded-3xl bg-white p-10 shadow-xl ring-1 ring-slate-200">
                         <div class="mb-8 space-y-3 text-center">
                                 <p class="text-sm font-semibold uppercase tracking-[0.3em] text-indigo-500">Perfugo</p>
-                                <h1 class="text-2xl font-semibold text-slate-900">Welcome back to the atelier</h1>
+                                <h1 class="text-2xl font-semibold text-slate-900">Select a sign-in option</h1>
                                 <p class="text-sm text-slate-500">
-                                        Sign in to continue crafting and managing your fragrance formulas.
+                                        Choose your identity provider to access the atelier workspace.
                                 </p>
                         </div>
                         if message != "" {
-                                <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-left text-sm text-amber-800">
+                                <div class="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-left text-sm text-amber-800">
                                         { message }
                                 </div>
                         }
-                        <form class="space-y-6" hx-post="/login" hx-target="#primary-content" hx-swap="innerHTML">
-                                <div class="space-y-2">
-                                        <label for="email" class="text-sm font-medium text-slate-700">Email</label>
-                                        <input id="email" name="email" type="email" required class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100" placeholder="fragrance@maison.com" />
+                        if len(options) == 0 {
+                                <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-5 text-center text-sm text-slate-600">
+                                        No authentication providers are currently configured.
                                 </div>
-                                <div class="space-y-2">
-                                        <label for="password" class="text-sm font-medium text-slate-700">Password</label>
-                                        <input id="password" name="password" type="password" required class="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100" placeholder="••••••••" />
+                        } else {
+                                <div class="space-y-4">
+                                        for _, option := range options {
+                                                <a href={ templ.SafeURL(option.URL) } class="flex items-center justify-between rounded-2xl border border-slate-200 px-5 py-4 text-left transition hover:border-indigo-300 hover:bg-indigo-50">
+                                                        <div>
+                                                                <p class="text-sm font-semibold text-slate-900">{ option.Title }</p>
+                                                                if option.Description != "" {
+                                                                        <p class="mt-1 text-xs text-slate-500">{ option.Description }</p>
+                                                                }
+                                                        </div>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-5 w-5 text-slate-400">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                                        </svg>
+                                                </a>
+                                        }
                                 </div>
-                                <button type="submit" class="w-full rounded-full bg-indigo-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-400">
-                                        Continue
-                                </button>
-                                <p class="text-center text-xs text-slate-400">Access is currently limited to invited maisons.</p>
-                        </form>
+                        }
                 </div>
         </div>
 }
