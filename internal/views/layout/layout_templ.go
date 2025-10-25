@@ -5,10 +5,13 @@ package layout
 
 //lint:file-ignore SA4006 This context is only used if a nested component is present.
 
-import "github.com/a-h/templ"
-import templruntime "github.com/a-h/templ/runtime"
+import (
+	"github.com/a-h/templ"
 
-import templpkg "github.com/a-h/templ"
+	templpkg "github.com/a-h/templ"
+
+	templruntime "github.com/a-h/templ/runtime"
+)
 
 func Layout(title string, sidebar templpkg.Component, content templpkg.Component, showSidebar bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -38,13 +41,13 @@ func Layout(title string, sidebar templpkg.Component, content templpkg.Component
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/layout.templ`, Line: 11, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/layout/layout.templ`, Line: 9, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link href=\"https://cdn.jsdelivr.net/npm/tailwindcss@3.3.5/dist/tailwind.min.css\" rel=\"stylesheet\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.12\" defer></script><script src=\"https://unpkg.com/hyperscript.org@0.9.12\" defer></script></head><body class=\"h-full text-slate-900 font-sans\" hx-boost=\"true\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><script src=\"https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4\"></script><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><script src=\"https://unpkg.com/htmx.org@1.9.12\" defer></script><script src=\"https://unpkg.com/hyperscript.org@0.9.12\" defer></script></head><body class=\"h-full text-slate-900 font-sans\" hx-boost=\"true\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
