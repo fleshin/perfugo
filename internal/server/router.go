@@ -9,6 +9,7 @@ import (
 func newRouter() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/healthz", handlers.Health)
-	mux.Handle("/", http.FileServer(http.Dir("web/static")))
+	mux.HandleFunc("/", handlers.Home)
+	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("web/static"))))
 	return mux
 }

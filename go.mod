@@ -3,6 +3,7 @@ module perfugo
 go 1.25
 
 require (
+	github.com/a-h/templ v0.2.747
 	gorm.io/driver/postgres v1.5.7
 	gorm.io/gorm v1.31.0
 )

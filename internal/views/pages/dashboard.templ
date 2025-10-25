@@ -1,0 +1,91 @@
+package pages
+
+import (
+        templpkg "github.com/a-h/templ"
+        "perfugo/internal/views/components"
+        "perfugo/internal/views/layout"
+)
+
+templ Dashboard() {
+        @layout.Layout("Perfugo Dashboard", components.Sidebar(navItems()), dashboardContent())
+}
+
+func navItems() []components.NavItem {
+        return []components.NavItem{
+                {Label: "Dashboard", Icon: "📊", Path: "/", Active: true},
+                {Label: "Batches", Icon: "🧪", Path: "/batches"},
+                {Label: "Inventory", Icon: "📦", Path: "/inventory"},
+                {Label: "Quality", Icon: "🧬", Path: "/quality"},
+                {Label: "Reports", Icon: "📑", Path: "/reports"},
+        }
+}
+
+func activityEntries() []components.ActivityEntry {
+        return []components.ActivityEntry{
+                {Name: "Batch 8724", Reference: "MR-2024-09", Quantity: "1,200 L", Progress: "72", ProgressStyle: "72%", UpdatedAt: "2h ago", Status: "In Progress"},
+                {Name: "Batch 8725", Reference: "MR-2024-10", Quantity: "980 L", Progress: "54", ProgressStyle: "54%", UpdatedAt: "4h ago", Status: "On Hold"},
+                {Name: "Batch 8719", Reference: "MR-2024-04", Quantity: "1,450 L", Progress: "100", ProgressStyle: "100%", UpdatedAt: "1d ago", Status: "Completed"},
+        }
+}
+
+func kpiCards() []templpkg.Component {
+        return []templpkg.Component{
+                components.StatCard("Active Batches", "48", "+12%", "vs. last month"),
+                components.StatCard("Quality Checks", "96.4%", "+2.1%", "pass rate this week"),
+                components.StatCard("Inventory Turns", "5.4", "+0.8", "rolling 30 days"),
+        }
+}
+
+templ dashboardContent() {
+        <div class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+                @components.Header("Manufacturing Overview", "Monitor production, quality, and inventory health in real time.")
+                <div class="grid gap-6 lg:grid-cols-3">
+                        for _, card := range kpiCards() {
+                                @card
+                        }
+                </div>
+                <div class="grid gap-6 lg:grid-cols-5">
+                        <section class="lg:col-span-3 space-y-4">
+                                <header class="flex items-center justify-between">
+                                        <div>
+                                                <h2 class="text-lg font-semibold text-slate-900">Batch Progress</h2>
+                                                <p class="text-sm text-slate-500">Key active batches and their current status.</p>
+                                        </div>
+                                        <button class="text-sm font-medium text-indigo-600 hover:text-indigo-500">View all</button>
+                                </header>
+                                @components.ActivityTable(activityEntries())
+                        </section>
+                        <aside class="space-y-4 lg:col-span-2">
+                                <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                                        <h3 class="text-base font-semibold text-slate-900">Quality Highlights</h3>
+                                        <ul class="mt-4 space-y-3 text-sm text-slate-600">
+                                                <li class="flex items-start gap-3">
+                                                        <span class="mt-1 inline-flex h-2 w-2 flex-shrink-0 rounded-full bg-emerald-500"></span>
+                                                        98% of critical control points within tolerance.
+                                                </li>
+                                                <li class="flex items-start gap-3">
+                                                        <span class="mt-1 inline-flex h-2 w-2 flex-shrink-0 rounded-full bg-amber-400"></span>
+                                                        3 batches flagged for review due to temperature variance.
+                                                </li>
+                                                <li class="flex items-start gap-3">
+                                                        <span class="mt-1 inline-flex h-2 w-2 flex-shrink-0 rounded-full bg-sky-400"></span>
+                                                        Trending stability improvements on release testing.
+                                                </li>
+                                        </ul>
+                                </div>
+                                <div class="rounded-2xl border border-indigo-100 bg-indigo-50 p-6 text-indigo-900 shadow-sm">
+                                        <h3 class="text-base font-semibold">Automation Insight</h3>
+                                        <p class="mt-3 text-sm leading-6 text-indigo-900/80">
+                                                Automated scheduling reduced manual interventions by 24% this quarter. Continue optimizing equipment changeovers to unlock more efficiency.
+                                        </p>
+                                        <button class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500">
+                                                Review playbook
+                                                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                        <path fill-rule="evenodd" d="M5.22 14.78a.75.75 0 0 1 0-1.06L11.94 7H6.75a.75.75 0 0 1 0-1.5h6.5a.75.75 0 0 1 .75.75v6.5a.75.75 0 0 1-1.5 0V8.06l-6.72 6.72a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
+                                                </svg>
+                                        </button>
+                                </div>
+                        </aside>
+                </div>
+        </div>
+}

@@ -1,0 +1,50 @@
+package components
+
+type ActivityEntry struct {
+        Name          string
+        Reference     string
+        Quantity      string
+        Progress      string
+        ProgressStyle string
+        UpdatedAt     string
+        Status        string
+}
+ 
+
+templ ActivityTable(entries []ActivityEntry) {
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <table class="min-w-full divide-y divide-slate-200">
+                        <thead class="bg-slate-50">
+                                <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Batch</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Reference</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Quantity</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Progress</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Updated</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
+                                </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 bg-white">
+                                for _, entry := range entries {
+                                        <tr class="hover:bg-slate-50">
+                                                <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-900">{ entry.Name }</td>
+                                                <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-600">{ entry.Reference }</td>
+                                                <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-600">{ entry.Quantity }</td>
+                                                <td class="px-6 py-4">
+                                                        <div class="flex items-center gap-3">
+                                                                <div class="h-2 flex-1 rounded-full bg-slate-200">
+                                                                        <div class="h-full rounded-full bg-indigo-500" style="width: { entry.ProgressStyle };"></div>
+                                                                </div>
+                                                                <span class="text-sm font-medium text-slate-700">{ entry.Progress }%</span>
+                                                        </div>
+                                                </td>
+                                                <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-600">{ entry.UpdatedAt }</td>
+                                                <td class="whitespace-nowrap px-6 py-4">
+                                                        <span class="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">{ entry.Status }</span>
+                                                </td>
+                                        </tr>
+                                }
+                        </tbody>
+                </table>
+        </div>
+}
