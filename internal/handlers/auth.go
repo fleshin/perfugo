@@ -51,6 +51,7 @@ func createUser(r *http.Request, email, name, password string) (*models.User, er
 		Email:        strings.ToLower(email),
 		Name:         strings.TrimSpace(name),
 		PasswordHash: string(hashed),
+		Theme:        models.DefaultTheme,
 	}
 
 	if err := database.WithContext(r.Context()).Create(user).Error; err != nil {

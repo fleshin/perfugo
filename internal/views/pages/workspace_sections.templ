@@ -4,6 +4,8 @@ package pages
 import (
         "fmt"
         "time"
+
+        "perfugo/internal/views/layout"
 )
 
 type ReportCard struct {
@@ -23,6 +25,13 @@ type IngredientPerformance struct {
         Name     string
         Velocity string
         Trend    string
+}
+
+func themeButtonState(value, current string) string {
+        if value == current {
+                return "active"
+        }
+        return "inactive"
 }
 
 func formatAuditDate(value string) string {
@@ -376,35 +385,56 @@ templ ReportsOverview(cards []ReportCard, timeline []ReportEvent, leaders []Ingr
         </section>
 }
 
-templ PreferencesPanel() {
+templ PreferencesPanel(currentTheme string, themes []layout.ThemeDefinition) {
         <section class="space-y-6" data-module="preferences">
-                <div class="space-y-5 rounded-3xl border border-white/10 bg-black/35 p-6 backdrop-blur-xl">
-                        <header class="flex flex-col gap-2 text-sm uppercase tracking-[0.4em] text-white/50">
-                                <span>Studio Preferences</span>
-                                <p class="text-xs normal-case text-white/60">Tweak notification, theme, and cadence defaults for the mock session.</p>
+                <div class="app-card space-y-6 p-8">
+                        <header class="space-y-3">
+                                <span class="app-badge">Studio Preferences</span>
+                                <div class="space-y-1">
+                                        <h2 class="text-xl font-semibold text-[var(--app-text)]">Workspace preferences</h2>
+                                        <p class="text-sm app-muted">Adjust notifications and visual theme for this atelier session.</p>
+                                </div>
                         </header>
-                        <form class="space-y-5" data-action="preferences">
-                                <div class="grid gap-4 md:grid-cols-2">
-                                        <label class="space-y-2 text-sm text-white">
-                                                <span class="text-[0.6rem] uppercase tracking-[0.45em] text-white/50">Notifications</span>
-                                                <select class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none">
+                        <form class="space-y-6" data-action="preferences">
+                                <div class="grid gap-5 md:grid-cols-2">
+                                        <label class="space-y-2 text-sm text-[var(--app-text)]">
+                                                <span class="font-medium">Notifications</span>
+                                                <select name="notifications" class="app-input w-full">
                                                         <option>Product launches</option>
                                                         <option>Compliance</option>
                                                         <option>Inventory</option>
                                                 </select>
                                         </label>
-                                        <label class="space-y-2 text-sm text-white">
-                                                <span class="text-[0.6rem] uppercase tracking-[0.45em] text-white/50">Theme</span>
-                                                <select class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none">
-                                                        <option>Nocturne</option>
-                                                        <option>Atelier Ivory</option>
-                                                        <option>Midnight Draft</option>
+                                        <label class="space-y-2 text-sm text-[var(--app-text)]">
+                                                <span class="font-medium">Theme</span>
+                                                <select name="theme" required class="app-input w-full">
+                                                        for _, option := range themes {
+                                                                <option value={ option.ID }
+                                                                        if option.ID == currentTheme {
+                                                                                selected
+                                                                        }
+                                                                >{ option.Label }</option>
+                                                        }
                                                 </select>
                                         </label>
                                 </div>
-                                <div class="flex flex-wrap items-center justify-end gap-3">
-                                        <button type="submit" class="rounded-full bg-white px-6 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-[#050509] shadow-[0_15px_40px_rgba(255,255,255,0.25)] transition hover:bg-white/90">Save Preferences</button>
-                                        <span data-success class="hidden text-xs uppercase tracking-[0.45em] text-emerald-300">Saved</span>
+                                <div class="grid gap-3 sm:grid-cols-3" data-theme-options>
+                                        for _, option := range themes {
+                                                <button
+                                                        type="button"
+                                                        class="app-theme-option"
+                                                        data-theme-choice={ option.ID }
+                                                        data-state={ themeButtonState(option.ID, currentTheme) }
+                                                >
+                                                        <span class="text-sm font-semibold text-[var(--app-text)]">{ option.Label }</span>
+                                                        <span class="text-xs leading-snug app-muted">{ option.Description }</span>
+                                                </button>
+                                        }
+                                </div>
+                                <div class="flex flex-wrap items-center justify-end gap-3 text-[0.65rem] uppercase tracking-[0.32em]">
+                                        <button type="submit" class="app-button" data-role="save">Save preferences</button>
+                                        <span data-success class="hidden app-muted">Preferences saved</span>
+                                        <span data-error class="hidden text-rose-400">Save failed</span>
                                 </div>
                         </form>
                 </div>
@@ -832,13 +862,114 @@ templ workspaceModulesScript() {
 
                         namespace.modules.preferences = function (root) {
                                 const form = root.querySelector('form[data-action="preferences"]');
+                                if (!form) {
+                                        return;
+                                }
+
                                 const success = root.querySelector('[data-success]');
-                                if (!form) return;
-                                form.addEventListener('submit', (event) => {
+                                const error = root.querySelector('[data-error]');
+                                const submit = form.querySelector('[data-role="save"]');
+                                const themeSelect = form.querySelector('select[name="theme"]');
+                                const themeButtons = Array.from(root.querySelectorAll('[data-theme-choice]'));
+
+                                const updateButtons = function (activeValue) {
+                                        themeButtons.forEach(function (button) {
+                                                if (!button || !button.dataset) {
+                                                        return;
+                                                }
+                                                button.dataset.state = button.dataset.themeChoice === activeValue ? 'active' : 'inactive';
+                                        });
+                                };
+
+                                if (themeSelect) {
+                                        updateButtons(themeSelect.value);
+                                        themeSelect.addEventListener('change', function () {
+                                                const value = themeSelect.value;
+                                                updateButtons(value);
+                                                if (namespace.updateTheme) {
+                                                        namespace.updateTheme(value);
+                                                }
+                                        });
+                                }
+
+                                themeButtons.forEach(function (button) {
+                                        button.addEventListener('click', function () {
+                                                const value = button.dataset.themeChoice;
+                                                if (!value || !themeSelect) {
+                                                        return;
+                                                }
+                                                if (themeSelect.value !== value) {
+                                                        themeSelect.value = value;
+                                                        themeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                                                }
+                                        });
+                                });
+
+                                form.addEventListener('submit', async function (event) {
                                         event.preventDefault();
+
+                                        if (error) {
+                                                error.classList.add('hidden');
+                                        }
                                         if (success) {
-                                                success.classList.remove('hidden');
-                                                setTimeout(() => success.classList.add('hidden'), 1500);
+                                                success.classList.add('hidden');
+                                        }
+                                        if (submit) {
+                                                submit.setAttribute('disabled', 'true');
+                                                submit.setAttribute('data-loading', 'true');
+                                        }
+
+                                        try {
+                                                const formData = new FormData(form);
+                                                const response = await fetch(form.getAttribute('action') || '/app/preferences', {
+                                                        method: 'POST',
+                                                        body: formData,
+                                                        headers: {
+                                                                Accept: 'application/json',
+                                                        },
+                                                        credentials: 'same-origin',
+                                                });
+
+                                                if (!response.ok) {
+                                                        throw new Error('preferences:request-failed');
+                                                }
+
+                                                const payload = await response.json().catch(function () {
+                                                        return {};
+                                                });
+
+                                                const savedTheme = typeof payload.theme === 'string' && payload.theme.trim()
+                                                        ? payload.theme.trim()
+                                                        : (themeSelect ? themeSelect.value : '');
+
+                                                if (savedTheme) {
+                                                        updateButtons(savedTheme);
+                                                        if (themeSelect) {
+                                                                themeSelect.value = savedTheme;
+                                                        }
+                                                        if (namespace.updateTheme) {
+                                                                namespace.updateTheme(savedTheme);
+                                                        }
+                                                }
+
+                                                if (success) {
+                                                        success.classList.remove('hidden');
+                                                        window.setTimeout(function () {
+                                                                success.classList.add('hidden');
+                                                        }, 1800);
+                                                }
+                                        } catch (err) {
+                                                if (error) {
+                                                        error.classList.remove('hidden');
+                                                        window.setTimeout(function () {
+                                                                error.classList.add('hidden');
+                                                        }, 2200);
+                                                }
+                                        } finally {
+                                                if (submit) {
+                                                        submit.removeAttribute('data-loading');
+                                                        submit.removeAttribute('disabled');
+                                                }
                                         }
                                 });
                         };

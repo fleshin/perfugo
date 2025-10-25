@@ -1,9 +1,12 @@
 package pages
 
-import "perfugo/internal/views/layout"
+import (
+        "perfugo/internal/views/layout"
+        "perfugo/models"
+)
 
 templ Signup(message string, name string, email string) {
-        @layout.Layout("Create account • Perfugo", templ.Component(nil), signupContent(message, name, email), false)
+        @layout.Layout("Create account • Perfugo", templ.Component(nil), signupContent(message, name, email), false, layout.ThemeByID(models.DefaultTheme))
 }
 
 templ SignupPartial(message string, name string, email string) {
