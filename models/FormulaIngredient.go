@@ -20,4 +20,5 @@ type FormulaIngredient struct {
 	// We use pointers so they can be null.
 	AromaChemical *AromaChemical `gorm:"foreignKey:AromaChemicalID" json:"aroma_chemical,omitempty"`
 	SubFormula    *Formula       `gorm:"foreignKey:SubFormulaID" json:"sub_formula,omitempty"`
+	Formula       *Formula       `gorm:"foreignKey:FormulaID" json:"formula,omitempty"`
 }

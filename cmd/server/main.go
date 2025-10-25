@@ -6,10 +6,14 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
+
+	"gorm.io/gorm"
 
 	"perfugo/internal/config"
 	"perfugo/internal/db"
+	"perfugo/internal/db/mock"
 	applog "perfugo/internal/log"
 	"perfugo/internal/server"
 )
@@ -30,7 +34,13 @@ func main() {
 
 	applog.Debug(context.Background(), "log level configured", "level", cfg.Logging.Level)
 
-	database, err := db.Configure(cfg.Database)
+	var database *gorm.DB
+	if cfg.Database.UseMock || strings.TrimSpace(cfg.Database.URL) == "" {
+		applog.Debug(context.Background(), "using in-memory mock database")
+		database, err = mock.New(context.Background())
+	} else {
+		database, err = db.Configure(cfg.Database)
+	}
 	if err != nil {
 		applog.Error(context.Background(), "failed to initialize database", "error", err)
 		os.Exit(1)

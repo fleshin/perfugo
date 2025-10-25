@@ -2,45 +2,93 @@ package components
 
 import templpkg "github.com/a-h/templ"
 
-func sidebarLinkClass(active bool) string {
-        if active {
-                return "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors bg-white/10 text-white"
+type SidebarLink struct {
+        Label     string
+        Path      string
+        Section   string
+        Icon      string
+        UseHTMX   bool
+        SubtleTag string
+}
+
+type SidebarData struct {
+        Active    string
+        Features  []SidebarLink
+        Secondary []SidebarLink
+}
+
+func linkState(section, active string) string {
+        if section == active {
+                return "active"
         }
-        return "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-slate-200 hover:bg-white/10 hover:text-white"
+        return "inactive"
 }
 
-type NavItem struct {
-        Label  string
-        Icon   string
-        Path   string
-        Active bool
-}
-
-templ Sidebar(items []NavItem) {
-        <div class="flex-1 overflow-y-auto">
-                <div class="px-6 py-6">
-                        <div class="flex items-center gap-3">
-                                <div class="h-10 w-10 rounded-xl bg-indigo-500 flex items-center justify-center text-white font-semibold">PF</div>
-                                <div>
-                                        <p class="text-lg font-semibold tracking-tight">Perfugo</p>
-                                        <p class="text-sm text-slate-300">Operations Suite</p>
-                                </div>
+templ Sidebar(data SidebarData) {
+        <div class="flex min-h-screen flex-col text-white">
+                <div class="px-10 pt-14">
+                        <div class="space-y-3">
+                                <span class="text-[0.65rem] uppercase tracking-[0.6em] text-white/40">Perfugo</span>
+                                <h1 class="text-2xl font-semibold text-white">Digital Atelier</h1>
+                                <p class="text-xs uppercase tracking-[0.35em] text-white/40">Alchemy in motion</p>
                         </div>
-                        <nav class="mt-10 space-y-1">
-                                for _, item := range items {
-                                        <a href={ templpkg.URL(item.Path) } class={ sidebarLinkClass(item.Active) }>
-                                                <span class="text-lg" aria-hidden="true">{ item.Icon }</span>
-                                                <span>{ item.Label }</span>
-                                        </a>
-                                }
+                </div>
+                <div class="flex-1 flex items-center">
+                        <nav class="w-full px-10">
+                                <p class="text-[0.65rem] uppercase tracking-[0.45em] text-white/40">Features</p>
+                                <div class="mt-8 space-y-3">
+                                        for _, item := range data.Features {
+                                                <a
+                                                        href={ templpkg.URL(item.Path) }
+                                                        class="group relative flex items-center justify-between rounded-full border border-white/10 px-6 py-3 text-[0.68rem] uppercase tracking-[0.45em] text-white/60 transition data-[state=active]:border-white data-[state=active]:bg-white data-[state=active]:text-[#050509] data-[state=active]:shadow-[0_24px_70px_rgba(255,255,255,0.18)] hover:border-white/40 hover:text-white/90"
+                                                        data-nav-section={ item.Section }
+                                                        data-state={ linkState(item.Section, data.Active) }
+                                                        if item.UseHTMX {
+                                                                hx-get={ templpkg.URL(item.Path) }
+                                                                hx-target="#workspace-content"
+                                                                hx-swap="innerHTML"
+                                                                hx-push-url="true"
+                                                        }
+                                                >
+                                                        <span class="flex items-center gap-3">
+                                                                if item.Icon != "" {
+                                                                        <span class="text-lg">{ item.Icon }</span>
+                                                                }
+                                                                <span>{ item.Label }</span>
+                                                        </span>
+                                                        <span class="text-[0.55rem] uppercase tracking-[0.6em] text-white/30 opacity-0 transition group-data-[state=active]:opacity-100">open</span>
+                                                </a>
+                                        }
+                                </div>
                         </nav>
                 </div>
-                <div class="mt-auto p-6 border-t border-white/10 text-sm text-slate-300">
-                        <p class="font-medium text-slate-100">Storage Usage</p>
-                        <div class="mt-3 h-2 rounded-full bg-white/10">
-                                <div class="h-full w-2/3 rounded-full bg-emerald-400"></div>
+                <div class="px-10 pb-14 pt-12 border-t border-white/10">
+                        <div class="space-y-3">
+                                for _, item := range data.Secondary {
+                                        <a
+                                                href={ templpkg.URL(item.Path) }
+                                                class="flex items-center justify-between rounded-full border border-white/10 px-5 py-3 text-[0.62rem] uppercase tracking-[0.45em] text-white/50 transition hover:border-white/40 hover:text-white"
+                                                data-nav-section={ item.Section }
+                                                data-state={ linkState(item.Section, data.Active) }
+                                                if item.UseHTMX {
+                                                        hx-get={ templpkg.URL(item.Path) }
+                                                        hx-target="#workspace-content"
+                                                        hx-swap="innerHTML"
+                                                        hx-push-url="true"
+                                                }
+                                        >
+                                                <span class="flex items-center gap-3">
+                                                        if item.Icon != "" {
+                                                                <span class="text-base">{ item.Icon }</span>
+                                                        }
+                                                        <span>{ item.Label }</span>
+                                                </span>
+                                                if item.SubtleTag != "" {
+                                                        <span class="rounded-full border border-white/10 px-3 py-1 text-[0.55rem] uppercase tracking-[0.4em] text-white/40">{ item.SubtleTag }</span>
+                                                }
+                                        </a>
+                                }
                         </div>
-                        <p class="mt-2 text-xs text-slate-400">67% of 120GB used</p>
                 </div>
         </div>
 }
