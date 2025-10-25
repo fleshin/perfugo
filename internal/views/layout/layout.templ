@@ -2,25 +2,31 @@ package layout
 
 import templpkg "github.com/a-h/templ"
 
-templ Layout(title string, sidebar templpkg.Component, content templpkg.Component) {
+templ Layout(title string, sidebar templpkg.Component, content templpkg.Component, showSidebar bool) {
         <!DOCTYPE html>
         <html lang="en" class="h-full bg-slate-100">
                 <head>
                         <meta charset="utf-8" />
                         <meta name="viewport" content="width=device-width, initial-scale=1" />
                         <title>{ title }</title>
-                        <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+                        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.5/dist/tailwind.min.css" rel="stylesheet" />
                         <link rel="preconnect" href="https://fonts.googleapis.com" />
                         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
                         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+                        <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+                        <script src="https://unpkg.com/hyperscript.org@0.9.12" defer></script>
                 </head>
-                <body class="h-full text-slate-900 font-sans">
-                        <div class="min-h-screen flex">
-                                <aside class="hidden lg:flex lg:flex-col w-72 bg-slate-900 text-slate-100 shadow-xl">
-                                        @sidebar
-                                </aside>
+                <body class="h-full text-slate-900 font-sans" hx-boost="true">
+                        <div class={ bodyWrapperClass(showSidebar) }>
+                                if showSidebar {
+                                        <aside class="hidden lg:flex lg:flex-col w-72 bg-slate-900 text-slate-100 shadow-xl">
+                                                if sidebar != nil {
+                                                        @sidebar
+                                                }
+                                        </aside>
+                                }
                                 <div class="flex-1 flex flex-col min-h-screen">
-                                        <main class="flex-1 bg-white lg:bg-transparent">
+                                        <main id="primary-content" class={ mainClass(showSidebar) }>
                                                 @content
                                         </main>
                                         <footer class="bg-white border-t border-slate-200 py-4">
@@ -32,4 +38,18 @@ templ Layout(title string, sidebar templpkg.Component, content templpkg.Componen
                         </div>
                 </body>
         </html>
+}
+
+func bodyWrapperClass(showSidebar bool) string {
+        if showSidebar {
+                return "min-h-screen flex"
+        }
+        return "min-h-screen flex flex-col bg-white"
+}
+
+func mainClass(showSidebar bool) string {
+        if showSidebar {
+                return "flex-1 bg-white lg:bg-transparent"
+        }
+        return "flex-1"
 }

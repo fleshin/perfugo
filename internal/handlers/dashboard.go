@@ -7,15 +7,22 @@ import (
 	"perfugo/internal/views/pages"
 )
 
-// Home renders the landing experience for the perfumery platform.
-func Home(w http.ResponseWriter, r *http.Request) {
+// Dashboard renders the main application workspace once a user is authenticated.
+func Dashboard(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
 	var component templpkg.Component
 	if isHTMX(r) {
-		component = pages.LandingPartial()
+		component = pages.DashboardPartial()
 	} else {
-		component = pages.Landing()
+		component = pages.Dashboard()
 	}
+
 	if err := component.Render(r.Context(), w); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
