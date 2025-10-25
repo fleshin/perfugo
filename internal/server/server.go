@@ -2,23 +2,21 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
-	"github.com/coreos/go-oidc/v3/oidc"
-	"golang.org/x/oauth2"
+	"gorm.io/gorm"
 
 	"perfugo/internal/handlers"
 )
 
 // Config captures the runtime configuration for the HTTP server.
 type Config struct {
-	Addr    string
-	Session SessionConfig
-	OIDC    OIDCConfig
+	Addr     string
+	Session  SessionConfig
+	Database *gorm.DB
 }
 
 // SessionConfig controls session behavior for the HTTP server.
@@ -27,16 +25,6 @@ type SessionConfig struct {
 	CookieName   string
 	CookieDomain string
 	CookieSecure bool
-}
-
-// OIDCConfig captures the OpenID Connect provider configuration.
-type OIDCConfig struct {
-	ProviderName string
-	Issuer       string
-	ClientID     string
-	ClientSecret string
-	RedirectURL  string
-	Scopes       []string
 }
 
 // Server wraps an http.Server and exposes helpers for bootstrapping a
@@ -65,13 +53,9 @@ func New(cfg Config) (*Server, error) {
 	sessionManager.Cookie.SameSite = http.SameSiteLaxMode
 	sessionManager.Cookie.Secure = sessionCfg.CookieSecure
 
-	providers, err := buildOIDCProviders(cfg.OIDC)
-	if err != nil {
-		return nil, err
-	}
-	handlers.Configure(sessionManager, providers)
+	handlers.Configure(sessionManager, cfg.Database)
 
-	handler := sessionManager.LoadAndSave(newRouter(providers))
+	handler := sessionManager.LoadAndSave(newRouter())
 
 	return &Server{
 		config: cfg,
@@ -98,70 +82,4 @@ func (s *Server) Stop() error {
 // Handler exposes the configured HTTP handler, enabling integration tests.
 func (s *Server) Handler() http.Handler {
 	return s.httpServer.Handler
-}
-
-func buildOIDCProviders(cfg OIDCConfig) ([]handlers.OIDCProvider, error) {
-	trimmedIssuer := strings.TrimSpace(cfg.Issuer)
-	trimmedClientID := strings.TrimSpace(cfg.ClientID)
-	trimmedSecret := strings.TrimSpace(cfg.ClientSecret)
-	trimmedRedirect := strings.TrimSpace(cfg.RedirectURL)
-
-	if trimmedIssuer == "" && trimmedClientID == "" && trimmedSecret == "" && trimmedRedirect == "" {
-		return nil, nil
-	}
-
-	if trimmedIssuer == "" || trimmedClientID == "" || trimmedSecret == "" || trimmedRedirect == "" {
-		return nil, fmt.Errorf("incomplete OIDC configuration")
-	}
-
-	provider, err := oidc.NewProvider(context.Background(), trimmedIssuer)
-	if err != nil {
-		return nil, fmt.Errorf("failed to initialize OIDC provider: %w", err)
-	}
-
-	defaultScopes := []string{oidc.ScopeOpenID, "profile", "email"}
-	scopes := make([]string, 0, len(defaultScopes)+len(cfg.Scopes))
-	seen := make(map[string]struct{}, len(defaultScopes)+len(cfg.Scopes))
-
-	for _, scope := range defaultScopes {
-		if _, ok := seen[scope]; ok {
-			continue
-		}
-		seen[scope] = struct{}{}
-		scopes = append(scopes, scope)
-	}
-	for _, scope := range cfg.Scopes {
-		trimmed := strings.TrimSpace(scope)
-		if trimmed == "" {
-			continue
-		}
-		if _, ok := seen[trimmed]; ok {
-			continue
-		}
-		seen[trimmed] = struct{}{}
-		scopes = append(scopes, trimmed)
-	}
-
-	oauthCfg := &oauth2.Config{
-		ClientID:     trimmedClientID,
-		ClientSecret: trimmedSecret,
-		Endpoint:     provider.Endpoint(),
-		RedirectURL:  trimmedRedirect,
-		Scopes:       scopes,
-	}
-
-	displayName := strings.TrimSpace(cfg.ProviderName)
-	if displayName == "" {
-		displayName = "OIDC"
-	}
-	providerID := strings.ToLower(strings.ReplaceAll(displayName, " ", "-"))
-
-	return []handlers.OIDCProvider{
-		{
-			ID:           providerID,
-			DisplayName:  displayName,
-			OAuth2Config: oauthCfg,
-			Verifier:     provider.Verifier(&oidc.Config{ClientID: trimmedClientID}),
-		},
-	}, nil
 }

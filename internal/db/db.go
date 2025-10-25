@@ -73,6 +73,7 @@ func AutoMigrate(db *gorm.DB) error {
 		&models.OtherName{},
 		&models.Formula{},
 		&models.FormulaIngredient{},
+		&models.User{},
 	)
 }
 

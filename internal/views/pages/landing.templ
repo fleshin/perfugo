@@ -30,9 +30,12 @@ templ landingContent() {
                                         <a href="/login" hx-get="/login" hx-target="#primary-content" hx-push-url="true" hx-swap="innerHTML" class="inline-flex items-center justify-center rounded-full bg-indigo-500 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-indigo-400">
                                                 Login to Perfugo
                                         </a>
-                                        <a href="#discover" class="text-sm font-semibold text-indigo-200 transition hover:text-white">
-                                                Discover the atelier experience →
+                                        <a href="/signup" hx-get="/signup" hx-target="#primary-content" hx-push-url="true" hx-swap="innerHTML" class="inline-flex items-center justify-center rounded-full border border-indigo-200/80 px-6 py-3 text-sm font-semibold text-indigo-100 transition hover:border-white hover:text-white">
+                                                Create an account
                                         </a>
+                                </div>
+                                <div class="mt-4 text-sm font-semibold text-indigo-200">
+                                        <a href="#discover" class="transition hover:text-white">Discover the atelier experience →</a>
                                 </div>
                         </div>
                 </section>
@@ -91,7 +94,7 @@ templ landingContent() {
                                         </div>
                                 </div>
                                 <p class="text-sm text-indigo-700">
-                                        Ready to blend brilliance? Click login to enter the atelier. Access is exclusive to authenticated perfumers.
+                                        Ready to blend brilliance? Login or create an account to enter the atelier. Access is exclusive to authenticated perfumers.
                                 </p>
                         </div>
                 </section>

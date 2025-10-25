@@ -1,188 +1,123 @@
 package handlers
 
 import (
-	"crypto/rand"
-	"encoding/base64"
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/alexedwards/scs/v2"
-	"github.com/coreos/go-oidc/v3/oidc"
-	"golang.org/x/oauth2"
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 
 	applog "perfugo/internal/log"
+	"perfugo/models"
 )
 
 const (
 	sessionAuthenticatedKey = "auth:authenticated"
 	sessionLoginMessageKey  = "auth:message"
-	sessionStateKeyPrefix   = "auth:oidc:state:"
-	sessionNonceKeyPrefix   = "auth:oidc:nonce:"
+	sessionUserIDKey        = "auth:user:id"
+	sessionUserEmailKey     = "auth:user:email"
+	sessionUserNameKey      = "auth:user:name"
 )
 
 var (
-	sessionManager   *scs.SessionManager
-	providerRegistry = map[string]OIDCProvider{}
-	providerOrder    []string
+	sessionManager *scs.SessionManager
+	database       *gorm.DB
 )
 
-// OIDCProvider stores the runtime configuration for an OpenID Connect provider.
-type OIDCProvider struct {
-	ID           string
-	DisplayName  string
-	OAuth2Config *oauth2.Config
-	Verifier     *oidc.IDTokenVerifier
-}
-
 // Configure installs the shared dependencies used by the HTTP handlers.
-func Configure(sm *scs.SessionManager, providers []OIDCProvider) {
+func Configure(sm *scs.SessionManager, db *gorm.DB) {
 	sessionManager = sm
-
-	providerRegistry = make(map[string]OIDCProvider, len(providers))
-	providerOrder = make([]string, 0, len(providers))
-	for _, provider := range providers {
-		providerRegistry[provider.ID] = provider
-		providerOrder = append(providerOrder, provider.ID)
-	}
+	database = db
 }
 
-// OIDCStartHandler begins the OAuth2 authorization code flow for the configured provider.
-func OIDCStartHandler(providerID string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-		provider, ok := providerRegistry[providerID]
-		if !ok {
-			http.NotFound(w, r)
-			return
-		}
-		if sessionManager == nil {
-			http.Error(w, "authentication not available", http.StatusServiceUnavailable)
-			return
-		}
-
-		state, err := randomToken()
-		if err != nil {
-			applog.Error(r.Context(), "failed to generate oidc state", "error", err)
-			http.Error(w, "failed to initiate login", http.StatusInternalServerError)
-			return
-		}
-		nonce, err := randomToken()
-		if err != nil {
-			applog.Error(r.Context(), "failed to generate oidc nonce", "error", err)
-			http.Error(w, "failed to initiate login", http.StatusInternalServerError)
-			return
-		}
-
-		sessionManager.Put(r.Context(), stateSessionKey(providerID), state)
-		sessionManager.Put(r.Context(), nonceSessionKey(providerID), nonce)
-
-		authURL := provider.OAuth2Config.AuthCodeURL(state, oauth2.SetAuthURLParam("nonce", nonce))
-		http.Redirect(w, r, authURL, http.StatusFound)
+func createUser(r *http.Request, email, name, password string) (*models.User, error) {
+	if database == nil {
+		return nil, gorm.ErrInvalidDB
 	}
+
+	hashed, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+
+	user := &models.User{
+		Email:        strings.ToLower(email),
+		Name:         strings.TrimSpace(name),
+		PasswordHash: string(hashed),
+	}
+
+	if err := database.WithContext(r.Context()).Create(user).Error; err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
-// OIDCCallbackHandler completes the OAuth2 authorization code flow and creates the user session.
-func OIDCCallbackHandler(providerID string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodGet {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-		provider, ok := providerRegistry[providerID]
-		if !ok {
-			http.NotFound(w, r)
-			return
-		}
-		if sessionManager == nil {
-			http.Error(w, "authentication not available", http.StatusServiceUnavailable)
-			return
-		}
-
-		if !validateState(r, providerID) {
-			sessionManager.Put(r.Context(), sessionLoginMessageKey, "We couldn't verify that login attempt. Please try again.")
-			redirectToLogin(w, r)
-			return
-		}
-
-		code := strings.TrimSpace(r.URL.Query().Get("code"))
-		if code == "" {
-			sessionManager.Put(r.Context(), sessionLoginMessageKey, "The login response was missing required information. Please try again.")
-			redirectToLogin(w, r)
-			return
-		}
-
-		token, err := provider.OAuth2Config.Exchange(r.Context(), code)
-		if err != nil {
-			applog.Error(r.Context(), "oidc token exchange failed", "error", err)
-			sessionManager.Put(r.Context(), sessionLoginMessageKey, "We couldn't complete the sign in process. Please try again.")
-			redirectToLogin(w, r)
-			return
-		}
-
-		rawIDToken, ok := token.Extra("id_token").(string)
-		if !ok || rawIDToken == "" {
-			applog.Error(r.Context(), "oidc response missing id_token")
-			sessionManager.Put(r.Context(), sessionLoginMessageKey, "We couldn't complete the sign in process. Please try again.")
-			redirectToLogin(w, r)
-			return
-		}
-
-		idToken, err := provider.Verifier.Verify(r.Context(), rawIDToken)
-		if err != nil {
-			applog.Error(r.Context(), "failed to verify id_token", "error", err)
-			sessionManager.Put(r.Context(), sessionLoginMessageKey, "We couldn't verify your sign in. Please try again.")
-			redirectToLogin(w, r)
-			return
-		}
-
-		expectedNonce := sessionManager.PopString(r.Context(), nonceSessionKey(providerID))
-		if expectedNonce != "" && idToken.Nonce != expectedNonce {
-			applog.Error(r.Context(), "oidc nonce mismatch", "expected", expectedNonce, "actual", idToken.Nonce)
-			sessionManager.Put(r.Context(), sessionLoginMessageKey, "We couldn't verify your sign in. Please try again.")
-			redirectToLogin(w, r)
-			return
-		}
-
-		var claims struct {
-			Email string `json:"email"`
-			Name  string `json:"name"`
-		}
-		if err := idToken.Claims(&claims); err != nil {
-			applog.Error(r.Context(), "failed to parse id_token claims", "error", err)
-			sessionManager.Put(r.Context(), sessionLoginMessageKey, "We couldn't verify your sign in. Please try again.")
-			redirectToLogin(w, r)
-			return
-		}
-
-		if err := sessionManager.RenewToken(r.Context()); err != nil {
-			applog.Error(r.Context(), "failed to renew session token", "error", err)
-			sessionManager.Put(r.Context(), sessionLoginMessageKey, "We couldn't verify your sign in. Please try again.")
-			redirectToLogin(w, r)
-			return
-		}
-
-		sessionManager.Put(r.Context(), sessionAuthenticatedKey, true)
-		sessionManager.Put(r.Context(), "auth:user:provider", provider.DisplayName)
-		if claims.Email != "" {
-			sessionManager.Put(r.Context(), "auth:user:email", claims.Email)
-		}
-		if claims.Name != "" {
-			sessionManager.Put(r.Context(), "auth:user:name", claims.Name)
-		}
-
-		redirectToApp(w, r)
+func findUserByEmail(r *http.Request, email string) (*models.User, error) {
+	if database == nil {
+		return nil, gorm.ErrInvalidDB
 	}
+
+	user := &models.User{}
+	err := database.WithContext(r.Context()).Where("lower(email) = ?", strings.ToLower(email)).First(user).Error
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+// authenticate verifies the provided credentials and populates the session if successful.
+func authenticate(w http.ResponseWriter, r *http.Request, email, password string) bool {
+	if sessionManager == nil {
+		http.Error(w, "authentication not available", http.StatusServiceUnavailable)
+		return false
+	}
+
+	user, err := findUserByEmail(r, email)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			sessionManager.Put(r.Context(), sessionLoginMessageKey, "Invalid email or password. Please try again.")
+		} else {
+			applog.Error(r.Context(), "failed to load user during login", "error", err)
+			sessionManager.Put(r.Context(), sessionLoginMessageKey, "We were unable to sign you in. Please try again.")
+		}
+		return false
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
+		sessionManager.Put(r.Context(), sessionLoginMessageKey, "Invalid email or password. Please try again.")
+		return false
+	}
+
+	if err := establishSession(r, user); err != nil {
+		applog.Error(r.Context(), "failed to establish session", "error", err)
+		sessionManager.Put(r.Context(), sessionLoginMessageKey, "We were unable to sign you in. Please try again.")
+		return false
+	}
+
+	return true
+}
+
+func establishSession(r *http.Request, user *models.User) error {
+	if sessionManager == nil {
+		return errors.New("session manager not configured")
+	}
+	if err := sessionManager.RenewToken(r.Context()); err != nil {
+		return err
+	}
+	sessionManager.Put(r.Context(), sessionAuthenticatedKey, true)
+	sessionManager.Put(r.Context(), sessionUserIDKey, int(user.ID))
+	sessionManager.Put(r.Context(), sessionUserEmailKey, user.Email)
+	sessionManager.Put(r.Context(), sessionUserNameKey, user.Name)
+	return nil
 }
 
 // RequireAuthentication ensures the user has an active session before accessing the resource.
 func RequireAuthentication(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if sessionManager == nil || !sessionManager.GetBool(r.Context(), sessionAuthenticatedKey) {
+		if !ActiveSession(r) {
 			redirectToLogin(w, r)
 			return
 		}
@@ -226,56 +161,10 @@ func redirectToApp(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/app", http.StatusSeeOther)
 }
 
-func validateState(r *http.Request, providerID string) bool {
-	expected := sessionManager.PopString(r.Context(), stateSessionKey(providerID))
-	if expected == "" {
-		return false
-	}
-	received := strings.TrimSpace(r.URL.Query().Get("state"))
-	return received != "" && received == expected
-}
-
-func stateSessionKey(providerID string) string {
-	return sessionStateKeyPrefix + providerID
-}
-
-func nonceSessionKey(providerID string) string {
-	return sessionNonceKeyPrefix + providerID
-}
-
-func randomToken() (string, error) {
-	buf := make([]byte, 32)
-	if _, err := rand.Read(buf); err != nil {
-		return "", err
-	}
-	return base64.RawURLEncoding.EncodeToString(buf), nil
-}
-
-// AvailableProviders exposes the configured provider identifiers to other handlers.
-func AvailableProviders() []OIDCProvider {
-	providers := make([]OIDCProvider, 0, len(providerOrder))
-	for _, id := range providerOrder {
-		if provider, ok := providerRegistry[id]; ok {
-			providers = append(providers, provider)
-		}
-	}
-	return providers
-}
-
 // ActiveSession returns true when the current request has an authenticated session.
 func ActiveSession(r *http.Request) bool {
-	return sessionManager != nil && sessionManager.GetBool(r.Context(), sessionAuthenticatedKey)
-}
-
-// SessionValue retrieves a value from the session.
-func SessionValue[T any](r *http.Request, key string) (T, error) {
-	var zero T
 	if sessionManager == nil {
-		return zero, errors.New("session manager not configured")
+		return false
 	}
-	value, ok := sessionManager.Get(r.Context(), key).(T)
-	if !ok {
-		return zero, fmt.Errorf("session value %q missing or wrong type", key)
-	}
-	return value, nil
+	return sessionManager.GetBool(r.Context(), sessionAuthenticatedKey) && sessionManager.GetInt(r.Context(), sessionUserIDKey) > 0
 }
