@@ -22,11 +22,3 @@ export SESSION_LIFETIME="12h"
 export SESSION_COOKIE_NAME="perfugo_session"
 export SESSION_COOKIE_DOMAIN=""
 export SESSION_COOKIE_SECURE="true"
-
-# OpenID Connect (OIDC) authentication configuration
-export OIDC_PROVIDER_NAME="google"
-export OIDC_ISSUER="https://accounts.google.com"
-export OIDC_CLIENT_ID="your-google-client-id"
-export OIDC_CLIENT_SECRET="your-google-client-secret"
-export OIDC_REDIRECT_URL="http://localhost:8080/auth/callback"
-export OIDC_SCOPES="profile,email"
