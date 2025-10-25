@@ -1,11 +1,14 @@
 package config
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	applog "perfugo/internal/log"
 )
 
 // Config captures the runtime configuration for the application.
@@ -50,6 +53,7 @@ type SessionConfig struct {
 
 // Load inspects the environment and builds a Config value.
 func Load() (Config, error) {
+	applog.Debug(context.Background(), "loading configuration from environment")
 	cfg := Config{}
 
 	cfg.Server = ServerConfig{
@@ -59,6 +63,8 @@ func Load() (Config, error) {
 			":8080",
 		),
 	}
+
+	applog.Debug(context.Background(), "server configuration resolved", "addr", cfg.Server.Addr)
 
 	cfg.Database = DatabaseConfig{
 		URL: firstNonEmpty(
@@ -72,12 +78,20 @@ func Load() (Config, error) {
 		ConnMaxIdleTime: parseDurationWithDefault(os.Getenv("DATABASE_CONN_MAX_IDLE_TIME"), 5*time.Minute),
 	}
 
+	applog.Debug(context.Background(), "database configuration resolved",
+		"urlConfigured", strings.TrimSpace(cfg.Database.URL) != "",
+		"maxIdleConns", cfg.Database.MaxIdleConns,
+		"maxOpenConns", cfg.Database.MaxOpenConns,
+	)
+
 	cfg.Logging = LoggingConfig{
 		Level: firstNonEmpty(
 			os.Getenv("LOG_LEVEL"),
 			"info",
 		),
 	}
+
+	applog.Debug(context.Background(), "logging configuration resolved", "level", cfg.Logging.Level)
 
 	cfg.Auth = AuthConfig{
 		Session: SessionConfig{
@@ -88,9 +102,18 @@ func Load() (Config, error) {
 		},
 	}
 
+	applog.Debug(context.Background(), "session configuration resolved",
+		"lifetime", cfg.Auth.Session.Lifetime.String(),
+		"cookieName", cfg.Auth.Session.CookieName,
+		"cookieDomainSet", strings.TrimSpace(cfg.Auth.Session.CookieDomain) != "",
+		"cookieSecure", cfg.Auth.Session.CookieSecure,
+	)
+
 	if strings.TrimSpace(cfg.Server.Addr) == "" {
 		return Config{}, fmt.Errorf("server address must not be empty")
 	}
+
+	applog.Debug(context.Background(), "configuration load complete")
 
 	return cfg, nil
 }

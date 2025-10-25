@@ -21,16 +21,22 @@ func main() {
 		os.Exit(1)
 	}
 
+	applog.Debug(context.Background(), "configuration loaded", "addr", cfg.Server.Addr, "logLevel", cfg.Logging.Level)
+
 	if err := applog.SetLevel(cfg.Logging.Level); err != nil {
 		applog.Error(context.Background(), "invalid log level configuration", "level", cfg.Logging.Level, "error", err)
 		os.Exit(1)
 	}
+
+	applog.Debug(context.Background(), "log level configured", "level", cfg.Logging.Level)
 
 	database, err := db.Configure(cfg.Database)
 	if err != nil {
 		applog.Error(context.Background(), "failed to initialize database", "error", err)
 		os.Exit(1)
 	}
+
+	applog.Debug(context.Background(), "database configured", "hasDB", database != nil)
 
 	srv, err := server.New(server.Config{
 		Addr: cfg.Server.Addr,
@@ -46,6 +52,8 @@ func main() {
 		applog.Error(context.Background(), "failed to initialize http server", "error", err)
 		os.Exit(1)
 	}
+
+	applog.Debug(context.Background(), "http server initialized", "addr", cfg.Server.Addr)
 
 	go func() {
 		applog.Info(context.Background(), "starting http server", "addr", cfg.Server.Addr)

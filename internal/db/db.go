@@ -1,11 +1,13 @@
 package db
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"time"
 
 	"perfugo/internal/config"
+	applog "perfugo/internal/log"
 	"perfugo/models"
 
 	"gorm.io/driver/postgres"
@@ -20,6 +22,14 @@ func Initialize(cfg config.DatabaseConfig) (*gorm.DB, error) {
 	if strings.TrimSpace(cfg.URL) == "" {
 		return nil, fmt.Errorf("database URL must not be empty")
 	}
+
+	applog.Debug(context.Background(), "initializing database connection",
+		"urlConfigured", strings.TrimSpace(cfg.URL) != "",
+		"maxIdleConns", cfg.MaxIdleConns,
+		"maxOpenConns", cfg.MaxOpenConns,
+		"connMaxLifetime", cfg.ConnMaxLifetime.String(),
+		"connMaxIdleTime", cfg.ConnMaxIdleTime.String(),
+	)
 
 	gormCfg := &gorm.Config{
 		PrepareStmt:            true,
@@ -39,10 +49,14 @@ func Initialize(cfg config.DatabaseConfig) (*gorm.DB, error) {
 		return nil, fmt.Errorf("open database: %w", err)
 	}
 
+	applog.Debug(context.Background(), "database connection established")
+
 	sqlDB, err := db.DB()
 	if err != nil {
 		return nil, fmt.Errorf("get sql db: %w", err)
 	}
+
+	applog.Debug(context.Background(), "configuring database connection pool")
 
 	if cfg.MaxIdleConns > 0 {
 		sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
@@ -60,6 +74,8 @@ func Initialize(cfg config.DatabaseConfig) (*gorm.DB, error) {
 		sqlDB.SetConnMaxIdleTime(cfg.ConnMaxIdleTime)
 	}
 
+	applog.Debug(context.Background(), "database connection pool configured")
+
 	return db, nil
 }
 
@@ -67,6 +83,8 @@ func AutoMigrate(db *gorm.DB) error {
 	if db == nil {
 		return fmt.Errorf("database handle is nil")
 	}
+
+	applog.Debug(context.Background(), "running database migrations")
 
 	return db.AutoMigrate(
 		&models.AromaChemical{},
@@ -78,6 +96,7 @@ func AutoMigrate(db *gorm.DB) error {
 }
 
 func Configure(cfg config.DatabaseConfig) (*gorm.DB, error) {
+	applog.Debug(context.Background(), "configuring database from application settings")
 	database, err := Initialize(cfg)
 	if err != nil {
 		return nil, err
@@ -87,17 +106,21 @@ func Configure(cfg config.DatabaseConfig) (*gorm.DB, error) {
 		return nil, err
 	}
 
+	applog.Debug(context.Background(), "database configured and migrated")
+
 	DB = database
 
 	return database, nil
 }
 
 func MustConfigure(cfg config.DatabaseConfig) *gorm.DB {
+	applog.Debug(context.Background(), "MustConfigure invoked for database")
 	database, err := Configure(cfg)
 	if err != nil {
 		panic(err)
 	}
 
+	applog.Debug(context.Background(), "MustConfigure completed successfully")
 	return database
 }
 
