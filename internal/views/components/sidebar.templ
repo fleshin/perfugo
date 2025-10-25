@@ -1,0 +1,46 @@
+package components
+
+import templpkg "github.com/a-h/templ"
+
+func sidebarLinkClass(active bool) string {
+        if active {
+                return "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors bg-white/10 text-white"
+        }
+        return "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors text-slate-200 hover:bg-white/10 hover:text-white"
+}
+
+type NavItem struct {
+        Label  string
+        Icon   string
+        Path   string
+        Active bool
+}
+
+templ Sidebar(items []NavItem) {
+        <div class="flex-1 overflow-y-auto">
+                <div class="px-6 py-6">
+                        <div class="flex items-center gap-3">
+                                <div class="h-10 w-10 rounded-xl bg-indigo-500 flex items-center justify-center text-white font-semibold">PF</div>
+                                <div>
+                                        <p class="text-lg font-semibold tracking-tight">Perfugo</p>
+                                        <p class="text-sm text-slate-300">Operations Suite</p>
+                                </div>
+                        </div>
+                        <nav class="mt-10 space-y-1">
+                                for _, item := range items {
+                                        <a href={ templpkg.URL(item.Path) } class={ sidebarLinkClass(item.Active) }>
+                                                <span class="text-lg" aria-hidden="true">{ item.Icon }</span>
+                                                <span>{ item.Label }</span>
+                                        </a>
+                                }
+                        </nav>
+                </div>
+                <div class="mt-auto p-6 border-t border-white/10 text-sm text-slate-300">
+                        <p class="font-medium text-slate-100">Storage Usage</p>
+                        <div class="mt-3 h-2 rounded-full bg-white/10">
+                                <div class="h-full w-2/3 rounded-full bg-emerald-400"></div>
+                        </div>
+                        <p class="mt-2 text-xs text-slate-400">67% of 120GB used</p>
+                </div>
+        </div>
+}
