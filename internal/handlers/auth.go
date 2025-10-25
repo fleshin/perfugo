@@ -148,10 +148,7 @@ func OIDCCallbackHandler(providerID string) http.HandlerFunc {
 			return
 		}
 
-		var claims struct {
-			Email string `json:"email"`
-			Name  string `json:"name"`
-		}
+		var claims customClaims
 		if err := idToken.Claims(&claims); err != nil {
 			applog.Error(r.Context(), "failed to parse id_token claims", "error", err)
 			sessionManager.Put(r.Context(), sessionLoginMessageKey, "We couldn't verify your sign in. Please try again.")
@@ -278,4 +275,9 @@ func SessionValue[T any](r *http.Request, key string) (T, error) {
 		return zero, fmt.Errorf("session value %q missing or wrong type", key)
 	}
 	return value, nil
+}
+
+type customClaims struct {
+	Email string `json:"email"`
+	Name  string `json:"name"`
 }

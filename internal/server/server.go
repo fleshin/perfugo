@@ -119,8 +119,8 @@ func buildOIDCProviders(cfg OIDCConfig) ([]handlers.OIDCProvider, error) {
 		return nil, fmt.Errorf("failed to initialize OIDC provider: %w", err)
 	}
 
-	scopes := []string{oidc.ScopeOpenID}
-	seen := map[string]struct{}{oidc.ScopeOpenID: {}}
+	scopes := []string{oidc.ScopeOpenID, "profile", "email"}
+	seen := map[string]struct{}{oidc.ScopeOpenID: {}, "profile": {}, "email": {}}
 	for _, scope := range cfg.Scopes {
 		trimmed := strings.TrimSpace(scope)
 		if trimmed == "" {
