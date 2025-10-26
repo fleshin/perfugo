@@ -59,7 +59,7 @@ func run(ctx context.Context) int {
 
 	var database *gorm.DB
 	if cfg.Database.UseMock || strings.TrimSpace(cfg.Database.URL) == "" {
-		applog.Debug(ctx, "using in-memory mock database")
+		applog.Info(ctx, "using in-memory mock database")
 		database, err = newMockDatabaseFunc(ctx)
 	} else {
 		database, err = configureDatabase(cfg.Database)
