@@ -13,10 +13,11 @@ type WorkspaceSnapshot struct {
 	FormulaIngredients []models.FormulaIngredient
 	AromaChemicals     []models.AromaChemical
 	Theme              string
+	UserID             uint
 }
 
 // NewWorkspaceSnapshot normalises and sorts the data required by the workspace views.
-func NewWorkspaceSnapshot(formulas []models.Formula, ingredients []models.FormulaIngredient, chemicals []models.AromaChemical, theme string) WorkspaceSnapshot {
+func NewWorkspaceSnapshot(formulas []models.Formula, ingredients []models.FormulaIngredient, chemicals []models.AromaChemical, theme string, userID uint) WorkspaceSnapshot {
 	sort.SliceStable(formulas, func(i, j int) bool {
 		return formulas[i].Name < formulas[j].Name
 	})
@@ -37,6 +38,7 @@ func NewWorkspaceSnapshot(formulas []models.Formula, ingredients []models.Formul
 		FormulaIngredients: ingredients,
 		AromaChemicals:     chemicals,
 		Theme:              theme,
+		UserID:             userID,
 	}
 }
 
@@ -51,10 +53,12 @@ func (s WorkspaceSnapshot) SeedsJSON() string {
 		Formulas           []models.Formula           `json:"formulas"`
 		FormulaIngredients []models.FormulaIngredient `json:"formula_ingredients"`
 		AromaChemicals     []models.AromaChemical     `json:"aroma_chemicals"`
+		CurrentUserID      uint                       `json:"current_user_id"`
 	}{
 		Formulas:           s.Formulas,
 		FormulaIngredients: s.FormulaIngredients,
 		AromaChemicals:     s.AromaChemicals,
+		CurrentUserID:      s.UserID,
 	}
 
 	bytes, err := json.Marshal(payload)

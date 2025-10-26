@@ -72,6 +72,8 @@ func seed(ctx context.Context, db *gorm.DB) error {
 		Type:                "Top Note",
 		Strength:            3,
 		RecommendedDilution: 0.1,
+		OwnerID:             user.ID,
+		Public:              true,
 	}
 
 	iris := models.AromaChemical{
@@ -81,6 +83,7 @@ func seed(ctx context.Context, db *gorm.DB) error {
 		Type:                "Heart Note",
 		Strength:            4,
 		RecommendedDilution: 0.05,
+		OwnerID:             user.ID,
 	}
 
 	ambroxan := models.AromaChemical{
@@ -90,6 +93,7 @@ func seed(ctx context.Context, db *gorm.DB) error {
 		Type:                "Base Note",
 		Strength:            5,
 		RecommendedDilution: 0.02,
+		OwnerID:             user.ID,
 	}
 
 	chemicals := []*models.AromaChemical{&bergamot, &iris, &ambroxan}

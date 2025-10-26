@@ -21,7 +21,7 @@ func TestLoadWorkspaceDataReturnsChemicals(t *testing.T) {
 		t.Fatalf("request: %v", err)
 	}
 
-	_, _, chemicals := loadWorkspaceData(req)
+	_, _, chemicals := loadWorkspaceData(req, 0)
 	if len(chemicals) == 0 {
 		t.Fatalf("expected chemicals from workspace load, got none")
 	}
