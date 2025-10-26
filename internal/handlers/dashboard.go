@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 	"strings"
 
@@ -34,6 +35,13 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 	if isHTMX(r) {
 		applog.Debug(r.Context(), "rendering HTMX workspace partial")
 		component = pages.WorkspaceSection(section, snapshot)
+
+		payload, err := json.Marshal(map[string]string{"workspace:theme": snapshot.Theme})
+		if err != nil {
+			applog.Error(r.Context(), "failed to encode workspace theme trigger", "error", err)
+		} else {
+			w.Header().Set("HX-Trigger-After-Swap", string(payload))
+		}
 	} else {
 		applog.Debug(r.Context(), "rendering full workspace page")
 		component = pages.Workspace(section, snapshot)
