@@ -19,6 +19,7 @@ const (
 	sessionUserIDKey        = "auth:user:id"
 	sessionUserEmailKey     = "auth:user:email"
 	sessionUserNameKey      = "auth:user:name"
+	sessionUserThemeKey     = "auth:user:theme"
 )
 
 var (
@@ -135,6 +136,7 @@ func establishSession(r *http.Request, user *models.User) error {
 	sessionManager.Put(r.Context(), sessionUserIDKey, int(user.ID))
 	sessionManager.Put(r.Context(), sessionUserEmailKey, user.Email)
 	sessionManager.Put(r.Context(), sessionUserNameKey, user.Name)
+	sessionManager.Put(r.Context(), sessionUserThemeKey, user.Theme)
 	applog.Debug(r.Context(), "session established", "userID", user.ID)
 	return nil
 }
