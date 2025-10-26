@@ -881,10 +881,39 @@ templ workspaceModulesScript() {
                                         });
                                 };
 
+                                const ensureThemeSelection = function () {
+                                        if (themeSelect && themeSelect.value) {
+                                                return themeSelect.value;
+                                        }
+
+                                        const activeButton = themeButtons.find(function (button) {
+                                                return button && button.dataset && button.dataset.state === 'active' && button.dataset.themeChoice;
+                                        });
+                                        if (activeButton && activeButton.dataset.themeChoice) {
+                                                if (themeSelect) {
+                                                        themeSelect.value = activeButton.dataset.themeChoice;
+                                                }
+                                                return activeButton.dataset.themeChoice;
+                                        }
+
+                                        const fallbackButton = themeButtons.find(function (button) {
+                                                return button && button.dataset && button.dataset.themeChoice;
+                                        });
+                                        if (fallbackButton && fallbackButton.dataset.themeChoice) {
+                                                if (themeSelect) {
+                                                        themeSelect.value = fallbackButton.dataset.themeChoice;
+                                                }
+                                                return fallbackButton.dataset.themeChoice;
+                                        }
+
+                                        return '';
+                                };
+
                                 if (themeSelect) {
-                                        updateButtons(themeSelect.value);
+                                        const resolvedTheme = ensureThemeSelection();
+                                        updateButtons(resolvedTheme);
                                         themeSelect.addEventListener('change', function () {
-                                                const value = themeSelect.value;
+                                                const value = ensureThemeSelection();
                                                 updateButtons(value);
                                                 if (namespace.updateTheme) {
                                                         namespace.updateTheme(value);
@@ -921,6 +950,10 @@ templ workspaceModulesScript() {
 
                                         try {
                                                 const formData = new FormData(form);
+                                                const selectedTheme = ensureThemeSelection();
+                                                if (selectedTheme) {
+                                                        formData.set('theme', selectedTheme);
+                                                }
                                                 const response = await fetch(form.getAttribute('action') || '/app/preferences', {
                                                         method: 'POST',
                                                         body: formData,
