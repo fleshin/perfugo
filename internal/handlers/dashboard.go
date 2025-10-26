@@ -25,11 +25,14 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 
 	theme := loadCurrentUserTheme(r)
 	applog.Debug(r.Context(), "workspace theme resolved", "theme", theme)
+	userID, _ := currentUserID(r)
+
 	snapshot := pages.EmptyWorkspaceSnapshot()
 	snapshot.Theme = theme
+	snapshot.UserID = userID
 	if database != nil {
-		formulas, ingredients, chemicals := loadWorkspaceData(r)
-		snapshot = pages.NewWorkspaceSnapshot(formulas, ingredients, chemicals, theme)
+		formulas, ingredients, chemicals := loadWorkspaceData(r, userID)
+		snapshot = pages.NewWorkspaceSnapshot(formulas, ingredients, chemicals, theme, userID)
 	}
 
 	var component templpkg.Component
@@ -47,11 +50,11 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func loadWorkspaceData(r *http.Request) ([]models.Formula, []models.FormulaIngredient, []models.AromaChemical) {
+func loadWorkspaceData(r *http.Request, userID uint) ([]models.Formula, []models.FormulaIngredient, []models.AromaChemical) {
 	ctx := r.Context()
 	formulas := loadFormulas(ctx)
 	ingredients := loadFormulaIngredients(ctx)
-	chemicals := loadAromaChemicals(ctx)
+	chemicals := loadAromaChemicals(ctx, userID)
 
 	applog.Debug(ctx, "workspace dataset loaded",
 		"formulas", len(formulas),
@@ -96,17 +99,24 @@ func loadFormulaIngredients(ctx context.Context) []models.FormulaIngredient {
 	return results
 }
 
-func loadAromaChemicals(ctx context.Context) []models.AromaChemical {
+func loadAromaChemicals(ctx context.Context, userID uint) []models.AromaChemical {
 	results := []models.AromaChemical{}
 	if database == nil {
 		return results
 	}
 
-	if err := database.WithContext(ctx).
+	query := database.WithContext(ctx).
 		Model(&models.AromaChemical{}).
 		Preload("OtherNames").
-		Order("ingredient_name asc").
-		Find(&results).Error; err != nil {
+		Order("ingredient_name asc")
+
+	if userID == 0 {
+		query = query.Where("public = ?", true)
+	} else {
+		query = query.Where("owner_id = ? OR public = ?", userID, true)
+	}
+
+	if err := query.Find(&results).Error; err != nil {
 		applog.Error(ctx, "failed to load aroma chemicals for workspace", "error", err)
 	}
 	return results

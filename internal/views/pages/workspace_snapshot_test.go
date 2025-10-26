@@ -21,7 +21,7 @@ func TestNewWorkspaceSnapshotSortsCollections(t *testing.T) {
 		{Model: gorm.Model{ID: 1}, IngredientName: "A"},
 	}
 
-	snapshot := NewWorkspaceSnapshot(formulas, ingredients, chemicals, models.ThemeNocturne)
+	snapshot := NewWorkspaceSnapshot(formulas, ingredients, chemicals, models.ThemeNocturne, 9)
 
 	if snapshot.Formulas[0].Name != "A" {
 		t.Fatalf("expected formulas to be sorted by name: %v", snapshot.Formulas)
@@ -32,6 +32,9 @@ func TestNewWorkspaceSnapshotSortsCollections(t *testing.T) {
 	if snapshot.AromaChemicals[0].IngredientName != "A" {
 		t.Fatalf("expected aroma chemicals sorted alphabetically: %v", snapshot.AromaChemicals)
 	}
+	if snapshot.UserID != 9 {
+		t.Fatalf("expected snapshot user id to be set, got %d", snapshot.UserID)
+	}
 }
 
 func TestWorkspaceSnapshotSeedsJSON(t *testing.T) {
@@ -39,6 +42,7 @@ func TestWorkspaceSnapshotSeedsJSON(t *testing.T) {
 		Formulas:           []models.Formula{{Name: "F"}},
 		FormulaIngredients: []models.FormulaIngredient{{Amount: 1}},
 		AromaChemicals:     []models.AromaChemical{{IngredientName: "C"}},
+		UserID:             12,
 	}
 
 	data := snapshot.SeedsJSON()
@@ -48,6 +52,9 @@ func TestWorkspaceSnapshotSeedsJSON(t *testing.T) {
 	}
 	if _, ok := parsed["formulas"]; !ok {
 		t.Fatalf("expected formulas key in seeds json: %s", data)
+	}
+	if _, ok := parsed["current_user_id"]; !ok {
+		t.Fatalf("expected current_user_id in seeds json: %s", data)
 	}
 }
 

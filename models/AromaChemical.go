@@ -22,6 +22,9 @@ type AromaChemical struct {
 	HistoricRole        string      `json:"historic_role"`
 	Popularity          int         `json:"popularity"`
 	Usage               string      `gorm:"type:text" json:"usage"`
+	OwnerID             uint        `gorm:"not null" json:"owner_id"`
+	Owner               *User       `gorm:"foreignKey:OwnerID" json:"owner,omitempty"`
+	Public              bool        `gorm:"not null;default:false" json:"public"`
 }
 
 // OtherName holds an alternative name for an AromaChemical.

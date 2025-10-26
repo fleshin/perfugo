@@ -133,7 +133,105 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
 					</div>
 				</div>
 			</header>
-			<div class="mt-4 overflow-hidden rounded-3xl border border-white/10">
+                    <div data-chemical-editor class="hidden mt-6 space-y-5 rounded-3xl border border-white/10 bg-black/35 p-6 text-sm text-white/70 backdrop-blur-xl">
+                            <header class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                                    <div class="space-y-1">
+                                            <h4 class="text-lg font-semibold text-white" data-chemical-title>Ingredient Details</h4>
+                                            <p class="text-xs uppercase tracking-[0.35em] text-white/40" data-chemical-meta></p>
+                                            <p class="hidden text-xs text-white/50" data-chemical-readonly>This ingredient is read-only. Copy it to customise your own version.</p>
+                                    </div>
+                                    <div class="flex gap-3 text-[0.6rem] tracking-[0.45em]">
+                                            <button type="button" data-role="copy-selected" class="hidden rounded-full border border-white/15 px-4 py-2 text-white/60 transition hover:border-white/30 hover:text-white">Copy to Edit</button>
+                                    </div>
+                            </header>
+                            <form id="chemical-editor-form" data-chemical-form class="space-y-5">
+                                    <input type="hidden" name="id"/>
+                                    <div class="grid gap-4 md:grid-cols-2">
+                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                    Ingredient Name
+                                                    <input type="text" name="ingredientName" required class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+                                            </label>
+                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                    CAS Number
+                                                    <input type="text" name="casNumber" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+                                            </label>
+                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                    Ingredient Type
+                                                    <input type="text" name="type" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+                                            </label>
+                                            <label class="flex items-center justify-between rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-[0.6rem] tracking-[0.45em] text-white/60">
+                                                    <span>Publicly visible</span>
+                                                    <input type="checkbox" name="public" data-chemical-public class="h-4 w-4 rounded border-white/20 bg-black/40"/>
+                                            </label>
+                                    </div>
+                                    <div class="grid gap-4 md:grid-cols-3">
+                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                    Pyramid Position
+                                                    <input type="text" name="pyramidPosition" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+                                            </label>
+                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                    Wheel Position
+                                                    <input type="text" name="wheelPosition" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+                                            </label>
+                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                    Strength
+                                                    <input type="number" name="strength" min="0" max="10" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+                                            </label>
+                                    </div>
+                                    <div class="grid gap-4 md:grid-cols-4">
+                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                    Recommended Dilution
+                                                    <input type="number" name="recommendedDilution" step="0.01" min="0" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+                                            </label>
+                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                    Dilution %
+                                                    <input type="number" name="dilutionPercentage" step="0.01" min="0" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+                                            </label>
+                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                    Max IFRA %
+                                                    <input type="number" name="maxIfraPercentage" step="0.01" min="0" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+                                            </label>
+                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                    Price per mg
+                                                    <input type="number" name="pricePerMg" step="0.0001" min="0" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+                                            </label>
+                                    </div>
+                                    <div class="grid gap-4 md:grid-cols-3">
+                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                    Duration
+                                                    <input type="text" name="duration" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+                                            </label>
+                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                    Historic Role
+                                                    <input type="text" name="historicRole" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+                                            </label>
+                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                    Popularity
+                                                    <input type="number" name="popularity" min="0" max="10" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+                                            </label>
+                                    </div>
+                                    <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                            Usage Guidance
+                                            <textarea name="usage" rows="3" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"></textarea>
+                                    </label>
+                                    <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                            Notes
+                                            <textarea name="notes" rows="4" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"></textarea>
+                                    </label>
+                                    <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                            Other Names (comma separated)
+                                            <textarea name="otherNames" rows="2" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"></textarea>
+                                    </label>
+                                    <div class="flex flex-wrap items-center justify-between gap-3 text-[0.6rem] tracking-[0.45em]">
+                                            <span data-chemical-message class="text-white/60"></span>
+                                            <div class="flex gap-3">
+                                                    <button type="button" data-role="cancel-chemical" class="rounded-full border border-white/15 px-4 py-2 text-white/60 transition hover:border-white/30 hover:text-white">Cancel</button>
+                                                    <button type="submit" class="rounded-full bg-white px-6 py-2 text-[#050509] shadow-[0_18px_50px_rgba(255,255,255,0.25)] transition hover:bg-white/90" data-role="save-chemical">Save</button>
+                                            </div>
+                                    </div>
+                            </form>
+                    </div>
+                    <div class="mt-4 overflow-hidden rounded-3xl border border-white/10">
 				<table class="min-w-full divide-y divide-white/10 text-left text-sm text-white/70">
 					<thead class="bg-white/5 text-xs font-medium text-white/60">
 						<tr>
@@ -141,12 +239,13 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
 							<th class="px-5 py-4 font-medium">Pyramid</th>
 							<th class="px-5 py-4 font-medium">Wheel</th>
 							<th class="px-5 py-4 font-medium">Potency</th>
-							<th class="px-5 py-4 font-medium">Updated</th>
-						</tr>
-					</thead>
-					<tbody data-list class="divide-y divide-white/10">
-						for _, chemical := range snapshot.AromaChemicals {
-							<tr data-id={ chemical.ID } class="bg-black/25 text-white/80">
+                                                    <th class="px-5 py-4 font-medium">Updated</th>
+                                                    <th class="px-5 py-4 font-medium text-right">Actions</th>
+                                                </tr>
+                                        </thead>
+                                        <tbody data-list class="divide-y divide-white/10">
+                                                for _, chemical := range snapshot.AromaChemicals {
+                                                        <tr data-id={ chemical.ID } class="bg-black/25 text-white/80">
 								<td class="px-5 py-4">
 									<div class="font-medium text-white">{ chemical.IngredientName }</div>
 									<div class="text-xs text-white/40">
@@ -166,10 +265,18 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
 									<div class="font-medium text-white">{ AromaChemicalPotencyLabel(chemical.Strength) }</div>
 									<div class="text-xs text-white/40">Strength { chemical.Strength }</div>
 								</td>
-								<td class="px-5 py-4">{ chemical.UpdatedAt.UTC().Format("02 Jan 2006") }</td>
-							</tr>
-						}
-					</tbody>
+                                                                <td class="px-5 py-4">{ chemical.UpdatedAt.UTC().Format("02 Jan 2006") }</td>
+                                                                <td class="px-5 py-4">
+                                                                        <div class="flex items-center justify-end gap-2 text-xs">
+                                                                                <button type="button" data-role="open-chemical" class="rounded-full border border-white/20 px-3 py-1 text-white/70 transition hover:border-white/40 hover:text-white">View</button>
+                                                                                <button type="button" data-role="edit-chemical" class="hidden rounded-full border border-white/20 px-3 py-1 text-white/70 transition hover:border-white/40 hover:text-white">Edit</button>
+                                                                                <button type="button" data-role="copy-chemical" class="rounded-full border border-white/20 px-3 py-1 text-white/70 transition hover:border-white/40 hover:text-white">Copy</button>
+                                                                                <button type="button" data-role="delete-chemical" class="hidden rounded-full border border-rose-400/40 px-3 py-1 text-rose-300 transition hover:border-rose-300 hover:text-rose-200">Delete</button>
+                                                                        </div>
+                                                                </td>
+                                                        </tr>
+                                                }
+                                        </tbody>
 				</table>
 				<div data-empty-state class="hidden px-6 py-16 text-center text-sm text-white/60">No aroma chemicals match your filters yet.</div>
 				<div data-pagination class="hidden flex-col gap-3 border-t border-white/10 px-6 py-4 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
@@ -514,6 +621,10 @@ templ workspaceModulesScript() {
                                 return Number.isFinite(numeric) ? numeric : null;
                         };
 
+                        const currentUserId = toNumber(readValue(seeds, 'CurrentUserID', 'current_user_id'));
+                        namespace.session = namespace.session || {};
+                        namespace.session.userId = currentUserId;
+
                         const potencyLabel = (strength) => {
                                 const value = Number(strength) || 0;
                                 if (value >= 7) return 'Powerful';
@@ -557,6 +668,12 @@ templ workspaceModulesScript() {
                                                   .map((item) => readValue(item, 'Name', 'name'))
                                                   .filter((value) => typeof value === 'string' && value.trim().length > 0)
                                         : [];
+                                const ownerId = toNumber(readValue(entry, 'OwnerID', 'owner_id'));
+                                const isPublic = Boolean(readValue(entry, 'Public', 'public'));
+                                const updatedAt = readValue(entry, 'UpdatedAt', 'updated_at') || new Date().toISOString();
+                                const createdAt = readValue(entry, 'CreatedAt', 'created_at') || updatedAt;
+                                const canEdit = Number.isFinite(currentUserId) && ownerId != null && Number(ownerId) === Number(currentUserId);
+                                const canCopy = Boolean(isPublic || canEdit);
 
                                 return {
                                         id,
@@ -577,7 +694,13 @@ templ workspaceModulesScript() {
                                         pricePerMg: toNumber(readValue(entry, 'PricePerMg', 'price_per_mg')),
                                         popularity: toNumber(readValue(entry, 'Popularity', 'popularity')),
                                         otherNames,
-                                        updatedAt: readValue(entry, 'UpdatedAt', 'updated_at') || new Date().toISOString(),
+                                        updatedAt,
+                                        createdAt,
+                                        ownerId,
+                                        isPublic,
+                                        canEdit,
+                                        canDelete: canEdit,
+                                        canCopy,
                                 };
                         });
 
@@ -646,6 +769,20 @@ templ workspaceModulesScript() {
                                 const createForm = root.querySelector('form[data-action="create"]');
                                 const panel = root.querySelector('[data-edit-panel]');
                                 const editForm = panel ? panel.querySelector('form[data-action="edit"]') : null;
+                                const detailCard = root.querySelector('[data-chemical-editor]');
+                                const detailForm = detailCard ? detailCard.querySelector('[data-chemical-form]') : null;
+                                const detailMessage = detailCard ? detailCard.querySelector('[data-chemical-message]') : null;
+                                const detailTitle = detailCard ? detailCard.querySelector('[data-chemical-title]') : null;
+                                const detailMeta = detailCard ? detailCard.querySelector('[data-chemical-meta]') : null;
+                                const detailReadonly = detailCard ? detailCard.querySelector('[data-chemical-readonly]') : null;
+                                const detailSaveButton = detailCard ? detailCard.querySelector('[data-role="save-chemical"]') : null;
+                                const detailCopySelected = detailCard ? detailCard.querySelector('[data-role="copy-selected"]') : null;
+                                const detailCancelButtons = detailCard ? Array.from(detailCard.querySelectorAll('[data-role="cancel-chemical"]')) : [];
+                                const detailPublicToggle = detailCard ? detailCard.querySelector('[data-chemical-public]') : null;
+
+                                let currentChemical = null;
+                                let selectedChemicalId = null;
+                                let submittingChemical = false;
 
                                 const escapeHTML = (value) => (value || '').toString().replace(/[&<]/g, (char) => (char === '&' ? '&amp;' : '&lt;'));
                                 const dash = (value) => {
@@ -655,6 +792,384 @@ templ workspaceModulesScript() {
                                         return value.trim().length ? value : '—';
                                 };
 
+                                const fetchJSON = async (url, options = {}) => {
+                                        const headers = { Accept: 'application/json', ...(options.headers || {}) };
+                                        const config = { ...options, headers };
+                                        if (config.body && !(config.body instanceof FormData) && !headers['Content-Type']) {
+                                                config.headers['Content-Type'] = 'application/json';
+                                        }
+                                        const response = await fetch(url, config);
+                                        let payload = null;
+                                        const contentType = response.headers.get('Content-Type') || '';
+                                        if (contentType.includes('application/json')) {
+                                                try {
+                                                        payload = await response.json();
+                                                } catch (error) {
+                                                        payload = null;
+                                                }
+                                        }
+                                        if (!response.ok) {
+                                                const message = payload && payload.error ? payload.error : response.statusText || 'Request failed';
+                                                const err = new Error(message);
+                                                err.status = response.status;
+                                                err.payload = payload;
+                                                throw err;
+                                        }
+                                        return payload;
+                                };
+
+                                const normaliseChemicalPayload = (payload) => {
+                                        if (!payload) {
+                                                return null;
+                                        }
+                                        const strengthValue = toNumber(payload.strength) ?? 0;
+                                        const ownerIdValue = toNumber(payload.owner_id);
+                                        const isPublic = Boolean(payload.public);
+                                        const baseName = (payload.ingredient_name || '').toString().trim();
+                                        const name = baseName || (payload.id ? `Chemical #${payload.id}` : 'Unassigned Chemical');
+                                        const otherNames = Array.isArray(payload.other_names)
+                                                ? payload.other_names
+                                                          .map((entry) => (typeof entry === 'string' ? entry.trim() : ''))
+                                                          .filter((entry) => entry.length > 0)
+                                                : [];
+
+                                        const normalized = {
+                                                id: payload.id,
+                                                name,
+                                                casNumber: (payload.cas_number || '').toString(),
+                                                pyramid: (payload.pyramid_position || '').toString(),
+                                                wheel: (payload.wheel_position || '').toString(),
+                                                type: (payload.type || '').toString(),
+                                                potency: potencyLabel(strengthValue),
+                                                strength: strengthValue,
+                                                duration: (payload.duration || '').toString(),
+                                                notes: (payload.notes || '').toString(),
+                                                usage: (payload.usage || '').toString(),
+                                                historicRole: (payload.historic_role || '').toString(),
+                                                recommendedDilution: toNumber(payload.recommended_dilution),
+                                                dilutionPercentage: toNumber(payload.dilution_percentage),
+                                                maxIFRA: toNumber(payload.max_ifra_percentage),
+                                                pricePerMg: toNumber(payload.price_per_mg),
+                                                popularity: toNumber(payload.popularity),
+                                                otherNames,
+                                                updatedAt: payload.updated_at || new Date().toISOString(),
+                                                createdAt: payload.created_at || payload.updated_at || new Date().toISOString(),
+                                                ownerId: Number.isFinite(ownerIdValue) ? ownerIdValue : null,
+                                                isPublic,
+                                                canEdit: Boolean(payload.can_edit),
+                                                canDelete: Boolean(payload.can_delete),
+                                                canCopy: payload.can_copy !== undefined ? Boolean(payload.can_copy) : Boolean(isPublic || (Number.isFinite(ownerIdValue) && Number(ownerIdValue) === Number(currentUserId))),
+                                        };
+
+                                        if (!payload.can_edit && Number.isFinite(ownerIdValue) && Number(ownerIdValue) === Number(currentUserId)) {
+                                                normalized.canEdit = true;
+                                                normalized.canDelete = true;
+                                        }
+                                        if (normalized.canCopy === undefined) {
+                                                normalized.canCopy = Boolean(isPublic || normalized.canEdit);
+                                        }
+                                        return normalized;
+                                };
+
+                                const updateChemicalStore = (payload) => {
+                                        const normalized = normaliseChemicalPayload(payload);
+                                        if (!normalized) {
+                                                return null;
+                                        }
+                                        const index = namespace.store.chemicals.findIndex((item) => Number(item.id) === Number(normalized.id));
+                                        if (index === -1) {
+                                                namespace.store.chemicals.push(normalized);
+                                        } else {
+                                                namespace.store.chemicals[index] = { ...namespace.store.chemicals[index], ...normalized };
+                                        }
+                                        rebuildFilterOptions();
+                                        refreshSelects();
+                                        emit('chemicals:updated');
+                                        return normalized;
+                                };
+
+                                const removeChemicalFromStore = (id) => {
+                                        namespace.store.chemicals = namespace.store.chemicals.filter((item) => Number(item.id) !== Number(id));
+                                        rebuildFilterOptions();
+                                        refreshSelects();
+                                        emit('chemicals:updated');
+                                };
+
+                                const setDetailMessage = (message, tone) => {
+                                        if (!detailMessage) {
+                                                return;
+                                        }
+                                        detailMessage.textContent = message || '';
+                                        detailMessage.classList.remove('text-emerald-300', 'text-rose-300', 'text-white/60');
+                                        if (!message) {
+                                                detailMessage.classList.add('text-white/60');
+                                                return;
+                                        }
+                                        if (tone === 'success') {
+                                                detailMessage.classList.add('text-emerald-300');
+                                        } else if (tone === 'error') {
+                                                detailMessage.classList.add('text-rose-300');
+                                        }
+                                };
+
+                                const populateDetail = (chemical) => {
+                                        if (!detailForm || !chemical) {
+                                                return;
+                                        }
+                                        const setField = (name, value) => {
+                                                const field = detailForm.querySelector(`[name="${name}"]`);
+                                                if (!field) return;
+                                                if (field.type === 'number') {
+                                                        field.value = value === null || value === undefined || Number.isNaN(value) ? '' : value;
+                                                        return;
+                                                }
+                                                field.value = value || '';
+                                        };
+
+                                        setField('id', chemical.id || '');
+                                        setField('ingredientName', chemical.name);
+                                        setField('casNumber', chemical.casNumber);
+                                        setField('type', chemical.type);
+                                        setField('pyramidPosition', chemical.pyramid);
+                                        setField('wheelPosition', chemical.wheel);
+                                        setField('strength', Number.isFinite(chemical.strength) ? chemical.strength : '');
+                                        setField('recommendedDilution', chemical.recommendedDilution);
+                                        setField('dilutionPercentage', chemical.dilutionPercentage);
+                                        setField('maxIfraPercentage', chemical.maxIFRA);
+                                        setField('pricePerMg', chemical.pricePerMg);
+                                        setField('duration', chemical.duration);
+                                        setField('historicRole', chemical.historicRole);
+                                        setField('popularity', Number.isFinite(chemical.popularity) ? chemical.popularity : '');
+                                        setField('usage', chemical.usage);
+                                        setField('notes', chemical.notes);
+                                        setField('otherNames', chemical.otherNames && chemical.otherNames.length ? chemical.otherNames.join(', ') : '');
+                                        if (detailPublicToggle) {
+                                                detailPublicToggle.checked = Boolean(chemical.isPublic);
+                                        }
+                                        if (detailTitle) {
+                                                detailTitle.textContent = chemical.name;
+                                        }
+                                        if (detailMeta) {
+                                                const segments = [];
+                                                if (chemical.updatedAt) {
+                                                        const updatedDate = new Date(chemical.updatedAt);
+                                                        if (!Number.isNaN(updatedDate.valueOf())) {
+                                                                segments.push(`Updated ${updatedDate.toLocaleString()}`);
+                                                        }
+                                                }
+                                                segments.push(chemical.isPublic ? 'Public' : 'Private');
+                                                if (Number.isFinite(chemical.ownerId)) {
+                                                        if (currentUserId != null && Number(chemical.ownerId) === Number(currentUserId)) {
+                                                                segments.push('Owned by you');
+                                                        }
+                                                }
+                                                detailMeta.textContent = segments.join(' • ');
+                                        }
+                                };
+
+                                const setDetailEditable = (editable) => {
+                                        if (!detailForm) {
+                                                return;
+                                        }
+                                        const controls = Array.from(detailForm.querySelectorAll('input, textarea, select'));
+                                        controls.forEach((field) => {
+                                                if (field.name === 'id') {
+                                                        return;
+                                                }
+                                                if (field.type === 'checkbox') {
+                                                        field.disabled = !editable;
+                                                        return;
+                                                }
+                                                if (editable) {
+                                                        field.removeAttribute('readonly');
+                                                        field.classList.remove('pointer-events-none');
+                                                } else {
+                                                        field.setAttribute('readonly', 'readonly');
+                                                }
+                                        });
+                                        if (detailPublicToggle) {
+                                                detailPublicToggle.disabled = !editable;
+                                        }
+                                        if (detailSaveButton) {
+                                                detailSaveButton.classList.toggle('hidden', !editable);
+                                                detailSaveButton.disabled = !editable && detailSaveButton.disabled;
+                                        }
+                                        if (detailReadonly) {
+                                                const showReadonly = currentChemical && currentChemical.canCopy && !currentChemical.canEdit && !editable;
+                                                detailReadonly.classList.toggle('hidden', !showReadonly);
+                                        }
+                                        if (detailCopySelected) {
+                                                const allowCopy = currentChemical && currentChemical.canCopy && !currentChemical.canEdit;
+                                                detailCopySelected.classList.toggle('hidden', !allowCopy);
+                                        }
+                                };
+
+                                const showDetailCard = () => {
+                                        if (!detailCard) {
+                                                return;
+                                        }
+                                        detailCard.classList.remove('hidden');
+                                };
+
+                                const hideDetailCard = () => {
+                                        if (!detailCard) {
+                                                return;
+                                        }
+                                        detailCard.classList.add('hidden');
+                                        if (detailForm) {
+                                                detailForm.reset();
+                                        }
+                                        selectedChemicalId = null;
+                                        currentChemical = null;
+                                        setDetailMessage('');
+                                };
+
+                                const loadChemical = async (id, mode = 'view') => {
+                                        if (!id) {
+                                                return;
+                                        }
+                                        try {
+                                                setDetailMessage('');
+                                                const payload = await fetchJSON(`/app/api/aroma-chemicals/${id}`);
+                                                const normalized = updateChemicalStore(payload) || normaliseChemicalPayload(payload);
+                                                if (!normalized) {
+                                                        return;
+                                                }
+                                                currentChemical = normalized;
+                                                selectedChemicalId = normalized.id;
+                                                populateDetail(normalized);
+                                                showDetailCard();
+                                                const editable = mode === 'edit' && normalized.canEdit;
+                                                setDetailEditable(editable);
+                                                if (mode === 'edit' && !normalized.canEdit) {
+                                                        setDetailMessage('You can only edit ingredients you own.', 'error');
+                                                }
+                                        } catch (error) {
+                                                setDetailMessage(error.message || 'Unable to load ingredient.', 'error');
+                                        }
+                                };
+
+                                const copyChemical = async (id) => {
+                                        if (!id) {
+                                                return;
+                                        }
+                                        try {
+                                                setDetailMessage('');
+                                                const payload = await fetchJSON(`/app/api/aroma-chemicals/${id}/copy`, { method: 'POST' });
+                                                const normalized = updateChemicalStore(payload);
+                                                if (!normalized) {
+                                                        return;
+                                                }
+                                                currentChemical = normalized;
+                                                selectedChemicalId = normalized.id;
+                                                populateDetail(normalized);
+                                                showDetailCard();
+                                                setDetailEditable(true);
+                                                setDetailMessage('Ingredient copied. Update the details and save.', 'success');
+                                        } catch (error) {
+                                                setDetailMessage(error.message || 'Unable to copy ingredient.', 'error');
+                                        }
+                                };
+
+                                const deleteChemical = async (id) => {
+                                        if (!id) {
+                                                return;
+                                        }
+                                        if (!window.confirm('Are you sure you want to delete this ingredient?')) {
+                                                return;
+                                        }
+                                        try {
+                                                setDetailMessage('');
+                                                await fetchJSON(`/app/api/aroma-chemicals/${id}`, { method: 'DELETE' });
+                                                removeChemicalFromStore(id);
+                                                if (selectedChemicalId === id) {
+                                                        hideDetailCard();
+                                                }
+                                                setDetailMessage('Ingredient deleted.', 'success');
+                                        } catch (error) {
+                                                setDetailMessage(error.message || 'Unable to delete ingredient.', 'error');
+                                        }
+                                };
+
+                                const serialiseChemicalForm = () => {
+                                        if (!detailForm) {
+                                                return null;
+                                        }
+                                        const form = new FormData(detailForm);
+                                        const parseFloatField = (value) => {
+                                                const numeric = parseFloat(value);
+                                                return Number.isFinite(numeric) ? numeric : 0;
+                                        };
+                                        const parseIntField = (value) => {
+                                                const numeric = parseInt(value, 10);
+                                                return Number.isNaN(numeric) ? 0 : numeric;
+                                        };
+                                        const otherNamesRaw = (form.get('otherNames') || '').toString();
+                                        const otherNames = otherNamesRaw
+                                                .split(/[,\n]/)
+                                                .map((value) => value.trim())
+                                                .filter((value) => value.length > 0);
+
+                                        return {
+                                                ingredient_name: (form.get('ingredientName') || '').toString().trim(),
+                                                cas_number: (form.get('casNumber') || '').toString().trim(),
+                                                type: (form.get('type') || '').toString().trim(),
+                                                pyramid_position: (form.get('pyramidPosition') || '').toString().trim(),
+                                                wheel_position: (form.get('wheelPosition') || '').toString().trim(),
+                                                strength: parseIntField(form.get('strength')), 
+                                                recommended_dilution: parseFloatField(form.get('recommendedDilution')),
+                                                dilution_percentage: parseFloatField(form.get('dilutionPercentage')),
+                                                max_ifra_percentage: parseFloatField(form.get('maxIfraPercentage')),
+                                                price_per_mg: parseFloatField(form.get('pricePerMg')),
+                                                duration: (form.get('duration') || '').toString().trim(),
+                                                historic_role: (form.get('historicRole') || '').toString().trim(),
+                                                popularity: parseIntField(form.get('popularity')),
+                                                usage: (form.get('usage') || '').toString().trim(),
+                                                notes: (form.get('notes') || '').toString().trim(),
+                                                public: detailPublicToggle ? detailPublicToggle.checked : form.get('public') !== null,
+                                                other_names: otherNames,
+                                        };
+                                };
+
+                                const submitChemicalForm = async () => {
+                                        if (!detailForm || !currentChemical || !currentChemical.canEdit || submittingChemical) {
+                                                return;
+                                        }
+                                        const payload = serialiseChemicalForm();
+                                        if (!payload || !payload.ingredient_name) {
+                                                setDetailMessage('Ingredient name is required.', 'error');
+                                                return;
+                                        }
+                                        submittingChemical = true;
+                                        if (detailSaveButton) {
+                                                detailSaveButton.disabled = true;
+                                                detailSaveButton.textContent = 'Saving…';
+                                        }
+                                        try {
+                                                const response = await fetchJSON(`/app/api/aroma-chemicals/${currentChemical.id}`, {
+                                                        method: 'PUT',
+                                                        body: JSON.stringify(payload),
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                });
+                                                const normalized = updateChemicalStore(response);
+                                                if (normalized) {
+                                                        currentChemical = normalized;
+                                                        selectedChemicalId = normalized.id;
+                                                        populateDetail(normalized);
+                                                        setDetailEditable(true);
+                                                        setDetailMessage('Ingredient saved.', 'success');
+                                                }
+                                        } catch (error) {
+                                                setDetailMessage(error.message || 'Unable to save ingredient.', 'error');
+                                        } finally {
+                                                submittingChemical = false;
+                                                if (detailSaveButton) {
+                                                        detailSaveButton.disabled = false;
+                                                        detailSaveButton.textContent = 'Save';
+                                                }
+                                        }
+                                };
+
                                 const optionSets = {
                                         pyramid: new Set(),
                                         wheel: new Set(),
@@ -662,17 +1177,6 @@ templ workspaceModulesScript() {
                                         type: new Set(),
                                 };
                                 const unknownFlags = { pyramid: false, wheel: false, potency: false, type: false };
-
-                                namespace.store.chemicals.forEach((chemical) => {
-                                        if (chemical.pyramid) optionSets.pyramid.add(chemical.pyramid);
-                                        else unknownFlags.pyramid = true;
-                                        if (chemical.wheel) optionSets.wheel.add(chemical.wheel);
-                                        else unknownFlags.wheel = true;
-                                        if (chemical.potency && chemical.potency !== 'Unknown') optionSets.potency.add(chemical.potency);
-                                        else unknownFlags.potency = true;
-                                        if (chemical.type) optionSets.type.add(chemical.type);
-                                        else unknownFlags.type = true;
-                                });
 
                                 const potencyOrder = ['Powerful', 'Strong', 'Moderate', 'Delicate'];
 
@@ -696,17 +1200,41 @@ templ workspaceModulesScript() {
                                         element.value = 'all';
                                 };
 
-                                populateSelect(pyramidSelect, optionSets.pyramid, 'All pyramid positions', unknownFlags.pyramid);
-                                populateSelect(wheelSelect, optionSets.wheel, 'All wheel families', unknownFlags.wheel);
-                                populateSelect(potencySelect, optionSets.potency, 'All potencies', unknownFlags.potency, (a, b) => {
-                                        const indexA = potencyOrder.indexOf(a);
-                                        const indexB = potencyOrder.indexOf(b);
-                                        if (indexA === -1 && indexB === -1) return a.localeCompare(b);
-                                        if (indexA === -1) return 1;
-                                        if (indexB === -1) return -1;
-                                        return indexA - indexB;
-                                });
-                                populateSelect(typeSelect, optionSets.type, 'All ingredient types', unknownFlags.type);
+                                const rebuildFilterOptions = () => {
+                                        optionSets.pyramid.clear();
+                                        optionSets.wheel.clear();
+                                        optionSets.potency.clear();
+                                        optionSets.type.clear();
+                                        unknownFlags.pyramid = false;
+                                        unknownFlags.wheel = false;
+                                        unknownFlags.potency = false;
+                                        unknownFlags.type = false;
+
+                                        namespace.store.chemicals.forEach((chemical) => {
+                                                if (chemical.pyramid) optionSets.pyramid.add(chemical.pyramid);
+                                                else unknownFlags.pyramid = true;
+                                                if (chemical.wheel) optionSets.wheel.add(chemical.wheel);
+                                                else unknownFlags.wheel = true;
+                                                if (chemical.potency && chemical.potency !== 'Unknown') optionSets.potency.add(chemical.potency);
+                                                else unknownFlags.potency = true;
+                                                if (chemical.type) optionSets.type.add(chemical.type);
+                                                else unknownFlags.type = true;
+                                        });
+
+                                        populateSelect(pyramidSelect, optionSets.pyramid, 'All pyramid positions', unknownFlags.pyramid);
+                                        populateSelect(wheelSelect, optionSets.wheel, 'All wheel families', unknownFlags.wheel);
+                                        populateSelect(potencySelect, optionSets.potency, 'All potencies', unknownFlags.potency, (a, b) => {
+                                                const indexA = potencyOrder.indexOf(a);
+                                                const indexB = potencyOrder.indexOf(b);
+                                                if (indexA === -1 && indexB === -1) return a.localeCompare(b);
+                                                if (indexA === -1) return 1;
+                                                if (indexB === -1) return -1;
+                                                return indexA - indexB;
+                                        });
+                                        populateSelect(typeSelect, optionSets.type, 'All ingredient types', unknownFlags.type);
+                                };
+
+                                rebuildFilterOptions();
 
                                 const applyFilters = () => {
                                         const searchText = state.search.trim();
@@ -784,7 +1312,18 @@ templ workspaceModulesScript() {
                                                                                 ? updatedAt.toLocaleDateString()
                                                                                 : '—';
                                                                         const strengthLabel = Number.isFinite(chemical.strength) ? chemical.strength : '—';
-                                                                        return `<tr data-id="${chemical.id}" class="bg-black/25 text-white/80">
+                                                                        const actionButtons = [];
+                                                                        actionButtons.push('<button type="button" data-role="open-chemical" class="rounded-full border border-white/20 px-3 py-1 text-white/70 transition hover:border-white/40 hover:text-white">View</button>');
+                                                                        if (chemical.canEdit) {
+                                                                                actionButtons.push('<button type="button" data-role="edit-chemical" class="rounded-full border border-white/20 px-3 py-1 text-white/70 transition hover:border-white/40 hover:text-white">Edit</button>');
+                                                                        }
+                                                                        if (chemical.canCopy) {
+                                                                                actionButtons.push('<button type="button" data-role="copy-chemical" class="rounded-full border border-white/20 px-3 py-1 text-white/70 transition hover:border-white/40 hover:text-white">Copy</button>');
+                                                                        }
+                                                                        if (chemical.canDelete) {
+                                                                                actionButtons.push('<button type="button" data-role="delete-chemical" class="rounded-full border border-rose-400/40 px-3 py-1 text-rose-300 transition hover:border-rose-300 hover:text-rose-200">Delete</button>');
+                                                                        }
+                                                                        return `<tr data-id="${chemical.id}" data-owner="${chemical.ownerId ?? ''}" data-public="${chemical.isPublic ? '1' : '0'}" class="bg-black/25 text-white/80">
                                                                 <td class="px-5 py-4">
                                                                         <div class="font-medium text-white">${escapeHTML(chemical.name)}</div>
                                                                         <div class="text-xs   text-white/40">${casLabel}${typeLabel}</div>
@@ -796,6 +1335,9 @@ templ workspaceModulesScript() {
                                                                         <div class="text-xs   text-white/40">Strength ${strengthLabel}</div>
                                                                 </td>
                                                                 <td class="px-5 py-4">${escapeHTML(updatedLabel)}</td>
+                                                                <td class="px-5 py-4">
+                                                                        <div class="flex items-center justify-end gap-2 text-xs">${actionButtons.join('')}</div>
+                                                                </td>
                                                         </tr>`;
                                                                 })
                                                                 .join('');
@@ -836,6 +1378,59 @@ templ workspaceModulesScript() {
                                 on('formulas:updated', () => { refreshSelects(); render(); });
                                 on('ingredients:updated', render);
                                 on('chemicals:updated', render);
+
+                                if (list) {
+                                        list.addEventListener('click', (event) => {
+                                                const trigger = event.target.closest('button[data-role]');
+                                                if (!trigger) {
+                                                        return;
+                                                }
+                                                const row = trigger.closest('tr[data-id]');
+                                                const id = row ? Number(row.getAttribute('data-id')) : null;
+                                                if (!id) {
+                                                        return;
+                                                }
+                                                event.preventDefault();
+                                                if (trigger.dataset.role === 'open-chemical') {
+                                                        loadChemical(id, 'view');
+                                                        return;
+                                                }
+                                                if (trigger.dataset.role === 'edit-chemical') {
+                                                        loadChemical(id, 'edit');
+                                                        return;
+                                                }
+                                                if (trigger.dataset.role === 'copy-chemical') {
+                                                        copyChemical(id);
+                                                        return;
+                                                }
+                                                if (trigger.dataset.role === 'delete-chemical') {
+                                                        deleteChemical(id);
+                                                }
+                                        });
+                                }
+
+                                if (detailForm) {
+                                        detailForm.addEventListener('submit', (event) => {
+                                                event.preventDefault();
+                                                submitChemicalForm();
+                                        });
+                                }
+
+                                detailCancelButtons.forEach((button) => {
+                                        button.addEventListener('click', (event) => {
+                                                event.preventDefault();
+                                                hideDetailCard();
+                                        });
+                                });
+
+                                if (detailCopySelected) {
+                                        detailCopySelected.addEventListener('click', (event) => {
+                                                event.preventDefault();
+                                                if (currentChemical) {
+                                                        copyChemical(currentChemical.id);
+                                                }
+                                        });
+                                }
 
                                 const openPanel = () => {
                                         if (!panel) return;

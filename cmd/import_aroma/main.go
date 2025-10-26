@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/csv"
 	"errors"
 	"fmt"
@@ -65,10 +66,16 @@ func run(csvPath string) error {
 		return fmt.Errorf("read csv: %w", err)
 	}
 
+	ownerID, err := resolveImportOwner(database)
+	if err != nil {
+		return fmt.Errorf("resolve owner: %w", err)
+	}
+
 	imported := 0
 	for idx, record := range records {
 		if err := database.Transaction(func(tx *gorm.DB) error {
 			chemical := buildAromaChemical(record)
+			chemical.OwnerID = ownerID
 
 			var existing models.AromaChemical
 			foundByName := false
@@ -130,6 +137,7 @@ func run(csvPath string) error {
 				}
 
 				chemical.ID = existing.ID
+				chemical.OwnerID = existing.OwnerID
 			}
 
 			if chemical.ID == 0 {
@@ -163,6 +171,28 @@ func run(csvPath string) error {
 
 	fmt.Fprintf(os.Stdout, "Imported %d aroma chemicals from %s\n", imported, filepath.Base(csvPath))
 	return nil
+}
+
+func resolveImportOwner(db *gorm.DB) (uint, error) {
+	if db == nil {
+		return 0, fmt.Errorf("database handle is nil")
+	}
+
+	ctx := context.Background()
+	email := strings.TrimSpace(os.Getenv("PERFUGO_AROMA_OWNER_EMAIL"))
+	if email != "" {
+		var user models.User
+		if err := db.WithContext(ctx).Where("lower(email) = ?", strings.ToLower(email)).First(&user).Error; err != nil {
+			return 0, fmt.Errorf("find owner by email %q: %w", strings.ToLower(email), err)
+		}
+		return user.ID, nil
+	}
+
+	var user models.User
+	if err := db.WithContext(ctx).Order("id asc").First(&user).Error; err != nil {
+		return 0, fmt.Errorf("find default owner: %w", err)
+	}
+	return user.ID, nil
 }
 
 func readCSV(path string) ([]map[string]string, error) {
