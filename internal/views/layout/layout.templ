@@ -34,6 +34,9 @@ templ Layout(title string, sidebar templpkg.Component, content templpkg.Componen
                                         --app-input-focus: rgba(56, 189, 248, 0.65);
                                         --app-input-focus-shadow: rgba(56, 189, 248, 0.28);
                                         --app-footer-bg: rgba(7, 10, 18, 0.85);
+                                        --app-accent: #38bdf8;
+                                        --app-accent-border: rgba(56, 189, 248, 0.45);
+                                        --app-accent-soft: rgba(56, 189, 248, 0.18);
                                 }
 
                                 body[data-theme="atelier_ivory"] {
@@ -54,6 +57,9 @@ templ Layout(title string, sidebar templpkg.Component, content templpkg.Componen
                                         --app-input-focus: rgba(249, 115, 22, 0.5);
                                         --app-input-focus-shadow: rgba(249, 115, 22, 0.25);
                                         --app-footer-bg: rgba(248, 250, 252, 0.95);
+                                        --app-accent: #c2410c;
+                                        --app-accent-border: rgba(194, 65, 12, 0.45);
+                                        --app-accent-soft: rgba(251, 146, 60, 0.18);
                                 }
 
                                 body[data-theme="midnight_draft"] {
@@ -74,6 +80,9 @@ templ Layout(title string, sidebar templpkg.Component, content templpkg.Componen
                                         --app-input-focus: rgba(129, 140, 248, 0.65);
                                         --app-input-focus-shadow: rgba(99, 102, 241, 0.35);
                                         --app-footer-bg: rgba(11, 17, 30, 0.88);
+                                        --app-accent: #818cf8;
+                                        --app-accent-border: rgba(129, 140, 248, 0.45);
+                                        --app-accent-soft: rgba(129, 140, 248, 0.2);
                                 }
 
                                 body {
@@ -152,6 +161,32 @@ templ Layout(title string, sidebar templpkg.Component, content templpkg.Componen
                                 .app-button:hover {
                                         opacity: 0.92;
                                         transform: translateY(-1px);
+                                }
+
+                                .app-label {
+                                        color: var(--app-text);
+                                        font-weight: 500;
+                                        letter-spacing: 0.04em;
+                                }
+
+                                .app-link {
+                                        color: var(--app-accent);
+                                        font-weight: 600;
+                                        transition: opacity 150ms ease;
+                                }
+
+                                .app-link:hover {
+                                        opacity: 0.85;
+                                }
+
+                                .app-alert {
+                                        border-radius: 1rem;
+                                        border: 1px solid var(--app-accent-border);
+                                        background-color: var(--app-accent-soft);
+                                        color: var(--app-accent);
+                                        padding: 0.75rem 1rem;
+                                        font-size: 0.9rem;
+                                        font-weight: 500;
                                 }
 
                                 .app-input {
