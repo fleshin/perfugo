@@ -2,7 +2,7 @@
 package pages
 
 import (
-        "strings"
+        "fmt"
         "time"
 
         "perfugo/internal/views/layout"
@@ -43,28 +43,6 @@ func formatAuditDate(value string) string {
                 return value
         }
         return parsed.Format("02 Jan 2006")
-}
-
-func DefaultDash(value string) string {
-        if strings.TrimSpace(value) == "" {
-                return "—"
-        }
-        return value
-}
-
-func AromaChemicalPotencyLabel(strength int) string {
-        switch {
-        case strength >= 7:
-                return "Powerful"
-        case strength >= 5:
-                return "Strong"
-        case strength >= 3:
-                return "Moderate"
-        case strength > 0:
-                return "Delicate"
-        default:
-                return "Unknown"
-        }
 }
 
 templ IngredientManagement(snapshot WorkspaceSnapshot) {
@@ -115,22 +93,13 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
                 <div class="rounded-3xl border border-white/10 bg-black/35 backdrop-blur-xl">
                         <header class="flex flex-col gap-3 px-6 pt-6 text-sm uppercase tracking-[0.45em] text-white/50 sm:flex-row sm:items-center sm:justify-between">
                                 <span>Ledger</span>
-                                <div class="flex w-full flex-col gap-3 sm:w-auto">
-                                        <input type="search" data-filter-search placeholder="Search aroma chemical" class="w-full rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none sm:min-w-[18rem]"/>
-                                        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                                                <select data-filter-pyramid class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-[0.55rem] uppercase tracking-[0.45em] text-white focus:border-white/40 focus:outline-none">
-                                                        <option value="all">All pyramid positions</option>
-                                                </select>
-                                                <select data-filter-wheel class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-[0.55rem] uppercase tracking-[0.45em] text-white focus:border-white/40 focus:outline-none">
-                                                        <option value="all">All wheel families</option>
-                                                </select>
-                                                <select data-filter-potency class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-[0.55rem] uppercase tracking-[0.45em] text-white focus:border-white/40 focus:outline-none">
-                                                        <option value="all">All potencies</option>
-                                                </select>
-                                                <select data-filter-type class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-[0.55rem] uppercase tracking-[0.45em] text-white focus:border-white/40 focus:outline-none">
-                                                        <option value="all">All ingredient types</option>
-                                                </select>
-                                        </div>
+                                <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                                        <input type="search" data-filter-search placeholder="Search ingredient or formula" class="w-full rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"/>
+                                        <select data-filter-status class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white focus:border-white/40 focus:outline-none">
+                                                <option value="all">All sources</option>
+                                                <option value="Aroma Chemical">Aroma chemical</option>
+                                                <option value="Sub-Formula">Sub-formula</option>
+                                        </select>
                                 </div>
                         </header>
                         <div class="mt-4 overflow-hidden rounded-3xl border border-white/10">
@@ -138,57 +107,39 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
                                         <thead class="bg-white/5 text-[0.6rem] uppercase tracking-[0.45em] text-white/45">
                                                 <tr>
                                                         <th class="px-5 py-4 font-medium">Ingredient</th>
-                                                        <th class="px-5 py-4 font-medium">Pyramid</th>
-                                                        <th class="px-5 py-4 font-medium">Wheel</th>
-                                                        <th class="px-5 py-4 font-medium">Potency</th>
+                                                        <th class="px-5 py-4 font-medium">Formula</th>
+                                                        <th class="px-5 py-4 font-medium">Amount</th>
                                                         <th class="px-5 py-4 font-medium">Updated</th>
+                                                        <th class="px-5 py-4 font-medium">Actions</th>
                                                 </tr>
                                         </thead>
                                         <tbody data-list class="divide-y divide-white/10">
-                                                for _, chemical := range snapshot.AromaChemicals {
-                                                        <tr data-id={ chemical.ID } class="bg-black/25 text-white/80">
+                                                for _, ingredient := range snapshot.FormulaIngredients {
+                                                        <tr data-id={ ingredient.ID } class="bg-black/25 text-white/80">
                                                                 <td class="px-5 py-4">
-                                                                        <div class="font-medium text-white">{ chemical.IngredientName }</div>
-                                                                        <div class="text-xs uppercase tracking-[0.35em] text-white/40">
-                                                                                if chemical.CASNumber != "" {
-                                                                                        CAS { chemical.CASNumber }
-                                                                                } else {
-                                                                                        CAS Unknown
-                                                                                }
-                                                                                if chemical.Type != "" {
-                                                                                        <span class="ml-2 text-white/50">{ chemical.Type }</span>
-                                                                                }
+                                                                        <div class="font-medium text-white">{ IngredientDisplayName(ingredient) }</div>
+                                                                        <div class="text-xs uppercase tracking-[0.35em] text-white/40">{ IngredientSourceKind(ingredient) }</div>
+                                                                </td>
+                                                                <td class="px-5 py-4">
+                                                                        if ingredient.Formula != nil {
+                                                                                { ingredient.Formula.Name }
+                                                                        } else {
+                                                                                <span class="text-white/50">Formula #{ ingredient.FormulaID }</span>
+                                                                        }
+                                                                </td>
+                                                                <td class="px-5 py-4">{ fmt.Sprintf("%.2f %s", ingredient.Amount, ingredient.Unit) }</td>
+                                                                <td class="px-5 py-4">{ ingredient.UpdatedAt.UTC().Format("02 Jan 2006") }</td>
+                                                                <td class="px-5 py-4">
+                                                                        <div class="flex items-center gap-2">
+                                                                                <button type="button" data-action="edit" data-id={ ingredient.ID } class="rounded-full border border-white/20 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/70 transition hover:border-white/40 hover:text-white">Edit</button>
+                                                                                <button type="button" data-action="delete" data-id={ ingredient.ID } class="rounded-full border border-rose-400/25 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-rose-200 transition hover:border-rose-300/40 hover:text-rose-100">Remove</button>
                                                                         </div>
                                                                 </td>
-                                                                <td class="px-5 py-4">{ DefaultDash(chemical.PyramidPosition) }</td>
-                                                                <td class="px-5 py-4">{ DefaultDash(chemical.WheelPosition) }</td>
-                                                                <td class="px-5 py-4">
-                                                                        <div class="font-medium text-white">{ AromaChemicalPotencyLabel(chemical.Strength) }</div>
-                                                                        <div class="text-xs uppercase tracking-[0.35em] text-white/40">Strength { chemical.Strength }</div>
-                                                                </td>
-                                                                <td class="px-5 py-4">{ chemical.UpdatedAt.UTC().Format("02 Jan 2006") }</td>
                                                         </tr>
                                                 }
                                         </tbody>
                                 </table>
-                                <div data-empty-state class="hidden px-6 py-16 text-center text-sm text-white/60">No aroma chemicals match your filters yet.</div>
-                                <div data-pagination class="hidden flex-col gap-3 border-t border-white/10 px-6 py-4 text-[0.6rem] uppercase tracking-[0.45em] text-white/50 sm:flex-row sm:items-center sm:justify-between">
-                                        <span data-pagination-summary>Showing 0 of 0 aroma chemicals</span>
-                                        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                                                <label class="flex items-center gap-2 text-[0.55rem] uppercase tracking-[0.45em] text-white/40">
-                                                        Rows
-                                                        <select data-page-size class="rounded-full border border-white/15 bg-black/40 px-3 py-1 text-xs text-white focus:border-white/40 focus:outline-none">
-                                                                <option value="10">10</option>
-                                                                <option value="25">25</option>
-                                                                <option value="50">50</option>
-                                                        </select>
-                                                </label>
-                                                <div class="flex items-center gap-2">
-                                                        <button type="button" data-page="prev" class="rounded-full border border-white/20 px-4 py-2 text-[0.55rem] uppercase tracking-[0.45em] text-white/70 transition hover:border-white/40 hover:text-white">Previous</button>
-                                                        <button type="button" data-page="next" class="rounded-full border border-white/20 px-4 py-2 text-[0.55rem] uppercase tracking-[0.45em] text-white/70 transition hover:border-white/40 hover:text-white">Next</button>
-                                                </div>
-                                        </div>
-                                </div>
+                                <div data-empty-state class="hidden px-6 py-16 text-center text-sm text-white/60">No records yet. Add an ingredient above to populate the ledger.</div>
                         </div>
                 </div>
                 <div data-edit-panel class="fixed inset-0 z-40 hidden items-center justify-center bg-black/80 px-6 py-10 backdrop-blur">
@@ -498,89 +449,32 @@ templ workspaceModulesScript() {
 
                         const seeds = window.PerfugoWorkspaceSeeds || { formulas: [], formula_ingredients: [], aroma_chemicals: [] };
 
-                        const readValue = (object, ...keys) => {
-                                if (!object) {
-                                        return undefined;
-                                }
-                                for (const key of keys) {
-                                        if (Object.prototype.hasOwnProperty.call(object, key) && object[key] !== undefined && object[key] !== null) {
-                                                return object[key];
-                                        }
-                                }
-                                return undefined;
-                        };
-
-                        const toNumber = (value) => {
-                                const numeric = Number(value);
-                                return Number.isFinite(numeric) ? numeric : null;
-                        };
-
-                        const potencyLabel = (strength) => {
-                                const value = Number(strength) || 0;
-                                if (value >= 7) return 'Powerful';
-                                if (value >= 5) return 'Strong';
-                                if (value >= 3) return 'Moderate';
-                                if (value > 0) return 'Delicate';
-                                return 'Unknown';
-                        };
-
                         const toFormulas = (items) => (items || []).map((entry) => ({
-                                id: readValue(entry, 'ID', 'id'),
-                                name: readValue(entry, 'Name', 'name'),
-                                notes: readValue(entry, 'Notes', 'notes') || '',
-                                version: readValue(entry, 'Version', 'version') || 1,
-                                isLatest: Boolean(readValue(entry, 'IsLatest', 'is_latest')),
-                                parentFormulaId: readValue(entry, 'ParentFormulaID', 'parent_formula_id') || '',
-                                ingredients: Array.isArray(readValue(entry, 'Ingredients', 'ingredients'))
-                                        ? readValue(entry, 'Ingredients', 'ingredients').map((ing) => readValue(ing, 'ID', 'id'))
-                                        : [],
-                                createdAt: readValue(entry, 'CreatedAt', 'created_at') || new Date().toISOString(),
-                                updatedAt: readValue(entry, 'UpdatedAt', 'updated_at') || new Date().toISOString(),
+                                id: entry.ID,
+                                name: entry.Name,
+                                notes: entry.Notes || '',
+                                version: entry.Version || 1,
+                                isLatest: Boolean(entry.IsLatest),
+                                parentFormulaId: entry.ParentFormulaID || '',
+                                ingredients: Array.isArray(entry.Ingredients) ? entry.Ingredients.map((ing) => ing.ID) : [],
+                                createdAt: entry.CreatedAt || new Date().toISOString(),
+                                updatedAt: entry.UpdatedAt || new Date().toISOString(),
                         }));
 
                         const toIngredients = (items) => (items || []).map((entry) => ({
-                                id: readValue(entry, 'ID', 'id'),
-                                formulaId: readValue(entry, 'FormulaID', 'formula_id'),
-                                aromaChemicalId: readValue(entry, 'AromaChemicalID', 'aroma_chemical_id') || null,
-                                amount: readValue(entry, 'Amount', 'amount') || 0,
-                                unit: readValue(entry, 'Unit', 'unit') || 'g',
-                                createdAt: readValue(entry, 'CreatedAt', 'created_at') || new Date().toISOString(),
-                                updatedAt: readValue(entry, 'UpdatedAt', 'updated_at') || new Date().toISOString(),
+                                id: entry.ID,
+                                formulaId: entry.FormulaID,
+                                aromaChemicalId: entry.AromaChemicalID || null,
+                                amount: entry.Amount || 0,
+                                unit: entry.Unit || 'g',
+                                createdAt: entry.CreatedAt || new Date().toISOString(),
+                                updatedAt: entry.UpdatedAt || new Date().toISOString(),
                         }));
 
-                        const toChemicals = (items) => (items || []).map((entry) => {
-                                const id = readValue(entry, 'ID', 'id');
-                                const name = readValue(entry, 'IngredientName', 'ingredient_name') || (id ? `Chemical #${id}` : 'Unassigned Chemical');
-                                const strength = toNumber(readValue(entry, 'Strength', 'strength')) ?? 0;
-                                const otherNamesRaw = readValue(entry, 'OtherNames', 'other_names');
-                                const otherNames = Array.isArray(otherNamesRaw)
-                                        ? otherNamesRaw
-                                                  .map((item) => readValue(item, 'Name', 'name'))
-                                                  .filter((value) => typeof value === 'string' && value.trim().length > 0)
-                                        : [];
-
-                                return {
-                                        id,
-                                        name,
-                                        casNumber: readValue(entry, 'CASNumber', 'cas_number') || '',
-                                        pyramid: readValue(entry, 'PyramidPosition', 'pyramid_position') || '',
-                                        wheel: readValue(entry, 'WheelPosition', 'wheel_position') || '',
-                                        type: readValue(entry, 'Type', 'type') || '',
-                                        potency: potencyLabel(strength),
-                                        strength,
-                                        duration: readValue(entry, 'Duration', 'duration') || '',
-                                        notes: readValue(entry, 'Notes', 'notes') || '',
-                                        usage: readValue(entry, 'Usage', 'usage') || '',
-                                        historicRole: readValue(entry, 'HistoricRole', 'historic_role') || '',
-                                        recommendedDilution: toNumber(readValue(entry, 'RecommendedDilution', 'recommended_dilution')),
-                                        dilutionPercentage: toNumber(readValue(entry, 'DilutionPercentage', 'dilution_percentage')),
-                                        maxIFRA: toNumber(readValue(entry, 'MaxIFRAPercentage', 'max_ifra_percentage')),
-                                        pricePerMg: toNumber(readValue(entry, 'PricePerMg', 'price_per_mg')),
-                                        popularity: toNumber(readValue(entry, 'Popularity', 'popularity')),
-                                        otherNames,
-                                        updatedAt: readValue(entry, 'UpdatedAt', 'updated_at') || new Date().toISOString(),
-                                };
-                        });
+                        const toChemicals = (items) => (items || []).map((entry) => ({
+                                id: entry.ID,
+                                name: entry.IngredientName || `Chemical #${entry.ID}`,
+                        }));
 
                         namespace.store = namespace.store || {
                                 formulas: toFormulas(seeds.formulas),
@@ -619,224 +513,66 @@ templ workspaceModulesScript() {
                         refreshSelects();
 
                         namespace.modules.ingredients = function (root) {
-                                const state = {
-                                        search: '',
-                                        pyramid: 'all',
-                                        wheel: 'all',
-                                        potency: 'all',
-                                        type: 'all',
-                                        page: 1,
-                                        perPage: 10,
-                                        editing: null,
-                                };
-
-                                let cachedRows = namespace.store.chemicals.slice();
-
+                                const state = { search: '', filter: 'all', editing: null };
                                 const list = root.querySelector('[data-list]');
                                 const empty = root.querySelector('[data-empty-state]');
                                 const searchInput = root.querySelector('[data-filter-search]');
-                                const pyramidSelect = root.querySelector('[data-filter-pyramid]');
-                                const wheelSelect = root.querySelector('[data-filter-wheel]');
-                                const potencySelect = root.querySelector('[data-filter-potency]');
-                                const typeSelect = root.querySelector('[data-filter-type]');
-                                const pagination = root.querySelector('[data-pagination]');
-                                const paginationSummary = pagination ? pagination.querySelector('[data-pagination-summary]') : null;
-                                const pageSizeSelect = root.querySelector('[data-page-size]');
-                                const prevButton = pagination ? pagination.querySelector('[data-page="prev"]') : null;
-                                const nextButton = pagination ? pagination.querySelector('[data-page="next"]') : null;
+                                const filterSelect = root.querySelector('[data-filter-status]');
                                 const createForm = root.querySelector('form[data-action="create"]');
                                 const panel = root.querySelector('[data-edit-panel]');
                                 const editForm = panel ? panel.querySelector('form[data-action="edit"]') : null;
 
-                                const escapeHTML = (value) => (value || '').toString().replace(/[&<]/g, (char) => (char === '&' ? '&amp;' : '&lt;'));
-                                const dash = (value) => {
-                                        if (typeof value !== 'string') {
-                                                return value == null ? '—' : String(value);
-                                        }
-                                        return value.trim().length ? value : '—';
+                                const formulaName = (id) => {
+                                        const formula = namespace.store.formulas.find((item) => Number(item.id) === Number(id));
+                                        return formula ? formula.name : `Formula #${id}`;
                                 };
 
-                                const optionSets = {
-                                        pyramid: new Set(),
-                                        wheel: new Set(),
-                                        potency: new Set(),
-                                        type: new Set(),
-                                };
-                                const unknownFlags = { pyramid: false, wheel: false, potency: false, type: false };
-
-                                namespace.store.chemicals.forEach((chemical) => {
-                                        if (chemical.pyramid) optionSets.pyramid.add(chemical.pyramid);
-                                        else unknownFlags.pyramid = true;
-                                        if (chemical.wheel) optionSets.wheel.add(chemical.wheel);
-                                        else unknownFlags.wheel = true;
-                                        if (chemical.potency && chemical.potency !== 'Unknown') optionSets.potency.add(chemical.potency);
-                                        else unknownFlags.potency = true;
-                                        if (chemical.type) optionSets.type.add(chemical.type);
-                                        else unknownFlags.type = true;
-                                });
-
-                                const potencyOrder = ['Powerful', 'Strong', 'Moderate', 'Delicate'];
-
-                                const populateSelect = (element, values, placeholder, includeUnknown, sortFn) => {
-                                        if (!element) return;
-                                        element.innerHTML = '';
-                                        const createOption = (value, label) => {
-                                                const option = document.createElement('option');
-                                                option.value = value;
-                                                option.textContent = label;
-                                                element.appendChild(option);
-                                        };
-                                        createOption('all', placeholder);
-                                        Array.from(values)
-                                                .filter((entry) => typeof entry === 'string' && entry.trim().length)
-                                                .sort(sortFn || ((a, b) => a.localeCompare(b)))
-                                                .forEach((entry) => createOption(entry, entry));
-                                        if (includeUnknown) {
-                                                createOption('unknown', 'Unknown');
-                                        }
-                                        element.value = 'all';
-                                };
-
-                                populateSelect(pyramidSelect, optionSets.pyramid, 'All pyramid positions', unknownFlags.pyramid);
-                                populateSelect(wheelSelect, optionSets.wheel, 'All wheel families', unknownFlags.wheel);
-                                populateSelect(potencySelect, optionSets.potency, 'All potencies', unknownFlags.potency, (a, b) => {
-                                        const indexA = potencyOrder.indexOf(a);
-                                        const indexB = potencyOrder.indexOf(b);
-                                        if (indexA === -1 && indexB === -1) return a.localeCompare(b);
-                                        if (indexA === -1) return 1;
-                                        if (indexB === -1) return -1;
-                                        return indexA - indexB;
-                                });
-                                populateSelect(typeSelect, optionSets.type, 'All ingredient types', unknownFlags.type);
-
-                                const applyFilters = () => {
-                                        const searchText = state.search.trim();
-                                        return namespace.store.chemicals
-                                                .filter((chemical) => {
-                                                        const haystack = [
-                                                                chemical.name,
-                                                                chemical.casNumber,
-                                                                chemical.pyramid,
-                                                                chemical.wheel,
-                                                                chemical.type,
-                                                                chemical.potency,
-                                                                chemical.notes,
-                                                                chemical.usage,
-                                                                chemical.historicRole,
-                                                                chemical.duration,
-                                                                chemical.otherNames ? chemical.otherNames.join(' ') : '',
-                                                                chemical.popularity != null ? String(chemical.popularity) : '',
-                                                        ]
-                                                                .filter(Boolean)
-                                                                .join(' ')
-                                                                .toLowerCase();
-                                                        const matchesSearch = searchText ? haystack.includes(searchText) : true;
-                                                        const matchesPyramid = state.pyramid === 'all'
-                                                                ? true
-                                                                : state.pyramid === 'unknown'
-                                                                        ? !chemical.pyramid
-                                                                        : chemical.pyramid === state.pyramid;
-                                                        const matchesWheel = state.wheel === 'all'
-                                                                ? true
-                                                                : state.wheel === 'unknown'
-                                                                        ? !chemical.wheel
-                                                                        : chemical.wheel === state.wheel;
-                                                        const matchesPotency = state.potency === 'all'
-                                                                ? true
-                                                                : state.potency === 'unknown'
-                                                                        ? !chemical.potency || chemical.potency === 'Unknown'
-                                                                        : chemical.potency === state.potency;
-                                                        const matchesType = state.type === 'all'
-                                                                ? true
-                                                                : state.type === 'unknown'
-                                                                        ? !chemical.type
-                                                                        : chemical.type === state.type;
-                                                        return matchesSearch && matchesPyramid && matchesWheel && matchesPotency && matchesType;
-                                                })
-                                                .sort((a, b) => a.name.localeCompare(b.name));
+                                const chemicalName = (id) => {
+                                        const chemical = namespace.store.chemicals.find((item) => Number(item.id) === Number(id));
+                                        return chemical ? chemical.name : 'Unassigned Ingredient';
                                 };
 
                                 const render = () => {
-                                        cachedRows = applyFilters();
-                                        const total = cachedRows.length;
-                                        const totalPages = total > 0 ? Math.ceil(total / state.perPage) : 1;
-                                        if (state.page > totalPages) {
-                                                state.page = totalPages;
-                                        }
-                                        if (state.page < 1) {
-                                                state.page = 1;
-                                        }
-
-                                        const offset = total === 0 ? 0 : (state.page - 1) * state.perPage;
-                                        const rows = total === 0 ? [] : cachedRows.slice(offset, offset + state.perPage);
+                                        const rows = namespace.store.ingredients.filter((item) => {
+                                                const source = item.aromaChemicalId ? 'Aroma Chemical' : 'Sub-Formula';
+                                                const text = `${chemicalName(item.aromaChemicalId)} ${formulaName(item.formulaId)} ${item.id}`.toLowerCase();
+                                                const matchesSearch = state.search ? text.includes(state.search) : true;
+                                                const matchesFilter = state.filter === 'all' ? true : state.filter === source;
+                                                return matchesSearch && matchesFilter;
+                                        });
 
                                         if (!rows.length) {
                                                 if (empty) empty.classList.remove('hidden');
                                                 if (list) list.innerHTML = '';
-                                        } else {
-                                                if (empty) empty.classList.add('hidden');
-                                                if (list) {
-                                                        list.innerHTML = rows
-                                                                .map((chemical) => {
-                                                                        const casLabel = chemical.casNumber ? `CAS ${escapeHTML(chemical.casNumber)}` : 'CAS Unknown';
-                                                                        const typeLabel = chemical.type ? `<span class="ml-2 text-white/50">${escapeHTML(chemical.type)}</span>` : '';
-                                                                        const updatedAt = chemical.updatedAt ? new Date(chemical.updatedAt) : null;
-                                                                        const updatedLabel = updatedAt && !Number.isNaN(updatedAt.valueOf())
-                                                                                ? updatedAt.toLocaleDateString()
-                                                                                : '—';
-                                                                        const strengthLabel = Number.isFinite(chemical.strength) ? chemical.strength : '—';
-                                                                        return `<tr data-id="${chemical.id}" class="bg-black/25 text-white/80">
-                                                                <td class="px-5 py-4">
-                                                                        <div class="font-medium text-white">${escapeHTML(chemical.name)}</div>
-                                                                        <div class="text-xs uppercase tracking-[0.35em] text-white/40">${casLabel}${typeLabel}</div>
-                                                                </td>
-                                                                <td class="px-5 py-4">${escapeHTML(dash(chemical.pyramid))}</td>
-                                                                <td class="px-5 py-4">${escapeHTML(dash(chemical.wheel))}</td>
-                                                                <td class="px-5 py-4">
-                                                                        <div class="font-medium text-white">${escapeHTML(chemical.potency || 'Unknown')}</div>
-                                                                        <div class="text-xs uppercase tracking-[0.35em] text-white/40">Strength ${strengthLabel}</div>
-                                                                </td>
-                                                                <td class="px-5 py-4">${escapeHTML(updatedLabel)}</td>
-                                                        </tr>`;
-                                                                })
-                                                                .join('');
-                                                }
+                                                return;
                                         }
 
-                                        if (pagination) {
-                                                if (total === 0) {
-                                                        pagination.classList.add('hidden');
-                                                        if (paginationSummary) {
-                                                                paginationSummary.textContent = 'Showing 0 of 0 aroma chemicals';
-                                                        }
-                                                } else {
-                                                        pagination.classList.remove('hidden');
-                                                        const start = offset + 1;
-                                                        const end = offset + rows.length;
-                                                        if (paginationSummary) {
-                                                                paginationSummary.textContent = `Showing ${start}-${end} of ${total} aroma chemicals`;
-                                                        }
-                                                }
-                                                if (pageSizeSelect) {
-                                                        pageSizeSelect.value = String(state.perPage);
-                                                }
-                                                if (prevButton) {
-                                                        const disabled = state.page <= 1 || total === 0;
-                                                        prevButton.disabled = disabled;
-                                                        prevButton.setAttribute('aria-disabled', disabled ? 'true' : 'false');
-                                                }
-                                                if (nextButton) {
-                                                        const disabled = total === 0 || state.page >= totalPages;
-                                                        nextButton.disabled = disabled;
-                                                        nextButton.setAttribute('aria-disabled', disabled ? 'true' : 'false');
-                                                }
+                                        if (empty) empty.classList.add('hidden');
+
+                                        if (list) {
+                                                list.innerHTML = rows.map((item) => {
+                                                        return `<tr data-id="${item.id}" class="bg-black/25 text-white/80">
+                                                                <td class="px-5 py-4">
+                                                                        <div class="font-medium text-white">${chemicalName(item.aromaChemicalId).replace(/</g, '&lt;')}</div>
+                                                                        <div class="text-xs uppercase tracking-[0.35em] text-white/40">${item.aromaChemicalId ? 'Aroma Chemical' : 'Sub-Formula'}</div>
+                                                                </td>
+                                                                <td class="px-5 py-4">${formulaName(item.formulaId).replace(/</g, '&lt;')}</td>
+                                                                <td class="px-5 py-4">${Number(item.amount).toFixed(2)} ${item.unit}</td>
+                                                                <td class="px-5 py-4">${new Date(item.updatedAt).toLocaleDateString()}</td>
+                                                                <td class="px-5 py-4">
+                                                                        <div class="flex items-center gap-2">
+                                                                                <button type="button" data-action="edit" data-id="${item.id}" class="rounded-full border border-white/20 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/70">Edit</button>
+                                                                                <button type="button" data-action="delete" data-id="${item.id}" class="rounded-full border border-rose-400/25 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-rose-200">Remove</button>
+                                                                        </div>
+                                                                </td>
+                                                        </tr>`;
+                                                }).join('');
                                         }
                                 };
 
                                 render();
                                 on('formulas:updated', () => { refreshSelects(); render(); });
                                 on('ingredients:updated', render);
-                                on('chemicals:updated', render);
 
                                 const openPanel = () => {
                                         if (!panel) return;
@@ -856,52 +592,13 @@ templ workspaceModulesScript() {
                                 if (searchInput) {
                                         searchInput.addEventListener('input', (event) => {
                                                 state.search = (event.target.value || '').toLowerCase();
-                                                state.page = 1;
                                                 render();
                                         });
                                 }
 
-                                [
-                                        { element: pyramidSelect, key: 'pyramid' },
-                                        { element: wheelSelect, key: 'wheel' },
-                                        { element: potencySelect, key: 'potency' },
-                                        { element: typeSelect, key: 'type' },
-                                ].forEach(({ element, key }) => {
-                                        if (!element) return;
-                                        element.addEventListener('change', (event) => {
-                                                state[key] = event.target.value;
-                                                state.page = 1;
-                                                render();
-                                        });
-                                });
-
-                                if (pageSizeSelect) {
-                                        pageSizeSelect.addEventListener('change', (event) => {
-                                                const value = parseInt(event.target.value, 10);
-                                                if (!Number.isNaN(value) && value > 0) {
-                                                        state.perPage = value;
-                                                        state.page = 1;
-                                                        render();
-                                                }
-                                        });
-                                }
-
-                                if (prevButton) {
-                                        prevButton.addEventListener('click', () => {
-                                                if (state.page > 1) {
-                                                        state.page -= 1;
-                                                        render();
-                                                }
-                                        });
-                                }
-
-                                if (nextButton) {
-                                        nextButton.addEventListener('click', () => {
-                                                const totalPages = cachedRows.length > 0 ? Math.ceil(cachedRows.length / state.perPage) : 1;
-                                                if (cachedRows.length === 0 || state.page >= totalPages) {
-                                                        return;
-                                                }
-                                                state.page += 1;
+                                if (filterSelect) {
+                                        filterSelect.addEventListener('change', (event) => {
+                                                state.filter = event.target.value;
                                                 render();
                                         });
                                 }
@@ -928,6 +625,7 @@ templ workspaceModulesScript() {
                                                         updatedAt: now,
                                                 });
                                                 emit('ingredients:updated');
+                                                render();
                                                 createForm.reset();
                                         });
                                 }
@@ -955,6 +653,7 @@ templ workspaceModulesScript() {
                                                         };
                                                 });
                                                 emit('ingredients:updated');
+                                                render();
                                                 closePanel();
                                         });
                                 }
@@ -966,6 +665,7 @@ templ workspaceModulesScript() {
                                         if (target.dataset.action === 'delete') {
                                                 namespace.store.ingredients = namespace.store.ingredients.filter((item) => Number(item.id) !== id);
                                                 emit('ingredients:updated');
+                                                render();
                                                 return;
                                         }
                                         if (target.dataset.action === 'edit') {
