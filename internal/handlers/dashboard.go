@@ -71,6 +71,7 @@ func loadWorkspaceData(r *http.Request) ([]models.Formula, []models.FormulaIngre
 	}
 
 	if err := database.WithContext(ctx).
+		Preload("OtherNames").
 		Order("ingredient_name asc").
 		Find(&chemicals).Error; err != nil {
 		applog.Error(ctx, "failed to load aroma chemicals for workspace", "error", err)
