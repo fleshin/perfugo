@@ -92,19 +92,19 @@ func loginContent(message string, email string) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex min-h-[calc(100vh-6rem)] items-center justify-center bg-gradient-to-br from-slate-100 via-white to-indigo-50 px-6 py-16 sm:px-8 lg:px-10\"><div class=\"w-full max-w-md rounded-3xl bg-white p-10 shadow-xl ring-1 ring-slate-200\"><div class=\"mb-8 space-y-3 text-center\"><p class=\"text-sm font-semibold uppercase tracking-[0.3em] text-indigo-500\">Perfugo</p><h1 class=\"text-2xl font-semibold text-slate-900\">Welcome back</h1><p class=\"text-sm text-slate-500\">Sign in to access your perfumery workspace.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"app-shell flex min-h-[calc(100vh-6rem)] items-center justify-center px-6 py-16 sm:px-10\"><div class=\"w-full max-w-md\"><div class=\"app-card px-8 py-10 sm:px-10 sm:py-12\"><div class=\"space-y-3 text-center\"><span class=\"app-badge justify-center\">Perfugo</span><h1 class=\"text-3xl font-semibold tracking-tight sm:text-4xl\">Welcome back</h1><p class=\"text-sm leading-relaxed app-muted\">Sign in to access your perfumery workspace.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if message != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-left text-sm text-amber-800\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"app-alert mt-8\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(message)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/login.templ`, Line: 28, Col: 49}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/login.templ`, Line: 29, Col: 57}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -115,20 +115,20 @@ func loginContent(message string, email string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<form method=\"post\" class=\"space-y-6\"><div class=\"space-y-2\"><label for=\"email\" class=\"block text-sm font-medium text-slate-700\">Email address</label> <input type=\"email\" id=\"email\" name=\"email\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<form method=\"post\" class=\"mt-8 space-y-6\"><div class=\"space-y-2\"><label for=\"email\" class=\"app-label text-sm\">Email address</label> <input type=\"email\" id=\"email\" name=\"email\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(email)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/login.templ`, Line: 34, Col: 97}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/login.templ`, Line: 35, Col: 105}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" required class=\"w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200\"></div><div class=\"space-y-2\"><label for=\"password\" class=\"block text-sm font-medium text-slate-700\">Password</label> <input type=\"password\" id=\"password\" name=\"password\" required class=\"w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200\"></div><button type=\"submit\" class=\"inline-flex w-full justify-center rounded-full bg-indigo-500 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-indigo-400\">Sign in</button></form><p class=\"mt-8 text-center text-sm text-slate-500\">Don't have an account? <a href=\"/signup\" class=\"font-semibold text-indigo-600 hover:text-indigo-500\">Create one</a></p></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" required class=\"app-input w-full\"></div><div class=\"space-y-2\"><label for=\"password\" class=\"app-label text-sm\">Password</label> <input type=\"password\" id=\"password\" name=\"password\" required class=\"app-input w-full\"></div><button type=\"submit\" class=\"app-button inline-flex w-full items-center justify-center gap-2\">Sign in</button></form><p class=\"mt-10 text-center text-sm app-muted\">Don't have an account? <a href=\"/signup\" class=\"app-link\">Create one</a></p></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
