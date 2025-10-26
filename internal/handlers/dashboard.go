@@ -23,6 +23,7 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	theme := loadCurrentUserTheme(r)
+	applog.Debug(r.Context(), "workspace theme resolved", "theme", theme)
 	snapshot := pages.EmptyWorkspaceSnapshot()
 	snapshot.Theme = theme
 	if database != nil {
