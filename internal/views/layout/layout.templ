@@ -366,19 +366,6 @@ templ Layout(title string, sidebar templpkg.Component, content templpkg.Componen
                                                 document.body.dataset.theme = identifier.trim();
                                         };
 
-                                        document.body.addEventListener('workspace:theme', function (event) {
-                                                if (!namespace.updateTheme) {
-                                                        return;
-                                                }
-                                                const detail = event && event.detail;
-                                                const value = typeof detail === 'string'
-                                                        ? detail
-                                                        : detail && (detail.value || detail.theme);
-                                                if (typeof value === 'string' && value.trim()) {
-                                                        namespace.updateTheme(value);
-                                                }
-                                        });
-
                                         const assignSeeds = function (container) {
                                                 if (!container) {
                                                         return;
