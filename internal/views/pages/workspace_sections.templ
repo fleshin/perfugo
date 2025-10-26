@@ -91,14 +91,18 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
                         </aside>
                 </div>
                 <div class="rounded-3xl border border-white/10 bg-black/35 backdrop-blur-xl">
-                        <header class="flex flex-col gap-3 px-6 pt-6 text-sm uppercase tracking-[0.45em] text-white/50 sm:flex-row sm:items-center sm:justify-between">
+                        <header class="flex flex-col gap-3 px-6 pt-6 text-sm uppercase tracking-[0.45em] text-white/50 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
                                 <span>Ledger</span>
-                                <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-                                        <input type="search" data-filter-search placeholder="Search ingredient or formula" class="w-full rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"/>
-                                        <select data-filter-status class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white focus:border-white/40 focus:outline-none">
-                                                <option value="all">All sources</option>
-                                                <option value="Aroma Chemical">Aroma chemical</option>
-                                                <option value="Sub-Formula">Sub-formula</option>
+                                <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+                                        <input type="search" data-filter-search placeholder="Search aroma chemicals" class="w-full rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none sm:max-w-[16rem]"/>
+                                        <select data-filter-wheel class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white focus:border-white/40 focus:outline-none">
+                                                <option value="">All wheel positions</option>
+                                        </select>
+                                        <select data-filter-pyramid class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white focus:border-white/40 focus:outline-none">
+                                                <option value="">All pyramid levels</option>
+                                        </select>
+                                        <select data-filter-potency class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white focus:border-white/40 focus:outline-none">
+                                                <option value="">All potencies</option>
                                         </select>
                                 </div>
                         </header>
@@ -107,39 +111,82 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
                                         <thead class="bg-white/5 text-[0.6rem] uppercase tracking-[0.45em] text-white/45">
                                                 <tr>
                                                         <th class="px-5 py-4 font-medium">Ingredient</th>
-                                                        <th class="px-5 py-4 font-medium">Formula</th>
-                                                        <th class="px-5 py-4 font-medium">Amount</th>
-                                                        <th class="px-5 py-4 font-medium">Updated</th>
-                                                        <th class="px-5 py-4 font-medium">Actions</th>
+                                                        <th class="px-5 py-4 font-medium">Wheel</th>
+                                                        <th class="px-5 py-4 font-medium">Pyramid</th>
+                                                        <th class="px-5 py-4 font-medium">Potency</th>
+                                                        <th class="px-5 py-4 font-medium">Details</th>
                                                 </tr>
                                         </thead>
                                         <tbody data-list class="divide-y divide-white/10">
-                                                for _, ingredient := range snapshot.FormulaIngredients {
-                                                        <tr data-id={ ingredient.ID } class="bg-black/25 text-white/80">
+                                                for _, chemical := range snapshot.AromaChemicals {
+                                                        <tr data-id={ chemical.ID } class="bg-black/25 text-white/80">
                                                                 <td class="px-5 py-4">
-                                                                        <div class="font-medium text-white">{ IngredientDisplayName(ingredient) }</div>
-                                                                        <div class="text-xs uppercase tracking-[0.35em] text-white/40">{ IngredientSourceKind(ingredient) }</div>
-                                                                </td>
-                                                                <td class="px-5 py-4">
-                                                                        if ingredient.Formula != nil {
-                                                                                { ingredient.Formula.Name }
-                                                                        } else {
-                                                                                <span class="text-white/50">Formula #{ ingredient.FormulaID }</span>
+                                                                        <div class="font-medium text-white">{ chemical.IngredientName }</div>
+                                                                        if chemical.Type != "" {
+                                                                                <div class="text-xs uppercase tracking-[0.35em] text-white/40">{ chemical.Type }</div>
+                                                                        }
+                                                                        if chemical.CASNumber != "" {
+                                                                                <div class="text-xs text-white/50">CAS { chemical.CASNumber }</div>
+                                                                        }
+                                                                        if len(chemical.OtherNames) > 0 {
+                                                                                <div class="text-xs text-white/40">Also known as: { JoinOtherNames(chemical.OtherNames) }</div>
                                                                         }
                                                                 </td>
-                                                                <td class="px-5 py-4">{ fmt.Sprintf("%.2f %s", ingredient.Amount, ingredient.Unit) }</td>
-                                                                <td class="px-5 py-4">{ ingredient.UpdatedAt.UTC().Format("02 Jan 2006") }</td>
                                                                 <td class="px-5 py-4">
-                                                                        <div class="flex items-center gap-2">
-                                                                                <button type="button" data-action="edit" data-id={ ingredient.ID } class="rounded-full border border-white/20 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/70 transition hover:border-white/40 hover:text-white">Edit</button>
-                                                                                <button type="button" data-action="delete" data-id={ ingredient.ID } class="rounded-full border border-rose-400/25 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-rose-200 transition hover:border-rose-300/40 hover:text-rose-100">Remove</button>
-                                                                        </div>
+                                                                        if chemical.WheelPosition != "" {
+                                                                                { chemical.WheelPosition }
+                                                                        } else {
+                                                                                <span class="text-white/40">—</span>
+                                                                        }
+                                                                </td>
+                                                                <td class="px-5 py-4">
+                                                                        if chemical.PyramidPosition != "" {
+                                                                                { chemical.PyramidPosition }
+                                                                        } else {
+                                                                                <span class="text-white/40">—</span>
+                                                                        }
+                                                                </td>
+                                                                <td class="px-5 py-4">
+                                                                        if chemical.Strength != 0 {
+                                                                                { chemical.Strength }
+                                                                        } else {
+                                                                                <span class="text-white/40">—</span>
+                                                                        }
+                                                                        if chemical.MaxIFRAPercentage != 0 || chemical.RecommendedDilution != 0 {
+                                                                                <div class="text-xs text-white/40">
+                                                                                        if chemical.RecommendedDilution != 0 {
+                                                                                                Recommended { fmt.Sprintf("%.2f%%", chemical.RecommendedDilution) }
+                                                                                        }
+                                                                                        if chemical.MaxIFRAPercentage != 0 {
+                                                                                                <span class="ml-1">Max IFRA { fmt.Sprintf("%.2f%%", chemical.MaxIFRAPercentage) }</span>
+                                                                                        }
+                                                                                </div>
+                                                                        }
+                                                                </td>
+                                                                <td class="px-5 py-4">
+                                                                        if chemical.Duration != "" {
+                                                                                <div>{ chemical.Duration }</div>
+                                                                        }
+                                                                        if chemical.Usage != "" {
+                                                                                <div class="text-xs text-white/50">{ SummariseUsage(chemical.Usage) }</div>
+                                                                        }
+                                                                        if chemical.HistoricRole != "" {
+                                                                                <div class="text-xs text-white/40">{ chemical.HistoricRole }</div>
+                                                                        }
                                                                 </td>
                                                         </tr>
                                                 }
                                         </tbody>
                                 </table>
-                                <div data-empty-state class="hidden px-6 py-16 text-center text-sm text-white/60">No records yet. Add an ingredient above to populate the ledger.</div>
+                                <div data-empty-state class="hidden px-6 py-16 text-center text-sm text-white/60">No aroma chemicals found. Adjust your filters to see results.</div>
+                                <div data-pagination class="flex flex-col gap-3 border-t border-white/10 bg-black/25 px-5 py-4 text-xs text-white/60 sm:flex-row sm:items-center sm:justify-between">
+                                        <span data-pagination-summary>Showing 0 aroma chemicals</span>
+                                        <div class="flex items-center gap-2">
+                                                <button type="button" data-page-prev class="rounded-full border border-white/15 px-4 py-1.5 text-[0.6rem] uppercase tracking-[0.45em] text-white/60 transition hover:border-white/30 hover:text-white disabled:cursor-not-allowed disabled:opacity-40">Previous</button>
+                                                <span data-pagination-pages>Page 1 of 1</span>
+                                                <button type="button" data-page-next class="rounded-full border border-white/15 px-4 py-1.5 text-[0.6rem] uppercase tracking-[0.45em] text-white/60 transition hover:border-white/30 hover:text-white disabled:cursor-not-allowed disabled:opacity-40">Next</button>
+                                        </div>
+                                </div>
                         </div>
                 </div>
                 <div data-edit-panel class="fixed inset-0 z-40 hidden items-center justify-center bg-black/80 px-6 py-10 backdrop-blur">
@@ -474,6 +521,24 @@ templ workspaceModulesScript() {
                         const toChemicals = (items) => (items || []).map((entry) => ({
                                 id: entry.ID,
                                 name: entry.IngredientName || `Chemical #${entry.ID}`,
+                                type: entry.Type || '',
+                                casNumber: entry.CASNumber || '',
+                                wheel: entry.WheelPosition || '',
+                                wheelPosition: entry.WheelPosition || '',
+                                pyramid: entry.PyramidPosition || '',
+                                pyramidPosition: entry.PyramidPosition || '',
+                                potency: Number.isFinite(entry.Strength) ? Number(entry.Strength) : null,
+                                strength: Number.isFinite(entry.Strength) ? Number(entry.Strength) : null,
+                                recommendedDilution: Number.isFinite(entry.RecommendedDilution) ? Number(entry.RecommendedDilution) : null,
+                                maxIfra: Number.isFinite(entry.MaxIFRAPercentage) ? Number(entry.MaxIFRAPercentage) : null,
+                                maxIFRA: Number.isFinite(entry.MaxIFRAPercentage) ? Number(entry.MaxIFRAPercentage) : null,
+                                duration: entry.Duration || '',
+                                usage: entry.Usage || '',
+                                historicRole: entry.HistoricRole || '',
+                                notes: entry.Notes || '',
+                                pricePerMg: Number.isFinite(entry.PricePerMg) ? Number(entry.PricePerMg) : null,
+                                popularity: Number.isFinite(entry.Popularity) ? Number(entry.Popularity) : null,
+                                otherNames: Array.isArray(entry.OtherNames) ? entry.OtherNames : [],
                         }));
 
                         namespace.store = namespace.store || {
@@ -513,66 +578,203 @@ templ workspaceModulesScript() {
                         refreshSelects();
 
                         namespace.modules.ingredients = function (root) {
-                                const state = { search: '', filter: 'all', editing: null };
+                                const state = { search: '', wheel: '', pyramid: '', potency: '', page: 1, pageSize: 10, editing: null };
                                 const list = root.querySelector('[data-list]');
                                 const empty = root.querySelector('[data-empty-state]');
                                 const searchInput = root.querySelector('[data-filter-search]');
-                                const filterSelect = root.querySelector('[data-filter-status]');
+                                const wheelSelect = root.querySelector('[data-filter-wheel]');
+                                const pyramidSelect = root.querySelector('[data-filter-pyramid]');
+                                const potencySelect = root.querySelector('[data-filter-potency]');
+                                const pagination = root.querySelector('[data-pagination]');
+                                const paginationSummary = root.querySelector('[data-pagination-summary]');
+                                const paginationPages = root.querySelector('[data-pagination-pages]');
+                                const prevPageButton = root.querySelector('[data-page-prev]');
+                                const nextPageButton = root.querySelector('[data-page-next]');
                                 const createForm = root.querySelector('form[data-action="create"]');
                                 const panel = root.querySelector('[data-edit-panel]');
                                 const editForm = panel ? panel.querySelector('form[data-action="edit"]') : null;
 
-                                const formulaName = (id) => {
-                                        const formula = namespace.store.formulas.find((item) => Number(item.id) === Number(id));
-                                        return formula ? formula.name : `Formula #${id}`;
+                                const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+
+                                const uniqueStrings = (values) => Array.from(new Set(values.filter((value) => value && String(value).trim() !== ''))).sort((a, b) => String(a).localeCompare(String(b)));
+                                const uniqueNumbers = (values) => Array.from(new Set(values.filter((value) => Number.isFinite(value) && value !== 0))).sort((a, b) => a - b);
+
+                                const populateFilterOptions = () => {
+                                        if (wheelSelect) {
+                                                const current = wheelSelect.value;
+                                                const options = uniqueStrings(namespace.store.chemicals.map((item) => item.wheel || item.wheelPosition || ''));
+                                                wheelSelect.innerHTML = '<option value="">All wheel positions</option>' + options.map((option) => `<option value="${escapeHtml(option)}">${escapeHtml(option)}</option>`).join('');
+                                                if (current && options.includes(current)) {
+                                                        wheelSelect.value = current;
+                                                }
+                                        }
+
+                                        if (pyramidSelect) {
+                                                const current = pyramidSelect.value;
+                                                const options = uniqueStrings(namespace.store.chemicals.map((item) => item.pyramid || item.pyramidPosition || ''));
+                                                pyramidSelect.innerHTML = '<option value="">All pyramid levels</option>' + options.map((option) => `<option value="${escapeHtml(option)}">${escapeHtml(option)}</option>`).join('');
+                                                if (current && options.includes(current)) {
+                                                        pyramidSelect.value = current;
+                                                }
+                                        }
+
+                                        if (potencySelect) {
+                                                const current = potencySelect.value;
+                                                const options = uniqueNumbers(namespace.store.chemicals.map((item) => item.potency ?? item.strength ?? null));
+                                                potencySelect.innerHTML = '<option value="">All potencies</option>' + options.map((option) => `<option value="${escapeHtml(String(option))}">${escapeHtml(String(option))}</option>`).join('');
+                                                if (current && options.map((option) => String(option)).includes(current)) {
+                                                        potencySelect.value = current;
+                                                }
+                                        }
                                 };
 
-                                const chemicalName = (id) => {
-                                        const chemical = namespace.store.chemicals.find((item) => Number(item.id) === Number(id));
-                                        return chemical ? chemical.name : 'Unassigned Ingredient';
+                                const formatPercentage = (value) => {
+                                        if (!Number.isFinite(value) || value === 0) return '';
+                                        const numeric = Number(value);
+                                        if (!Number.isFinite(numeric)) return '';
+                                        return `${numeric.toFixed(2)}%`;
+                                };
+
+                                const summariseUsage = (value) => {
+                                        if (!value) return '';
+                                        const trimmed = String(value).trim();
+                                        if (!trimmed) return '';
+                                        if (trimmed.length <= 140) return trimmed;
+                                        return `${trimmed.slice(0, 137)}…`;
+                                };
+
+                                const joinOtherNames = (names) => {
+                                        if (!Array.isArray(names)) return '';
+                                        const parts = names
+                                                .map((name) => (typeof name === 'string' ? name : name?.name || name?.Name || ''))
+                                                .map((name) => String(name).trim())
+                                                .filter((name) => name !== '');
+                                        return parts.join(', ');
+                                };
+
+                                const normaliseString = (value) => String(value ?? '').toLowerCase().trim();
+
+                                const formatDetails = (chemical) => {
+                                        const segments = [];
+                                        const recommended = formatPercentage(chemical.recommendedDilution ?? chemical.RecommendedDilution ?? null);
+                                        const maxIfra = formatPercentage(chemical.maxIfra ?? chemical.maxIFRA ?? chemical.MaxIFRAPercentage ?? null);
+                                        if (recommended) segments.push(`Recommended ${recommended}`);
+                                        if (maxIfra) segments.push(`Max IFRA ${maxIfra}`);
+                                        return segments.join(' • ');
                                 };
 
                                 const render = () => {
-                                        const rows = namespace.store.ingredients.filter((item) => {
-                                                const source = item.aromaChemicalId ? 'Aroma Chemical' : 'Sub-Formula';
-                                                const text = `${chemicalName(item.aromaChemicalId)} ${formulaName(item.formulaId)} ${item.id}`.toLowerCase();
-                                                const matchesSearch = state.search ? text.includes(state.search) : true;
-                                                const matchesFilter = state.filter === 'all' ? true : state.filter === source;
-                                                return matchesSearch && matchesFilter;
+                                        const chemicals = namespace.store.chemicals || [];
+                                        const terms = state.search ? state.search.split(/\s+/).filter(Boolean) : [];
+                                        const filtered = chemicals.filter((item) => {
+                                                const wheel = item.wheel || item.wheelPosition || '';
+                                                const pyramid = item.pyramid || item.pyramidPosition || '';
+                                                const potency = item.potency ?? item.strength ?? null;
+                                                const searchPool = [
+                                                        item.name,
+                                                        item.type,
+                                                        item.casNumber,
+                                                        item.notes,
+                                                        item.duration,
+                                                        item.usage,
+                                                        item.historicRole,
+                                                        wheel,
+                                                        pyramid,
+                                                        joinOtherNames(item.otherNames),
+                                                        potency != null ? String(potency) : '',
+                                                ]
+                                                        .map(normaliseString)
+                                                        .join(' ');
+                                                const matchesSearch = terms.length ? terms.every((term) => searchPool.includes(term)) : true;
+                                                const matchesWheel = state.wheel ? wheel === state.wheel : true;
+                                                const matchesPyramid = state.pyramid ? pyramid === state.pyramid : true;
+                                                const matchesPotency = state.potency ? String(potency) === state.potency : true;
+                                                return matchesSearch && matchesWheel && matchesPyramid && matchesPotency;
                                         });
 
-                                        if (!rows.length) {
+                                        const total = filtered.length;
+                                        const totalPages = total === 0 ? 1 : Math.ceil(total / state.pageSize);
+                                        if (state.page > totalPages) state.page = totalPages;
+                                        if (state.page < 1) state.page = 1;
+
+                                        const startIndex = (state.page - 1) * state.pageSize;
+                                        const pageItems = filtered.slice(startIndex, startIndex + state.pageSize);
+
+                                        if (!pageItems.length) {
                                                 if (empty) empty.classList.remove('hidden');
                                                 if (list) list.innerHTML = '';
+                                                if (pagination) pagination.classList.add('hidden');
+                                                if (paginationSummary) paginationSummary.textContent = total === 0 ? 'No aroma chemicals match your filters.' : 'Showing 0 aroma chemicals';
+                                                if (paginationPages) paginationPages.textContent = total === 0 ? 'Page 1 of 1' : `Page ${state.page} of ${totalPages}`;
+                                                if (prevPageButton) prevPageButton.disabled = true;
+                                                if (nextPageButton) nextPageButton.disabled = true;
                                                 return;
                                         }
 
                                         if (empty) empty.classList.add('hidden');
+                                        if (pagination) pagination.classList.remove('hidden');
 
                                         if (list) {
-                                                list.innerHTML = rows.map((item) => {
-                                                        return `<tr data-id="${item.id}" class="bg-black/25 text-white/80">
+                                                list.innerHTML = pageItems
+                                                        .map((item) => {
+                                                                const wheel = item.wheel || item.wheelPosition || '';
+                                                                const pyramid = item.pyramid || item.pyramidPosition || '';
+                                                                const potency = item.potency ?? item.strength ?? null;
+                                                                const otherNames = joinOtherNames(item.otherNames);
+                                                                const details = formatDetails(item);
+                                                                const duration = item.duration || item.Duration || '';
+                                                                const usage = summariseUsage(item.usage || item.Usage || '');
+                                                                const historicRole = item.historicRole || item.HistoricRole || '';
+                                                                const displayName = item.name || item.IngredientName || ('Chemical #' + item.id);
+                                                                const typeLabel = item.type || item.Type || '';
+                                                                const casLabel = item.casNumber || item.CASNumber || '';
+                                                                const potencyLabel = Number.isFinite(potency) && potency !== 0 ? escapeHtml(String(potency)) : '<span class="text-white/40">—</span>';
+                                                                const wheelLabel = wheel ? escapeHtml(wheel) : '<span class="text-white/40">—</span>';
+                                                                const pyramidLabel = pyramid ? escapeHtml(pyramid) : '<span class="text-white/40">—</span>';
+                                                                const detailsLabel = details ? `<div class="text-xs text-white/40">${escapeHtml(details)}</div>` : '';
+                                                                const durationLabel = duration ? `<div>${escapeHtml(duration)}</div>` : '';
+                                                                const usageLabel = usage ? `<div class="text-xs text-white/50">${escapeHtml(usage)}</div>` : '';
+                                                                const historicRoleLabel = historicRole ? `<div class="text-xs text-white/40">${escapeHtml(historicRole)}</div>` : '';
+                                                                const otherNamesLabel = otherNames ? `<div class="text-xs text-white/40">Also known as: ${escapeHtml(otherNames)}</div>` : '';
+                                                                const typeMarkup = typeLabel ? `<div class="text-xs uppercase tracking-[0.35em] text-white/40">${escapeHtml(typeLabel)}</div>` : '';
+                                                                const casMarkup = casLabel ? `<div class="text-xs text-white/50">CAS ${escapeHtml(casLabel)}</div>` : '';
+                                                                return `<tr data-id="${escapeHtml(item.id)}" class="bg-black/25 text-white/80">
                                                                 <td class="px-5 py-4">
-                                                                        <div class="font-medium text-white">${chemicalName(item.aromaChemicalId).replace(/</g, '&lt;')}</div>
-                                                                        <div class="text-xs uppercase tracking-[0.35em] text-white/40">${item.aromaChemicalId ? 'Aroma Chemical' : 'Sub-Formula'}</div>
+                                                                        <div class="font-medium text-white">${escapeHtml(displayName)}</div>
+                                                                        ${typeMarkup}
+                                                                        ${casMarkup}
+                                                                        ${otherNamesLabel}
                                                                 </td>
-                                                                <td class="px-5 py-4">${formulaName(item.formulaId).replace(/</g, '&lt;')}</td>
-                                                                <td class="px-5 py-4">${Number(item.amount).toFixed(2)} ${item.unit}</td>
-                                                                <td class="px-5 py-4">${new Date(item.updatedAt).toLocaleDateString()}</td>
+                                                                <td class="px-5 py-4">${wheelLabel}</td>
+                                                                <td class="px-5 py-4">${pyramidLabel}</td>
                                                                 <td class="px-5 py-4">
-                                                                        <div class="flex items-center gap-2">
-                                                                                <button type="button" data-action="edit" data-id="${item.id}" class="rounded-full border border-white/20 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/70">Edit</button>
-                                                                                <button type="button" data-action="delete" data-id="${item.id}" class="rounded-full border border-rose-400/25 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-rose-200">Remove</button>
-                                                                        </div>
+                                                                        ${potencyLabel}
+                                                                        ${detailsLabel}
+                                                                </td>
+                                                                <td class="px-5 py-4">
+                                                                        ${durationLabel}
+                                                                        ${usageLabel}
+                                                                        ${historicRoleLabel}
                                                                 </td>
                                                         </tr>`;
-                                                }).join('');
+                                                        })
+                                                        .join('');
                                         }
+
+                                        const start = startIndex + 1;
+                                        const end = startIndex + pageItems.length;
+                                        if (paginationSummary) paginationSummary.textContent = `Showing ${start}–${end} of ${total} aroma chemicals`;
+                                        if (paginationPages) paginationPages.textContent = `Page ${state.page} of ${totalPages}`;
+                                        if (prevPageButton) prevPageButton.disabled = state.page === 1;
+                                        if (nextPageButton) nextPageButton.disabled = state.page >= totalPages;
                                 };
 
+                                populateFilterOptions();
                                 render();
+
                                 on('formulas:updated', () => { refreshSelects(); render(); });
                                 on('ingredients:updated', render);
+                                on('chemicals:updated', () => { populateFilterOptions(); render(); });
 
                                 const openPanel = () => {
                                         if (!panel) return;
@@ -591,14 +793,47 @@ templ workspaceModulesScript() {
 
                                 if (searchInput) {
                                         searchInput.addEventListener('input', (event) => {
-                                                state.search = (event.target.value || '').toLowerCase();
+                                                state.search = normaliseString(event.target.value || '');
+                                                state.page = 1;
                                                 render();
                                         });
                                 }
 
-                                if (filterSelect) {
-                                        filterSelect.addEventListener('change', (event) => {
-                                                state.filter = event.target.value;
+                                if (wheelSelect) {
+                                        wheelSelect.addEventListener('change', (event) => {
+                                                state.wheel = event.target.value;
+                                                state.page = 1;
+                                                render();
+                                        });
+                                }
+
+                                if (pyramidSelect) {
+                                        pyramidSelect.addEventListener('change', (event) => {
+                                                state.pyramid = event.target.value;
+                                                state.page = 1;
+                                                render();
+                                        });
+                                }
+
+                                if (potencySelect) {
+                                        potencySelect.addEventListener('change', (event) => {
+                                                state.potency = event.target.value;
+                                                state.page = 1;
+                                                render();
+                                        });
+                                }
+
+                                if (prevPageButton) {
+                                        prevPageButton.addEventListener('click', () => {
+                                                if (state.page <= 1) return;
+                                                state.page -= 1;
+                                                render();
+                                        });
+                                }
+
+                                if (nextPageButton) {
+                                        nextPageButton.addEventListener('click', () => {
+                                                state.page += 1;
                                                 render();
                                         });
                                 }
@@ -625,7 +860,6 @@ templ workspaceModulesScript() {
                                                         updatedAt: now,
                                                 });
                                                 emit('ingredients:updated');
-                                                render();
                                                 createForm.reset();
                                         });
                                 }
@@ -653,7 +887,6 @@ templ workspaceModulesScript() {
                                                         };
                                                 });
                                                 emit('ingredients:updated');
-                                                render();
                                                 closePanel();
                                         });
                                 }
@@ -665,7 +898,6 @@ templ workspaceModulesScript() {
                                         if (target.dataset.action === 'delete') {
                                                 namespace.store.ingredients = namespace.store.ingredients.filter((item) => Number(item.id) !== id);
                                                 emit('ingredients:updated');
-                                                render();
                                                 return;
                                         }
                                         if (target.dataset.action === 'edit') {

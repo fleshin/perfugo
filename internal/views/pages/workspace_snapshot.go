@@ -3,6 +3,7 @@ package pages
 import (
 	"encoding/json"
 	"sort"
+	"strings"
 
 	"perfugo/models"
 )
@@ -93,4 +94,38 @@ func (s WorkspaceSnapshot) FormulaLookup() map[uint]string {
 		lookup[uint(formula.ID)] = formula.Name
 	}
 	return lookup
+}
+
+// JoinOtherNames concatenates alternative ingredient names for display.
+func JoinOtherNames(names []models.OtherName) string {
+	if len(names) == 0 {
+		return ""
+	}
+
+	parts := make([]string, 0, len(names))
+	for _, other := range names {
+		trimmed := strings.TrimSpace(other.Name)
+		if trimmed != "" {
+			parts = append(parts, trimmed)
+		}
+	}
+
+	return strings.Join(parts, ", ")
+}
+
+// SummariseUsage shortens verbose usage descriptions for table display.
+func SummariseUsage(usage string) string {
+	trimmed := strings.TrimSpace(usage)
+	if trimmed == "" {
+		return ""
+	}
+
+	const limit = 140
+	runes := []rune(trimmed)
+	if len(runes) <= limit {
+		return trimmed
+	}
+
+	summary := strings.TrimSpace(string(runes[:limit]))
+	return summary + "…"
 }

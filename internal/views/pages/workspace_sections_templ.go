@@ -113,19 +113,19 @@ func IngredientManagement(snapshot WorkspaceSnapshot) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " aroma chemicals.</p><p>All mutations stay on the client so you can preview flows without touching production services.</p></aside></div><div class=\"rounded-3xl border border-white/10 bg-black/35 backdrop-blur-xl\"><header class=\"flex flex-col gap-3 px-6 pt-6 text-sm uppercase tracking-[0.45em] text-white/50 sm:flex-row sm:items-center sm:justify-between\"><span>Ledger</span><div class=\"flex flex-col gap-3 sm:flex-row sm:items-center\"><input type=\"search\" data-filter-search placeholder=\"Search ingredient or formula\" class=\"w-full rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none\"> <select data-filter-status class=\"rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white focus:border-white/40 focus:outline-none\"><option value=\"all\">All sources</option> <option value=\"Aroma Chemical\">Aroma chemical</option> <option value=\"Sub-Formula\">Sub-formula</option></select></div></header><div class=\"mt-4 overflow-hidden rounded-3xl border border-white/10\"><table class=\"min-w-full divide-y divide-white/10 text-left text-sm text-white/70\"><thead class=\"bg-white/5 text-[0.6rem] uppercase tracking-[0.45em] text-white/45\"><tr><th class=\"px-5 py-4 font-medium\">Ingredient</th><th class=\"px-5 py-4 font-medium\">Formula</th><th class=\"px-5 py-4 font-medium\">Amount</th><th class=\"px-5 py-4 font-medium\">Updated</th><th class=\"px-5 py-4 font-medium\">Actions</th></tr></thead> <tbody data-list class=\"divide-y divide-white/10\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " aroma chemicals.</p><p>All mutations stay on the client so you can preview flows without touching production services.</p></aside></div><div class=\"rounded-3xl border border-white/10 bg-black/35 backdrop-blur-xl\"><header class=\"flex flex-col gap-3 px-6 pt-6 text-sm uppercase tracking-[0.45em] text-white/50 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between\"><span>Ledger</span><div class=\"flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end\"><input type=\"search\" data-filter-search placeholder=\"Search aroma chemicals\" class=\"w-full rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none sm:max-w-[16rem]\"> <select data-filter-wheel class=\"rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white focus:border-white/40 focus:outline-none\"><option value=\"\">All wheel positions</option></select> <select data-filter-pyramid class=\"rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white focus:border-white/40 focus:outline-none\"><option value=\"\">All pyramid levels</option></select> <select data-filter-potency class=\"rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white focus:border-white/40 focus:outline-none\"><option value=\"\">All potencies</option></select></div></header><div class=\"mt-4 overflow-hidden rounded-3xl border border-white/10\"><table class=\"min-w-full divide-y divide-white/10 text-left text-sm text-white/70\"><thead class=\"bg-white/5 text-[0.6rem] uppercase tracking-[0.45em] text-white/45\"><tr><th class=\"px-5 py-4 font-medium\">Ingredient</th><th class=\"px-5 py-4 font-medium\">Wheel</th><th class=\"px-5 py-4 font-medium\">Pyramid</th><th class=\"px-5 py-4 font-medium\">Potency</th><th class=\"px-5 py-4 font-medium\">Details</th></tr></thead> <tbody data-list class=\"divide-y divide-white/10\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, ingredient := range snapshot.FormulaIngredients {
+		for _, chemical := range snapshot.AromaChemicals {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<tr data-id=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(ingredient.ID)
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(chemical.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 118, Col: 83}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 122, Col: 81}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -136,118 +136,254 @@ func IngredientManagement(snapshot WorkspaceSnapshot) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(IngredientDisplayName(ingredient))
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(chemical.IngredientName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 120, Col: 143}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 124, Col: 133}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><div class=\"text-xs uppercase tracking-[0.35em] text-white/40\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var7 string
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(IngredientSourceKind(ingredient))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 121, Col: 169}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></td><td class=\"px-5 py-4\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if ingredient.Formula != nil {
-				var templ_7745c5c3_Var8 string
-				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(ingredient.Formula.Name)
+			if chemical.Type != "" {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"text-xs uppercase tracking-[0.35em] text-white/40\">")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 125, Col: 105}
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var7 string
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(chemical.Type)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 126, Col: 158}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			if chemical.CASNumber != "" {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"text-xs text-white/50\">CAS ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var8 string
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(chemical.CASNumber)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 129, Col: 139}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<span class=\"text-white/50\">Formula #")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			if len(chemical.OtherNames) > 0 {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"text-xs text-white/40\">Also known as: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var9 string
-				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(ingredient.FormulaID)
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(JoinOtherNames(chemical.OtherNames))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 127, Col: 139}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 132, Col: 167}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</td><td class=\"px-5 py-4\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</td><td class=\"px-5 py-4\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var10 string
-			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%.2f %s", ingredient.Amount, ingredient.Unit))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 130, Col: 146}
+			if chemical.WheelPosition != "" {
+				var templ_7745c5c3_Var10 string
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(chemical.WheelPosition)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 137, Col: 104}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<span class=\"text-white/40\">—</span>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</td><td class=\"px-5 py-4\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var11 string
-			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(ingredient.UpdatedAt.UTC().Format("02 Jan 2006"))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 131, Col: 136}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</td><td class=\"px-5 py-4\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</td><td class=\"px-5 py-4\"><div class=\"flex items-center gap-2\"><button type=\"button\" data-action=\"edit\" data-id=\"")
+			if chemical.PyramidPosition != "" {
+				var templ_7745c5c3_Var11 string
+				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(chemical.PyramidPosition)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 144, Col: 106}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<span class=\"text-white/40\">—</span>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</td><td class=\"px-5 py-4\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var12 string
-			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(ingredient.ID)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 134, Col: 144}
+			if chemical.Strength != 0 {
+				var templ_7745c5c3_Var12 string
+				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(chemical.Strength)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 151, Col: 99}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<span class=\"text-white/40\">—</span> ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
+			if chemical.MaxIFRAPercentage != 0 || chemical.RecommendedDilution != 0 {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"text-xs text-white/40\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				if chemical.RecommendedDilution != 0 {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "Recommended ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var13 string
+					templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%.2f%%", chemical.RecommendedDilution))
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 158, Col: 161}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, " ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				if chemical.MaxIFRAPercentage != 0 {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<span class=\"ml-1\">Max IFRA ")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var14 string
+					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%.2f%%", chemical.MaxIFRAPercentage))
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 161, Col: 175}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</span>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</td><td class=\"px-5 py-4\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "\" class=\"rounded-full border border-white/20 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/70 transition hover:border-white/40 hover:text-white\">Edit</button> <button type=\"button\" data-action=\"delete\" data-id=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
+			if chemical.Duration != "" {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var15 string
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(chemical.Duration)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 168, Col: 104}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
-			var templ_7745c5c3_Var13 string
-			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(ingredient.ID)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 135, Col: 146}
+			if chemical.Usage != "" {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<div class=\"text-xs text-white/50\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var16 string
+				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(SummariseUsage(chemical.Usage))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 171, Col: 147}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
+			if chemical.HistoricRole != "" {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div class=\"text-xs text-white/40\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var17 string
+				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(chemical.HistoricRole)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 174, Col: 138}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" class=\"rounded-full border border-rose-400/25 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-rose-200 transition hover:border-rose-300/40 hover:text-rose-100\">Remove</button></div></td></tr>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</td></tr>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</tbody></table><div data-empty-state class=\"hidden px-6 py-16 text-center text-sm text-white/60\">No records yet. Add an ingredient above to populate the ledger.</div></div></div><div data-edit-panel class=\"fixed inset-0 z-40 hidden items-center justify-center bg-black/80 px-6 py-10 backdrop-blur\"><div class=\"w-full max-w-lg space-y-5 rounded-3xl border border-white/10 bg-[#0a0a10] p-8 shadow-[0_40px_120px_rgba(0,0,0,0.55)]\"><header class=\"flex items-center justify-between\"><div><h4 class=\"text-lg text-white\">Edit Ingredient</h4><p class=\"text-sm text-white/60\">Changes stay local to your browser session.</p></div><button type=\"button\" data-role=\"close-panel\" class=\"rounded-full border border-white/15 px-3 py-1 text-[0.55rem] uppercase tracking-[0.5em] text-white/50 transition hover:border-white/30 hover:text-white\">Close</button></header><form class=\"space-y-4\" data-action=\"edit\"><input type=\"hidden\" name=\"id\"> <label class=\"space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">Formula <select name=\"formulaId\" required data-formula-select class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none\"></select></label> <label class=\"space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">Aroma Chemical <select name=\"aromaChemicalId\" required data-chemical-select class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none\"></select></label><div class=\"grid gap-4 sm:grid-cols-2\"><label class=\"space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">Amount <input type=\"number\" step=\"0.01\" min=\"0\" name=\"amount\" class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none\"></label> <label class=\"space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">Unit <select name=\"unit\" class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none\"><option value=\"g\">g</option> <option value=\"kg\">kg</option> <option value=\"ml\">ml</option> <option value=\"L\">L</option></select></label></div><div class=\"flex justify-end gap-3\"><button type=\"button\" data-role=\"close-panel\" class=\"rounded-full border border-white/15 px-5 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60 transition hover:border-white/30 hover:text-white\">Cancel</button> <button type=\"submit\" class=\"rounded-full bg-white px-6 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-[#050509] shadow-[0_18px_50px_rgba(255,255,255,0.25)] transition hover:bg-white/90\">Save</button></div></form></div></div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</tbody></table><div data-empty-state class=\"hidden px-6 py-16 text-center text-sm text-white/60\">No aroma chemicals found. Adjust your filters to see results.</div><div data-pagination class=\"flex flex-col gap-3 border-t border-white/10 bg-black/25 px-5 py-4 text-xs text-white/60 sm:flex-row sm:items-center sm:justify-between\"><span data-pagination-summary>Showing 0 aroma chemicals</span><div class=\"flex items-center gap-2\"><button type=\"button\" data-page-prev class=\"rounded-full border border-white/15 px-4 py-1.5 text-[0.6rem] uppercase tracking-[0.45em] text-white/60 transition hover:border-white/30 hover:text-white disabled:cursor-not-allowed disabled:opacity-40\">Previous</button> <span data-pagination-pages>Page 1 of 1</span> <button type=\"button\" data-page-next class=\"rounded-full border border-white/15 px-4 py-1.5 text-[0.6rem] uppercase tracking-[0.45em] text-white/60 transition hover:border-white/30 hover:text-white disabled:cursor-not-allowed disabled:opacity-40\">Next</button></div></div></div></div><div data-edit-panel class=\"fixed inset-0 z-40 hidden items-center justify-center bg-black/80 px-6 py-10 backdrop-blur\"><div class=\"w-full max-w-lg space-y-5 rounded-3xl border border-white/10 bg-[#0a0a10] p-8 shadow-[0_40px_120px_rgba(0,0,0,0.55)]\"><header class=\"flex items-center justify-between\"><div><h4 class=\"text-lg text-white\">Edit Ingredient</h4><p class=\"text-sm text-white/60\">Changes stay local to your browser session.</p></div><button type=\"button\" data-role=\"close-panel\" class=\"rounded-full border border-white/15 px-3 py-1 text-[0.55rem] uppercase tracking-[0.5em] text-white/50 transition hover:border-white/30 hover:text-white\">Close</button></header><form class=\"space-y-4\" data-action=\"edit\"><input type=\"hidden\" name=\"id\"> <label class=\"space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">Formula <select name=\"formulaId\" required data-formula-select class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none\"></select></label> <label class=\"space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">Aroma Chemical <select name=\"aromaChemicalId\" required data-chemical-select class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none\"></select></label><div class=\"grid gap-4 sm:grid-cols-2\"><label class=\"space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">Amount <input type=\"number\" step=\"0.01\" min=\"0\" name=\"amount\" class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none\"></label> <label class=\"space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">Unit <select name=\"unit\" class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none\"><option value=\"g\">g</option> <option value=\"kg\">kg</option> <option value=\"ml\">ml</option> <option value=\"L\">L</option></select></label></div><div class=\"flex justify-end gap-3\"><button type=\"button\" data-role=\"close-panel\" class=\"rounded-full border border-white/15 px-5 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60 transition hover:border-white/30 hover:text-white\">Cancel</button> <button type=\"submit\" class=\"rounded-full bg-white px-6 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-[#050509] shadow-[0_18px_50px_rgba(255,255,255,0.25)] transition hover:bg-white/90\">Save</button></div></form></div></div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -271,169 +407,169 @@ func FormulaManagement(snapshot WorkspaceSnapshot) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var14 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var14 == nil {
-			templ_7745c5c3_Var14 = templ.NopComponent
+		templ_7745c5c3_Var18 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var18 == nil {
+			templ_7745c5c3_Var18 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<section class=\"space-y-8\" data-module=\"formulas\" data-module-key=\"formulas\"><div class=\"grid gap-6 lg:grid-cols-3\"><div class=\"lg:col-span-2 space-y-6 rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-8 shadow-[0_30px_70px_rgba(0,0,0,0.35)] backdrop-blur-xl\"><header class=\"flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between\"><div><h3 class=\"text-lg text-white\">Formula</h3><p class=\"text-sm uppercase tracking-[0.4em] text-white/50\">Interact with the mock dataset built from real models.</p></div><span class=\"rounded-full border border-white/15 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/50\">Seeded User: avery@perfugo.app</span></header><form class=\"grid gap-5 md:grid-cols-2\" data-action=\"create\"><label class=\"space-y-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60\">Name <input type=\"text\" name=\"name\" required placeholder=\"Aurum Nocturne\" class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none\"></label> <label class=\"space-y-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60\">Version <input type=\"number\" name=\"version\" min=\"1\" step=\"1\" value=\"1\" class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/40 focus:outline-none\"></label> <label class=\"md:col-span-2 space-y-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60\">Notes <textarea name=\"notes\" rows=\"3\" placeholder=\"Resinous amber core balanced with luminous citrus facets.\" class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none\"></textarea></label> <label class=\"space-y-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60\">Latest Iteration<div class=\"flex items-center gap-3 rounded-2xl border border-white/15 bg-black/40 px-4 py-3\"><input type=\"checkbox\" name=\"isLatest\" class=\"h-4 w-4 rounded border-white/20 bg-black/40\" checked> <span class=\"text-sm text-white/70\">Mark as current</span></div></label> <label class=\"space-y-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60\">Parent Formula <select name=\"parentFormulaId\" data-formula-select class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/40 focus:outline-none\"><option value=\"\">None</option></select></label><div class=\"md:col-span-2 flex flex-wrap items-center justify-end gap-3\"><button type=\"reset\" class=\"rounded-full border border-white/15 px-6 py-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60 transition hover:border-white/30 hover:text-white\">Reset</button> <button type=\"submit\" class=\"rounded-full bg-white px-6 py-2 text-[0.65rem] uppercase tracking-[0.45em] text-[#050509] shadow-[0_18px_45px_rgba(255,255,255,0.22)] transition hover:bg-white/90\">Add Formula</button></div></form></div><aside class=\"space-y-4 rounded-3xl border border-white/10 bg-black/35 p-6 text-sm text-white/60 backdrop-blur-xl\"><h4 class=\"text-base text-white\">Mock Credentials</h4><p>Sign in with <code class=\"rounded bg-white/10 px-2 py-1 text-xs\">avery@perfugo.app / atelier</code> when running the server.</p><p>The mock sqlite connection is created automatically when <code>DATABASE_USE_MOCK=1</code> or no DSN is provided.</p></aside></div><div class=\"rounded-3xl border border-white/10 bg-black/35 backdrop-blur-xl\"><header class=\"flex flex-col gap-3 px-6 pt-6 text-sm uppercase tracking-[0.45em] text-white/50 sm:flex-row sm:items-center sm:justify-between\"><span>Portfolio</span><div class=\"flex flex-col gap-3 sm:flex-row sm:items-center\"><input type=\"search\" data-filter-search placeholder=\"Search formula\" class=\"w-full rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none\"> <select data-filter-status class=\"rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white focus:border-white/40 focus:outline-none\"><option value=\"all\">All</option> <option value=\"latest\">Current</option> <option value=\"archive\">Archive</option></select></div></header><div class=\"mt-4 overflow-hidden rounded-3xl border border-white/10\"><table class=\"min-w-full divide-y divide-white/10 text-left text-sm text-white/70\"><thead class=\"bg-white/5 text-[0.6rem] uppercase tracking-[0.45em] text-white/45\"><tr><th class=\"px-5 py-4 font-medium\">Formula</th><th class=\"px-5 py-4 font-medium\">Version</th><th class=\"px-5 py-4 font-medium\">Latest</th><th class=\"px-5 py-4 font-medium\">Parent</th><th class=\"px-5 py-4 font-medium\">Ingredients</th><th class=\"px-5 py-4 font-medium\">Updated</th><th class=\"px-5 py-4 font-medium\">Actions</th></tr></thead> <tbody data-list class=\"divide-y divide-white/10\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<section class=\"space-y-8\" data-module=\"formulas\" data-module-key=\"formulas\"><div class=\"grid gap-6 lg:grid-cols-3\"><div class=\"lg:col-span-2 space-y-6 rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-8 shadow-[0_30px_70px_rgba(0,0,0,0.35)] backdrop-blur-xl\"><header class=\"flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between\"><div><h3 class=\"text-lg text-white\">Formula</h3><p class=\"text-sm uppercase tracking-[0.4em] text-white/50\">Interact with the mock dataset built from real models.</p></div><span class=\"rounded-full border border-white/15 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/50\">Seeded User: avery@perfugo.app</span></header><form class=\"grid gap-5 md:grid-cols-2\" data-action=\"create\"><label class=\"space-y-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60\">Name <input type=\"text\" name=\"name\" required placeholder=\"Aurum Nocturne\" class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none\"></label> <label class=\"space-y-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60\">Version <input type=\"number\" name=\"version\" min=\"1\" step=\"1\" value=\"1\" class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/40 focus:outline-none\"></label> <label class=\"md:col-span-2 space-y-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60\">Notes <textarea name=\"notes\" rows=\"3\" placeholder=\"Resinous amber core balanced with luminous citrus facets.\" class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none\"></textarea></label> <label class=\"space-y-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60\">Latest Iteration<div class=\"flex items-center gap-3 rounded-2xl border border-white/15 bg-black/40 px-4 py-3\"><input type=\"checkbox\" name=\"isLatest\" class=\"h-4 w-4 rounded border-white/20 bg-black/40\" checked> <span class=\"text-sm text-white/70\">Mark as current</span></div></label> <label class=\"space-y-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60\">Parent Formula <select name=\"parentFormulaId\" data-formula-select class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/40 focus:outline-none\"><option value=\"\">None</option></select></label><div class=\"md:col-span-2 flex flex-wrap items-center justify-end gap-3\"><button type=\"reset\" class=\"rounded-full border border-white/15 px-6 py-2 text-[0.65rem] uppercase tracking-[0.45em] text-white/60 transition hover:border-white/30 hover:text-white\">Reset</button> <button type=\"submit\" class=\"rounded-full bg-white px-6 py-2 text-[0.65rem] uppercase tracking-[0.45em] text-[#050509] shadow-[0_18px_45px_rgba(255,255,255,0.22)] transition hover:bg-white/90\">Add Formula</button></div></form></div><aside class=\"space-y-4 rounded-3xl border border-white/10 bg-black/35 p-6 text-sm text-white/60 backdrop-blur-xl\"><h4 class=\"text-base text-white\">Mock Credentials</h4><p>Sign in with <code class=\"rounded bg-white/10 px-2 py-1 text-xs\">avery@perfugo.app / atelier</code> when running the server.</p><p>The mock sqlite connection is created automatically when <code>DATABASE_USE_MOCK=1</code> or no DSN is provided.</p></aside></div><div class=\"rounded-3xl border border-white/10 bg-black/35 backdrop-blur-xl\"><header class=\"flex flex-col gap-3 px-6 pt-6 text-sm uppercase tracking-[0.45em] text-white/50 sm:flex-row sm:items-center sm:justify-between\"><span>Portfolio</span><div class=\"flex flex-col gap-3 sm:flex-row sm:items-center\"><input type=\"search\" data-filter-search placeholder=\"Search formula\" class=\"w-full rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none\"> <select data-filter-status class=\"rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white focus:border-white/40 focus:outline-none\"><option value=\"all\">All</option> <option value=\"latest\">Current</option> <option value=\"archive\">Archive</option></select></div></header><div class=\"mt-4 overflow-hidden rounded-3xl border border-white/10\"><table class=\"min-w-full divide-y divide-white/10 text-left text-sm text-white/70\"><thead class=\"bg-white/5 text-[0.6rem] uppercase tracking-[0.45em] text-white/45\"><tr><th class=\"px-5 py-4 font-medium\">Formula</th><th class=\"px-5 py-4 font-medium\">Version</th><th class=\"px-5 py-4 font-medium\">Latest</th><th class=\"px-5 py-4 font-medium\">Parent</th><th class=\"px-5 py-4 font-medium\">Ingredients</th><th class=\"px-5 py-4 font-medium\">Updated</th><th class=\"px-5 py-4 font-medium\">Actions</th></tr></thead> <tbody data-list class=\"divide-y divide-white/10\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, formula := range snapshot.Formulas {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<tr data-id=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<tr data-id=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var15 string
-			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(formula.ID)
+			var templ_7745c5c3_Var19 string
+			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(formula.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 266, Col: 80}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 313, Col: 80}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\" class=\"bg-black/25 text-white/80\"><td class=\"px-5 py-4\"><div class=\"font-medium text-white\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var16 string
-			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(formula.Name)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 268, Col: 122}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div><div class=\"text-xs uppercase tracking-[0.35em] text-white/40\">ID ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var17 string
-			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(formula.ID)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 269, Col: 150}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div></td><td class=\"px-5 py-4\">v")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var18 string
-			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(formula.Version)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 271, Col: 104}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</td><td class=\"px-5 py-4\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if formula.IsLatest {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<span class=\"rounded-full border border-emerald-300/30 bg-emerald-400/10 px-3 py-1 text-xs uppercase tracking-[0.35em] text-emerald-100\">Current</span>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<span class=\"rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.35em] text-white/60\">Archive</span>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</td><td class=\"px-5 py-4\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if formula.ParentFormulaID != nil {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<span class=\"text-white/70\">#")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var19 string
-				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(*formula.ParentFormulaID)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 281, Col: 135}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</span>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<span class=\"text-white/50\">—</span>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</td><td class=\"px-5 py-4\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "\" class=\"bg-black/25 text-white/80\"><td class=\"px-5 py-4\"><div class=\"font-medium text-white\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var20 string
-			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(len(formula.Ingredients))
+			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(formula.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 286, Col: 112}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 315, Col: 122}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</td><td class=\"px-5 py-4\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</div><div class=\"text-xs uppercase tracking-[0.35em] text-white/40\">ID ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var21 string
-			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(formula.UpdatedAt.UTC().Format("02 Jan 2006"))
+			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(formula.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 287, Col: 133}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 316, Col: 150}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</td><td class=\"px-5 py-4\"><div class=\"flex items-center gap-2\"><button type=\"button\" data-action=\"edit\" data-id=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</div></td><td class=\"px-5 py-4\">v")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var22 string
-			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(formula.ID)
+			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(formula.Version)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 290, Col: 141}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 318, Col: 104}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "\" class=\"rounded-full border border-white/20 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/70 transition hover:border-white/40 hover:text-white\">Edit</button> <button type=\"button\" data-action=\"delete\" data-id=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</td><td class=\"px-5 py-4\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var23 string
-			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(formula.ID)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 291, Col: 143}
+			if formula.IsLatest {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<span class=\"rounded-full border border-emerald-300/30 bg-emerald-400/10 px-3 py-1 text-xs uppercase tracking-[0.35em] text-emerald-100\">Current</span>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<span class=\"rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.35em] text-white/60\">Archive</span>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</td><td class=\"px-5 py-4\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\" class=\"rounded-full border border-rose-400/25 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-rose-200 transition hover:border-rose-300/40 hover:text-rose-100\">Remove</button></div></td></tr>")
+			if formula.ParentFormulaID != nil {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<span class=\"text-white/70\">#")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var23 string
+				templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(*formula.ParentFormulaID)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 328, Col: 135}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</span>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<span class=\"text-white/50\">—</span>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</td><td class=\"px-5 py-4\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var24 string
+			templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(len(formula.Ingredients))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 333, Col: 112}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</td><td class=\"px-5 py-4\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var25 string
+			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(formula.UpdatedAt.UTC().Format("02 Jan 2006"))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 334, Col: 133}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</td><td class=\"px-5 py-4\"><div class=\"flex items-center gap-2\"><button type=\"button\" data-action=\"edit\" data-id=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var26 string
+			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(formula.ID)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 337, Col: 141}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "\" class=\"rounded-full border border-white/20 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/70 transition hover:border-white/40 hover:text-white\">Edit</button> <button type=\"button\" data-action=\"delete\" data-id=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var27 string
+			templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(formula.ID)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 338, Col: 143}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "\" class=\"rounded-full border border-rose-400/25 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-rose-200 transition hover:border-rose-300/40 hover:text-rose-100\">Remove</button></div></td></tr>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "</tbody></table><div data-empty-state class=\"hidden px-6 py-16 text-center text-sm text-white/60\">No formulas yet. Compose a new entry above.</div></div></div><div data-edit-panel class=\"fixed inset-0 z-40 hidden items-center justify-center bg-black/80 px-6 py-10 backdrop-blur\"><div class=\"w-full max-w-lg space-y-5 rounded-3xl border border-white/10 bg-[#0a0a10] p-8 shadow-[0_40px_120px_rgba(0,0,0,0.55)]\"><header class=\"flex items-center justify-between\"><div><h4 class=\"text-lg text-white\">Edit Formula</h4><p class=\"text-sm text-white/60\">All adjustments persist only in memory.</p></div><button type=\"button\" data-role=\"close-panel\" class=\"rounded-full border border-white/15 px-3 py-1 text-[0.55rem] uppercase tracking-[0.5em] text-white/50 transition hover:border-white/30 hover:text-white\">Close</button></header><form class=\"space-y-4\" data-action=\"edit\"><input type=\"hidden\" name=\"id\"> <label class=\"space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">Name <input type=\"text\" name=\"name\" required class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none\"></label> <label class=\"space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">Version <input type=\"number\" min=\"1\" step=\"1\" name=\"version\" class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none\"></label> <label class=\"space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">Notes <textarea name=\"notes\" rows=\"3\" class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none\"></textarea></label> <label class=\"flex items-center justify-between rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\"><span>Mark as latest</span> <input type=\"checkbox\" name=\"isLatest\" class=\"h-4 w-4 rounded border-white/20 bg-black/40\"></label> <label class=\"space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">Parent Formula <select name=\"parentFormulaId\" data-formula-select class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none\"><option value=\"\">None</option></select></label><div class=\"flex justify-end gap-3\"><button type=\"button\" data-role=\"close-panel\" class=\"rounded-full border border-white/15 px-5 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60 transition hover:border-white/30 hover:text-white\">Cancel</button> <button type=\"submit\" class=\"rounded-full bg-white px-6 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-[#050509] shadow-[0_18px_50px_rgba(255,255,255,0.25)] transition hover:bg-white/90\">Save</button></div></form></div></div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "</tbody></table><div data-empty-state class=\"hidden px-6 py-16 text-center text-sm text-white/60\">No formulas yet. Compose a new entry above.</div></div></div><div data-edit-panel class=\"fixed inset-0 z-40 hidden items-center justify-center bg-black/80 px-6 py-10 backdrop-blur\"><div class=\"w-full max-w-lg space-y-5 rounded-3xl border border-white/10 bg-[#0a0a10] p-8 shadow-[0_40px_120px_rgba(0,0,0,0.55)]\"><header class=\"flex items-center justify-between\"><div><h4 class=\"text-lg text-white\">Edit Formula</h4><p class=\"text-sm text-white/60\">All adjustments persist only in memory.</p></div><button type=\"button\" data-role=\"close-panel\" class=\"rounded-full border border-white/15 px-3 py-1 text-[0.55rem] uppercase tracking-[0.5em] text-white/50 transition hover:border-white/30 hover:text-white\">Close</button></header><form class=\"space-y-4\" data-action=\"edit\"><input type=\"hidden\" name=\"id\"> <label class=\"space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">Name <input type=\"text\" name=\"name\" required class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none\"></label> <label class=\"space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">Version <input type=\"number\" min=\"1\" step=\"1\" name=\"version\" class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none\"></label> <label class=\"space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">Notes <textarea name=\"notes\" rows=\"3\" class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none\"></textarea></label> <label class=\"flex items-center justify-between rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\"><span>Mark as latest</span> <input type=\"checkbox\" name=\"isLatest\" class=\"h-4 w-4 rounded border-white/20 bg-black/40\"></label> <label class=\"space-y-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">Parent Formula <select name=\"parentFormulaId\" data-formula-select class=\"w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none\"><option value=\"\">None</option></select></label><div class=\"flex justify-end gap-3\"><button type=\"button\" data-role=\"close-panel\" class=\"rounded-full border border-white/15 px-5 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/60 transition hover:border-white/30 hover:text-white\">Cancel</button> <button type=\"submit\" class=\"rounded-full bg-white px-6 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-[#050509] shadow-[0_18px_50px_rgba(255,255,255,0.25)] transition hover:bg-white/90\">Save</button></div></form></div></div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -457,159 +593,159 @@ func ReportsOverview(cards []ReportCard, timeline []ReportEvent, leaders []Ingre
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var24 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var24 == nil {
-			templ_7745c5c3_Var24 = templ.NopComponent
+		templ_7745c5c3_Var28 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var28 == nil {
+			templ_7745c5c3_Var28 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<section class=\"space-y-6\" data-module=\"reports\"><div class=\"grid gap-4 md:grid-cols-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<section class=\"space-y-6\" data-module=\"reports\"><div class=\"grid gap-4 md:grid-cols-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, card := range cards {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<div class=\"rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-5 text-white shadow-[0_20px_60px_rgba(0,0,0,0.4)]\"><p class=\"text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var25 string
-			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(card.Title)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 350, Col: 119}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</p><p class=\"mt-3 text-3xl font-semibold text-white\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var26 string
-			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(card.Metric)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 351, Col: 103}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</p><p class=\"mt-2 text-sm text-emerald-200\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var27 string
-			templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(card.Delta)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 352, Col: 93}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</p><p class=\"text-xs uppercase tracking-[0.45em] text-white/40\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var28 string
-			templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(card.DeltaLabel)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 353, Col: 118}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</p></div>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</div><div class=\"grid gap-4 lg:grid-cols-5\"><div class=\"space-y-4 rounded-3xl border border-white/10 bg-black/35 p-6 backdrop-blur-xl lg:col-span-3\"><h4 class=\"text-base text-white\">Recent Activity</h4><ol class=\"space-y-4 text-sm text-white/70\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		for _, event := range timeline {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "<li class=\"rounded-2xl border border-white/10 bg-white/5 px-5 py-4\"><div class=\"flex items-center justify-between text-xs uppercase tracking-[0.45em] text-white/40\"><span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "<div class=\"rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-5 text-white shadow-[0_20px_60px_rgba(0,0,0,0.4)]\"><p class=\"text-[0.6rem] uppercase tracking-[0.45em] text-white/60\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var29 string
-			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(event.Title)
+			templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(card.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 364, Col: 83}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 397, Col: 119}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "</span> <span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "</p><p class=\"mt-3 text-3xl font-semibold text-white\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var30 string
-			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(formatAuditDate(event.Timestamp))
+			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(card.Metric)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 365, Col: 104}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 398, Col: 103}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</span></div><p class=\"mt-3 text-white/80\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "</p><p class=\"mt-2 text-sm text-emerald-200\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var31 string
-			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(event.Summary)
+			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(card.Delta)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 367, Col: 101}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 399, Col: 93}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</p></li>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "</ol></div><aside class=\"space-y-4 rounded-3xl border border-white/10 bg-black/35 p-6 backdrop-blur-xl lg:col-span-2\"><h4 class=\"text-base text-white\">Velocity</h4><ul class=\"space-y-3 text-sm text-white/70\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		for _, leader := range leaders {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<li class=\"flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-5 py-3\"><span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "</p><p class=\"text-xs uppercase tracking-[0.45em] text-white/40\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var32 string
-			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(leader.Name)
+			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(card.DeltaLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 377, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 400, Col: 118}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 48, "</span> <span class=\"text-emerald-200\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "</p></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "</div><div class=\"grid gap-4 lg:grid-cols-5\"><div class=\"space-y-4 rounded-3xl border border-white/10 bg-black/35 p-6 backdrop-blur-xl lg:col-span-3\"><h4 class=\"text-base text-white\">Recent Activity</h4><ol class=\"space-y-4 text-sm text-white/70\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, event := range timeline {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "<li class=\"rounded-2xl border border-white/10 bg-white/5 px-5 py-4\"><div class=\"flex items-center justify-between text-xs uppercase tracking-[0.45em] text-white/40\"><span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var33 string
-			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(leader.Velocity)
+			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(event.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 378, Col: 104}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 411, Col: 83}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "</span></li>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "</span> <span>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var34 string
+			templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(formatAuditDate(event.Timestamp))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 412, Col: 104}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "</span></div><p class=\"mt-3 text-white/80\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var35 string
+			templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(event.Summary)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 414, Col: 101}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "</p></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</ul><p class=\"text-xs uppercase tracking-[0.45em] text-white/40\">98 checkpoints cleared in the latest QA run.</p></aside></div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "</ol></div><aside class=\"space-y-4 rounded-3xl border border-white/10 bg-black/35 p-6 backdrop-blur-xl lg:col-span-2\"><h4 class=\"text-base text-white\">Velocity</h4><ul class=\"space-y-3 text-sm text-white/70\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, leader := range leaders {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "<li class=\"flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-5 py-3\"><span>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var36 string
+			templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(leader.Name)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 424, Col: 75}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "</span> <span class=\"text-emerald-200\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var37 string
+			templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(leader.Velocity)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 425, Col: 104}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "</span></li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "</ul><p class=\"text-xs uppercase tracking-[0.45em] text-white/40\">98 checkpoints cleared in the latest QA run.</p></aside></div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -633,120 +769,120 @@ func PreferencesPanel(currentTheme string, themes []layout.ThemeDefinition) temp
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var34 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var34 == nil {
-			templ_7745c5c3_Var34 = templ.NopComponent
+		templ_7745c5c3_Var38 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var38 == nil {
+			templ_7745c5c3_Var38 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<section class=\"space-y-6\" data-module=\"preferences\"><div class=\"app-card space-y-6 p-8\"><header class=\"space-y-3\"><span class=\"app-badge\">Studio Preferences</span><div class=\"space-y-1\"><h2 class=\"text-xl font-semibold text-[var(--app-text)]\">Workspace preferences</h2><p class=\"text-sm app-muted\">Adjust notifications and visual theme for this atelier session.</p></div></header><form class=\"space-y-6\" data-action=\"preferences\" method=\"post\" action=\"/app/preferences\" hx-boost=\"false\"><div class=\"grid gap-5 md:grid-cols-2\"><label class=\"space-y-2 text-sm text-[var(--app-text)]\"><span class=\"font-medium\">Notifications</span> <select name=\"notifications\" class=\"app-input w-full\"><option>Product launches</option> <option>Compliance</option> <option>Inventory</option></select></label> <label class=\"space-y-2 text-sm text-[var(--app-text)]\"><span class=\"font-medium\">Theme</span> <select name=\"theme\" required class=\"app-input w-full\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 70, "<section class=\"space-y-6\" data-module=\"preferences\"><div class=\"app-card space-y-6 p-8\"><header class=\"space-y-3\"><span class=\"app-badge\">Studio Preferences</span><div class=\"space-y-1\"><h2 class=\"text-xl font-semibold text-[var(--app-text)]\">Workspace preferences</h2><p class=\"text-sm app-muted\">Adjust notifications and visual theme for this atelier session.</p></div></header><form class=\"space-y-6\" data-action=\"preferences\" method=\"post\" action=\"/app/preferences\" hx-boost=\"false\"><div class=\"grid gap-5 md:grid-cols-2\"><label class=\"space-y-2 text-sm text-[var(--app-text)]\"><span class=\"font-medium\">Notifications</span> <select name=\"notifications\" class=\"app-input w-full\"><option>Product launches</option> <option>Compliance</option> <option>Inventory</option></select></label> <label class=\"space-y-2 text-sm text-[var(--app-text)]\"><span class=\"font-medium\">Theme</span> <select name=\"theme\" required class=\"app-input w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, option := range themes {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<option value=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var35 string
-			templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(option.ID)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 412, Col: 89}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if option.ID == currentTheme {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, " selected")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, ">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var36 string
-			templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(option.Label)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 416, Col: 79}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "</option>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "</select></label></div><div class=\"grid gap-3 sm:grid-cols-3\" data-theme-options>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		for _, option := range themes {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "<button type=\"button\" class=\"app-theme-option\" data-theme-choice=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var37 string
-			templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(option.ID)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 426, Col: 85}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "\" data-state=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var38 string
-			templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(themeButtonState(option.ID, currentTheme))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 427, Col: 110}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "\"><span class=\"text-sm font-semibold text-[var(--app-text)]\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 71, "<option value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var39 string
-			templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(option.Label)
+			templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(option.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 429, Col: 129}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 459, Col: 89}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "</span> <span class=\"text-xs leading-snug app-muted\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 72, "\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if option.ID == currentTheme {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 73, " selected")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 74, ">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var40 string
-			templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(option.Description)
+			templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(option.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 430, Col: 121}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 463, Col: 79}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "</span></button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 75, "</option>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "</div><div class=\"flex flex-wrap items-center justify-end gap-3 text-[0.65rem] uppercase tracking-[0.32em]\"><button type=\"submit\" class=\"app-button\" data-role=\"save\">Save preferences</button> <span data-success class=\"hidden app-muted\">Preferences saved</span> <span data-error class=\"hidden text-rose-400\">Save failed</span></div></form></div></section>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 76, "</select></label></div><div class=\"grid gap-3 sm:grid-cols-3\" data-theme-options>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, option := range themes {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 77, "<button type=\"button\" class=\"app-theme-option\" data-theme-choice=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var41 string
+			templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(option.ID)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 473, Col: 85}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 78, "\" data-state=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var42 string
+			templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs(themeButtonState(option.ID, currentTheme))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 474, Col: 110}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 79, "\"><span class=\"text-sm font-semibold text-[var(--app-text)]\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var43 string
+			templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(option.Label)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 476, Col: 129}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 80, "</span> <span class=\"text-xs leading-snug app-muted\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var44 string
+			templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinStringErrs(option.Description)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 477, Col: 121}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 81, "</span></button>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 82, "</div><div class=\"flex flex-wrap items-center justify-end gap-3 text-[0.65rem] uppercase tracking-[0.32em]\"><button type=\"submit\" class=\"app-button\" data-role=\"save\">Save preferences</button> <span data-success class=\"hidden app-muted\">Preferences saved</span> <span data-error class=\"hidden text-rose-400\">Save failed</span></div></form></div></section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -770,12 +906,12 @@ func workspaceModulesScript() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var41 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var41 == nil {
-			templ_7745c5c3_Var41 = templ.NopComponent
+		templ_7745c5c3_Var45 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var45 == nil {
+			templ_7745c5c3_Var45 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "<script>\n                (function () {\n                        const namespace = window.PerfugoWorkspace || (window.PerfugoWorkspace = {});\n                        namespace.modules = namespace.modules || {};\n\n                        const seeds = window.PerfugoWorkspaceSeeds || { formulas: [], formula_ingredients: [], aroma_chemicals: [] };\n\n                        const toFormulas = (items) => (items || []).map((entry) => ({\n                                id: entry.ID,\n                                name: entry.Name,\n                                notes: entry.Notes || '',\n                                version: entry.Version || 1,\n                                isLatest: Boolean(entry.IsLatest),\n                                parentFormulaId: entry.ParentFormulaID || '',\n                                ingredients: Array.isArray(entry.Ingredients) ? entry.Ingredients.map((ing) => ing.ID) : [],\n                                createdAt: entry.CreatedAt || new Date().toISOString(),\n                                updatedAt: entry.UpdatedAt || new Date().toISOString(),\n                        }));\n\n                        const toIngredients = (items) => (items || []).map((entry) => ({\n                                id: entry.ID,\n                                formulaId: entry.FormulaID,\n                                aromaChemicalId: entry.AromaChemicalID || null,\n                                amount: entry.Amount || 0,\n                                unit: entry.Unit || 'g',\n                                createdAt: entry.CreatedAt || new Date().toISOString(),\n                                updatedAt: entry.UpdatedAt || new Date().toISOString(),\n                        }));\n\n                        const toChemicals = (items) => (items || []).map((entry) => ({\n                                id: entry.ID,\n                                name: entry.IngredientName || `Chemical #${entry.ID}`,\n                        }));\n\n                        namespace.store = namespace.store || {\n                                formulas: toFormulas(seeds.formulas),\n                                ingredients: toIngredients(seeds.formula_ingredients),\n                                chemicals: toChemicals(seeds.aroma_chemicals),\n                        };\n\n                        const emit = (event) => document.dispatchEvent(new CustomEvent(`perfugo:${event}`));\n                        const on = (event, handler) => document.addEventListener(`perfugo:${event}`, handler);\n\n                        const refreshSelects = () => {\n                                const formulaOptions = namespace.store.formulas\n                                        .map((formula) => `<option value=\"${formula.id}\">${formula.name.replace(/</g, '&lt;')}</option>`)\n                                        .join('');\n                                document.querySelectorAll('[data-formula-select]').forEach((select) => {\n                                        const base = select.getAttribute('name') === 'parentFormulaId' ? '<option value=\"\">None</option>' : '<option value=\"\" disabled hidden>Select…</option>';\n                                        const value = select.value;\n                                        select.innerHTML = base + formulaOptions;\n                                        if (value && select.querySelector(`option[value=\"${value}\"]`)) {\n                                                select.value = value;\n                                        }\n                                });\n\n                                const chemicalOptions = namespace.store.chemicals\n                                        .map((chemical) => `<option value=\"${chemical.id}\">${chemical.name.replace(/</g, '&lt;')}</option>`)\n                                        .join('');\n                                document.querySelectorAll('[data-chemical-select]').forEach((select) => {\n                                        const value = select.value;\n                                        select.innerHTML = '<option value=\"\" disabled hidden>Select…</option>' + chemicalOptions;\n                                        if (value && select.querySelector(`option[value=\"${value}\"]`)) {\n                                                select.value = value;\n                                        }\n                                });\n                        };\n\n                        refreshSelects();\n\n                        namespace.modules.ingredients = function (root) {\n                                const state = { search: '', filter: 'all', editing: null };\n                                const list = root.querySelector('[data-list]');\n                                const empty = root.querySelector('[data-empty-state]');\n                                const searchInput = root.querySelector('[data-filter-search]');\n                                const filterSelect = root.querySelector('[data-filter-status]');\n                                const createForm = root.querySelector('form[data-action=\"create\"]');\n                                const panel = root.querySelector('[data-edit-panel]');\n                                const editForm = panel ? panel.querySelector('form[data-action=\"edit\"]') : null;\n\n                                const formulaName = (id) => {\n                                        const formula = namespace.store.formulas.find((item) => Number(item.id) === Number(id));\n                                        return formula ? formula.name : `Formula #${id}`;\n                                };\n\n                                const chemicalName = (id) => {\n                                        const chemical = namespace.store.chemicals.find((item) => Number(item.id) === Number(id));\n                                        return chemical ? chemical.name : 'Unassigned Ingredient';\n                                };\n\n                                const render = () => {\n                                        const rows = namespace.store.ingredients.filter((item) => {\n                                                const source = item.aromaChemicalId ? 'Aroma Chemical' : 'Sub-Formula';\n                                                const text = `${chemicalName(item.aromaChemicalId)} ${formulaName(item.formulaId)} ${item.id}`.toLowerCase();\n                                                const matchesSearch = state.search ? text.includes(state.search) : true;\n                                                const matchesFilter = state.filter === 'all' ? true : state.filter === source;\n                                                return matchesSearch && matchesFilter;\n                                        });\n\n                                        if (!rows.length) {\n                                                if (empty) empty.classList.remove('hidden');\n                                                if (list) list.innerHTML = '';\n                                                return;\n                                        }\n\n                                        if (empty) empty.classList.add('hidden');\n\n                                        if (list) {\n                                                list.innerHTML = rows.map((item) => {\n                                                        return `<tr data-id=\"${item.id}\" class=\"bg-black/25 text-white/80\">\n                                                                <td class=\"px-5 py-4\">\n                                                                        <div class=\"font-medium text-white\">${chemicalName(item.aromaChemicalId).replace(/</g, '&lt;')}</div>\n                                                                        <div class=\"text-xs uppercase tracking-[0.35em] text-white/40\">${item.aromaChemicalId ? 'Aroma Chemical' : 'Sub-Formula'}</div>\n                                                                </td>\n                                                                <td class=\"px-5 py-4\">${formulaName(item.formulaId).replace(/</g, '&lt;')}</td>\n                                                                <td class=\"px-5 py-4\">${Number(item.amount).toFixed(2)} ${item.unit}</td>\n                                                                <td class=\"px-5 py-4\">${new Date(item.updatedAt).toLocaleDateString()}</td>\n                                                                <td class=\"px-5 py-4\">\n                                                                        <div class=\"flex items-center gap-2\">\n                                                                                <button type=\"button\" data-action=\"edit\" data-id=\"${item.id}\" class=\"rounded-full border border-white/20 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/70\">Edit</button>\n                                                                                <button type=\"button\" data-action=\"delete\" data-id=\"${item.id}\" class=\"rounded-full border border-rose-400/25 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-rose-200\">Remove</button>\n                                                                        </div>\n                                                                </td>\n                                                        </tr>`;\n                                                }).join('');\n                                        }\n                                };\n\n                                render();\n                                on('formulas:updated', () => { refreshSelects(); render(); });\n                                on('ingredients:updated', render);\n\n                                const openPanel = () => {\n                                        if (!panel) return;\n                                        panel.classList.remove('hidden');\n                                        panel.classList.add('flex');\n                                        document.body.classList.add('overflow-hidden');\n                                };\n\n                                const closePanel = () => {\n                                        if (!panel) return;\n                                        panel.classList.add('hidden');\n                                        panel.classList.remove('flex');\n                                        document.body.classList.remove('overflow-hidden');\n                                        state.editing = null;\n                                };\n\n                                if (searchInput) {\n                                        searchInput.addEventListener('input', (event) => {\n                                                state.search = (event.target.value || '').toLowerCase();\n                                                render();\n                                        });\n                                }\n\n                                if (filterSelect) {\n                                        filterSelect.addEventListener('change', (event) => {\n                                                state.filter = event.target.value;\n                                                render();\n                                        });\n                                }\n\n                                if (createForm) {\n                                        createForm.addEventListener('submit', (event) => {\n                                                event.preventDefault();\n                                                const form = new FormData(createForm);\n                                                const formulaId = Number(form.get('formulaId'));\n                                                const aromaChemicalId = Number(form.get('aromaChemicalId'));\n                                                const amount = parseFloat(form.get('amount'));\n                                                const unit = form.get('unit') || 'g';\n                                                if (!formulaId || !aromaChemicalId || Number.isNaN(amount)) {\n                                                        return;\n                                                }\n                                                const now = new Date().toISOString();\n                                                namespace.store.ingredients.push({\n                                                        id: Date.now(),\n                                                        formulaId,\n                                                        aromaChemicalId,\n                                                        amount,\n                                                        unit,\n                                                        createdAt: now,\n                                                        updatedAt: now,\n                                                });\n                                                emit('ingredients:updated');\n                                                render();\n                                                createForm.reset();\n                                        });\n                                }\n\n                                if (editForm) {\n                                        editForm.addEventListener('submit', (event) => {\n                                                event.preventDefault();\n                                                if (state.editing == null) return;\n                                                const form = new FormData(editForm);\n                                                const formulaId = Number(form.get('formulaId'));\n                                                const aromaChemicalId = Number(form.get('aromaChemicalId'));\n                                                const amount = parseFloat(form.get('amount'));\n                                                const unit = form.get('unit') || 'g';\n                                                namespace.store.ingredients = namespace.store.ingredients.map((item) => {\n                                                        if (Number(item.id) !== Number(state.editing)) {\n                                                                return item;\n                                                        }\n                                                        return {\n                                                                ...item,\n                                                                formulaId,\n                                                                aromaChemicalId,\n                                                                amount: Number.isNaN(amount) ? item.amount : amount,\n                                                                unit,\n                                                                updatedAt: new Date().toISOString(),\n                                                        };\n                                                });\n                                                emit('ingredients:updated');\n                                                render();\n                                                closePanel();\n                                        });\n                                }\n\n                                root.addEventListener('click', (event) => {\n                                        const target = event.target.closest('[data-action]');\n                                        if (!target) return;\n                                        const id = Number(target.getAttribute('data-id'));\n                                        if (target.dataset.action === 'delete') {\n                                                namespace.store.ingredients = namespace.store.ingredients.filter((item) => Number(item.id) !== id);\n                                                emit('ingredients:updated');\n                                                render();\n                                                return;\n                                        }\n                                        if (target.dataset.action === 'edit') {\n                                                const item = namespace.store.ingredients.find((entry) => Number(entry.id) === id);\n                                                if (!item || !editForm) return;\n                                                state.editing = id;\n                                                editForm.querySelector('[name=\"id\"]').value = id;\n                                                editForm.querySelector('[name=\"formulaId\"]').value = item.formulaId;\n                                                editForm.querySelector('[name=\"aromaChemicalId\"]').value = item.aromaChemicalId || '';\n                                                editForm.querySelector('[name=\"amount\"]').value = item.amount;\n                                                editForm.querySelector('[name=\"unit\"]').value = item.unit;\n                                                openPanel();\n                                        }\n                                });\n\n                                if (panel) {\n                                        panel.addEventListener('click', (event) => {\n                                                if (event.target === panel || event.target.closest('[data-role=\"close-panel\"]')) {\n                                                        closePanel();\n                                                }\n                                        });\n                                }\n                        };\n\n                        namespace.modules.formulas = function (root) {\n                                const state = { search: '', filter: 'all', editing: null };\n                                const list = root.querySelector('[data-list]');\n                                const empty = root.querySelector('[data-empty-state]');\n                                const searchInput = root.querySelector('[data-filter-search]');\n                                const filterSelect = root.querySelector('[data-filter-status]');\n                                const createForm = root.querySelector('form[data-action=\"create\"]');\n                                const panel = root.querySelector('[data-edit-panel]');\n                                const editForm = panel ? panel.querySelector('form[data-action=\"edit\"]') : null;\n\n                                const ingredientCount = (id) => namespace.store.ingredients.filter((item) => Number(item.formulaId) === Number(id)).length;\n\n                                const render = () => {\n                                        const rows = namespace.store.formulas.filter((item) => {\n                                                const text = `${item.name} ${item.notes} ${item.id}`.toLowerCase();\n                                                const matchesSearch = state.search ? text.includes(state.search) : true;\n                                                const matchesFilter = state.filter === 'all' ? true : state.filter === 'latest' ? item.isLatest : !item.isLatest;\n                                                return matchesSearch && matchesFilter;\n                                        });\n\n                                        if (!rows.length) {\n                                                if (empty) empty.classList.remove('hidden');\n                                                if (list) list.innerHTML = '';\n                                                return;\n                                        }\n\n                                        if (empty) empty.classList.add('hidden');\n\n                                        if (list) {\n                                                list.innerHTML = rows.map((item) => {\n                                                        return `<tr data-id=\"${item.id}\" class=\"bg-black/25 text-white/80\">\n                                                                <td class=\"px-5 py-4\">\n                                                                        <div class=\"font-medium text-white\">${item.name.replace(/</g, '&lt;')}</div>\n                                                                        <div class=\"text-xs uppercase tracking-[0.35em] text-white/40\">ID ${item.id}</div>\n                                                                </td>\n                                                                <td class=\"px-5 py-4\">v${item.version}</td>\n                                                                <td class=\"px-5 py-4\">${item.isLatest ? 'Current' : 'Archive'}</td>\n                                                                <td class=\"px-5 py-4\">${item.parentFormulaId || '—'}</td>\n                                                                <td class=\"px-5 py-4\">${ingredientCount(item.id)}</td>\n                                                                <td class=\"px-5 py-4\">${new Date(item.updatedAt).toLocaleDateString()}</td>\n                                                                <td class=\"px-5 py-4\">\n                                                                        <div class=\"flex items-center gap-2\">\n                                                                                <button type=\"button\" data-action=\"edit\" data-id=\"${item.id}\" class=\"rounded-full border border-white/20 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/70\">Edit</button>\n                                                                                <button type=\"button\" data-action=\"delete\" data-id=\"${item.id}\" class=\"rounded-full border border-rose-400/25 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-rose-200\">Remove</button>\n                                                                        </div>\n                                                                </td>\n                                                        </tr>`;\n                                                }).join('');\n                                        }\n                                };\n\n                                render();\n                                on('ingredients:updated', render);\n\n                                const openPanel = () => {\n                                        if (!panel) return;\n                                        panel.classList.remove('hidden');\n                                        panel.classList.add('flex');\n                                        document.body.classList.add('overflow-hidden');\n                                };\n\n                                const closePanel = () => {\n                                        if (!panel) return;\n                                        panel.classList.add('hidden');\n                                        panel.classList.remove('flex');\n                                        document.body.classList.remove('overflow-hidden');\n                                        state.editing = null;\n                                };\n\n                                if (searchInput) {\n                                        searchInput.addEventListener('input', (event) => {\n                                                state.search = (event.target.value || '').toLowerCase();\n                                                render();\n                                        });\n                                }\n\n                                if (filterSelect) {\n                                        filterSelect.addEventListener('change', (event) => {\n                                                state.filter = event.target.value;\n                                                render();\n                                        });\n                                }\n\n                                if (createForm) {\n                                        createForm.addEventListener('submit', (event) => {\n                                                event.preventDefault();\n                                                const form = new FormData(createForm);\n                                                const name = (form.get('name') || '').toString().trim();\n                                                const version = parseInt(form.get('version'), 10) || 1;\n                                                if (!name) return;\n                                                const now = new Date().toISOString();\n                                                namespace.store.formulas.push({\n                                                        id: Date.now(),\n                                                        name,\n                                                        notes: (form.get('notes') || '').toString(),\n                                                        version,\n                                                        isLatest: form.get('isLatest') !== null,\n                                                        parentFormulaId: form.get('parentFormulaId') || '',\n                                                        ingredients: [],\n                                                        createdAt: now,\n                                                        updatedAt: now,\n                                                });\n                                                emit('formulas:updated');\n                                                render();\n                                                createForm.reset();\n                                        });\n                                }\n\n                                if (editForm) {\n                                        editForm.addEventListener('submit', (event) => {\n                                                event.preventDefault();\n                                                if (state.editing == null) return;\n                                                const form = new FormData(editForm);\n                                                const name = (form.get('name') || '').toString().trim();\n                                                const version = parseInt(form.get('version'), 10) || 1;\n                                                namespace.store.formulas = namespace.store.formulas.map((item) => {\n                                                        if (Number(item.id) !== Number(state.editing)) {\n                                                                return item;\n                                                        }\n                                                        return {\n                                                                ...item,\n                                                                name: name || item.name,\n                                                                version,\n                                                                notes: (form.get('notes') || '').toString(),\n                                                                isLatest: form.get('isLatest') !== null,\n                                                                parentFormulaId: form.get('parentFormulaId') || '',\n                                                                updatedAt: new Date().toISOString(),\n                                                        };\n                                                });\n                                                emit('formulas:updated');\n                                                render();\n                                                closePanel();\n                                        });\n                                }\n\n                                root.addEventListener('click', (event) => {\n                                        const target = event.target.closest('[data-action]');\n                                        if (!target) return;\n                                        const id = Number(target.getAttribute('data-id'));\n                                        if (target.dataset.action === 'delete') {\n                                                namespace.store.formulas = namespace.store.formulas.filter((item) => Number(item.id) !== id);\n                                                namespace.store.ingredients = namespace.store.ingredients.filter((item) => Number(item.formulaId) !== id);\n                                                emit('formulas:updated');\n                                                emit('ingredients:updated');\n                                                render();\n                                                return;\n                                        }\n                                        if (target.dataset.action === 'edit') {\n                                                const item = namespace.store.formulas.find((entry) => Number(entry.id) === id);\n                                                if (!item || !editForm) return;\n                                                state.editing = id;\n                                                editForm.querySelector('[name=\"id\"]').value = id;\n                                                editForm.querySelector('[name=\"name\"]').value = item.name;\n                                                editForm.querySelector('[name=\"version\"]').value = item.version;\n                                                editForm.querySelector('[name=\"notes\"]').value = item.notes;\n                                                editForm.querySelector('[name=\"isLatest\"]').checked = !!item.isLatest;\n                                                editForm.querySelector('[name=\"parentFormulaId\"]').value = item.parentFormulaId || '';\n                                                openPanel();\n                                        }\n                                });\n\n                                if (panel) {\n                                        panel.addEventListener('click', (event) => {\n                                                if (event.target === panel || event.target.closest('[data-role=\"close-panel\"]')) {\n                                                        closePanel();\n                                                }\n                                        });\n                                }\n                        };\n\n                        namespace.modules.preferences = function (root) {\n                                const form = root.querySelector('form[data-action=\"preferences\"]');\n                                if (!form) {\n                                        return;\n                                }\n\n                                const success = root.querySelector('[data-success]');\n                                const error = root.querySelector('[data-error]');\n                                const submit = form.querySelector('[data-role=\"save\"]');\n                                const themeSelect = form.querySelector('select[name=\"theme\"]');\n                                const themeButtons = Array.from(root.querySelectorAll('[data-theme-choice]'));\n\n                                const updateButtons = function (activeValue) {\n                                        themeButtons.forEach(function (button) {\n                                                if (!button || !button.dataset) {\n                                                        return;\n                                                }\n                                                button.dataset.state = button.dataset.themeChoice === activeValue ? 'active' : 'inactive';\n                                        });\n                                };\n\n                                const ensureThemeSelection = function () {\n                                        if (themeSelect && themeSelect.value) {\n                                                return themeSelect.value;\n                                        }\n\n                                        const activeButton = themeButtons.find(function (button) {\n                                                return button && button.dataset && button.dataset.state === 'active' && button.dataset.themeChoice;\n                                        });\n                                        if (activeButton && activeButton.dataset.themeChoice) {\n                                                if (themeSelect) {\n                                                        themeSelect.value = activeButton.dataset.themeChoice;\n                                                }\n                                                return activeButton.dataset.themeChoice;\n                                        }\n\n                                        const fallbackButton = themeButtons.find(function (button) {\n                                                return button && button.dataset && button.dataset.themeChoice;\n                                        });\n                                        if (fallbackButton && fallbackButton.dataset.themeChoice) {\n                                                if (themeSelect) {\n                                                        themeSelect.value = fallbackButton.dataset.themeChoice;\n                                                }\n                                                return fallbackButton.dataset.themeChoice;\n                                        }\n\n                                        return '';\n                                };\n\n                                if (themeSelect) {\n                                        const resolvedTheme = ensureThemeSelection();\n                                        updateButtons(resolvedTheme);\n                                        themeSelect.addEventListener('change', function () {\n                                                const value = ensureThemeSelection();\n                                                updateButtons(value);\n                                                if (namespace.updateTheme) {\n                                                        namespace.updateTheme(value);\n                                                }\n                                        });\n                                }\n\n                                themeButtons.forEach(function (button) {\n                                        button.addEventListener('click', function () {\n                                                const value = button.dataset.themeChoice;\n                                                if (!value || !themeSelect) {\n                                                        return;\n                                                }\n                                                if (themeSelect.value !== value) {\n                                                        themeSelect.value = value;\n                                                        themeSelect.dispatchEvent(new Event('change', { bubbles: true }));\n                                                }\n                                        });\n                                });\n\n                                form.addEventListener('submit', async function (event) {\n                                        event.preventDefault();\n\n                                        if (error) {\n                                                error.classList.add('hidden');\n                                        }\n                                        if (success) {\n                                                success.classList.add('hidden');\n                                        }\n                                        if (submit) {\n                                                submit.setAttribute('disabled', 'true');\n                                                submit.setAttribute('data-loading', 'true');\n                                        }\n\n                                        try {\n                                                const formData = new FormData(form);\n                                                const selectedTheme = ensureThemeSelection();\n                                                if (selectedTheme) {\n                                                        formData.set('theme', selectedTheme);\n                                                }\n                                                const response = await fetch(form.getAttribute('action') || '/app/preferences', {\n                                                        method: 'POST',\n                                                        body: formData,\n                                                        headers: {\n                                                                Accept: 'application/json',\n                                                        },\n                                                        credentials: 'same-origin',\n                                                });\n\n                                                if (!response.ok) {\n                                                        throw new Error('preferences:request-failed');\n                                                }\n\n                                                const payload = await response.json().catch(function () {\n                                                        return {};\n                                                });\n\n                                                const savedTheme = typeof payload.theme === 'string' && payload.theme.trim()\n                                                        ? payload.theme.trim()\n                                                        : (themeSelect ? themeSelect.value : '');\n\n                                                if (savedTheme) {\n                                                        updateButtons(savedTheme);\n                                                        if (themeSelect) {\n                                                                themeSelect.value = savedTheme;\n                                                        }\n                                                        if (namespace.updateTheme) {\n                                                                namespace.updateTheme(savedTheme);\n                                                        }\n                                                }\n\n                                                if (success) {\n                                                        success.classList.remove('hidden');\n                                                        window.setTimeout(function () {\n                                                                success.classList.add('hidden');\n                                                        }, 1800);\n                                                }\n                                        } catch (err) {\n                                                if (error) {\n                                                        error.classList.remove('hidden');\n                                                        window.setTimeout(function () {\n                                                                error.classList.add('hidden');\n                                                        }, 2200);\n                                                }\n                                        } finally {\n                                                if (submit) {\n                                                        submit.removeAttribute('data-loading');\n                                                        submit.removeAttribute('disabled');\n                                                }\n                                        }\n                                });\n                        };\n                })();\n        </script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 83, "<script>\n                (function () {\n                        const namespace = window.PerfugoWorkspace || (window.PerfugoWorkspace = {});\n                        namespace.modules = namespace.modules || {};\n\n                        const seeds = window.PerfugoWorkspaceSeeds || { formulas: [], formula_ingredients: [], aroma_chemicals: [] };\n\n                        const toFormulas = (items) => (items || []).map((entry) => ({\n                                id: entry.ID,\n                                name: entry.Name,\n                                notes: entry.Notes || '',\n                                version: entry.Version || 1,\n                                isLatest: Boolean(entry.IsLatest),\n                                parentFormulaId: entry.ParentFormulaID || '',\n                                ingredients: Array.isArray(entry.Ingredients) ? entry.Ingredients.map((ing) => ing.ID) : [],\n                                createdAt: entry.CreatedAt || new Date().toISOString(),\n                                updatedAt: entry.UpdatedAt || new Date().toISOString(),\n                        }));\n\n                        const toIngredients = (items) => (items || []).map((entry) => ({\n                                id: entry.ID,\n                                formulaId: entry.FormulaID,\n                                aromaChemicalId: entry.AromaChemicalID || null,\n                                amount: entry.Amount || 0,\n                                unit: entry.Unit || 'g',\n                                createdAt: entry.CreatedAt || new Date().toISOString(),\n                                updatedAt: entry.UpdatedAt || new Date().toISOString(),\n                        }));\n\n                        const toChemicals = (items) => (items || []).map((entry) => ({\n                                id: entry.ID,\n                                name: entry.IngredientName || `Chemical #${entry.ID}`,\n                                type: entry.Type || '',\n                                casNumber: entry.CASNumber || '',\n                                wheel: entry.WheelPosition || '',\n                                wheelPosition: entry.WheelPosition || '',\n                                pyramid: entry.PyramidPosition || '',\n                                pyramidPosition: entry.PyramidPosition || '',\n                                potency: Number.isFinite(entry.Strength) ? Number(entry.Strength) : null,\n                                strength: Number.isFinite(entry.Strength) ? Number(entry.Strength) : null,\n                                recommendedDilution: Number.isFinite(entry.RecommendedDilution) ? Number(entry.RecommendedDilution) : null,\n                                maxIfra: Number.isFinite(entry.MaxIFRAPercentage) ? Number(entry.MaxIFRAPercentage) : null,\n                                maxIFRA: Number.isFinite(entry.MaxIFRAPercentage) ? Number(entry.MaxIFRAPercentage) : null,\n                                duration: entry.Duration || '',\n                                usage: entry.Usage || '',\n                                historicRole: entry.HistoricRole || '',\n                                notes: entry.Notes || '',\n                                pricePerMg: Number.isFinite(entry.PricePerMg) ? Number(entry.PricePerMg) : null,\n                                popularity: Number.isFinite(entry.Popularity) ? Number(entry.Popularity) : null,\n                                otherNames: Array.isArray(entry.OtherNames) ? entry.OtherNames : [],\n                        }));\n\n                        namespace.store = namespace.store || {\n                                formulas: toFormulas(seeds.formulas),\n                                ingredients: toIngredients(seeds.formula_ingredients),\n                                chemicals: toChemicals(seeds.aroma_chemicals),\n                        };\n\n                        const emit = (event) => document.dispatchEvent(new CustomEvent(`perfugo:${event}`));\n                        const on = (event, handler) => document.addEventListener(`perfugo:${event}`, handler);\n\n                        const refreshSelects = () => {\n                                const formulaOptions = namespace.store.formulas\n                                        .map((formula) => `<option value=\"${formula.id}\">${formula.name.replace(/</g, '&lt;')}</option>`)\n                                        .join('');\n                                document.querySelectorAll('[data-formula-select]').forEach((select) => {\n                                        const base = select.getAttribute('name') === 'parentFormulaId' ? '<option value=\"\">None</option>' : '<option value=\"\" disabled hidden>Select…</option>';\n                                        const value = select.value;\n                                        select.innerHTML = base + formulaOptions;\n                                        if (value && select.querySelector(`option[value=\"${value}\"]`)) {\n                                                select.value = value;\n                                        }\n                                });\n\n                                const chemicalOptions = namespace.store.chemicals\n                                        .map((chemical) => `<option value=\"${chemical.id}\">${chemical.name.replace(/</g, '&lt;')}</option>`)\n                                        .join('');\n                                document.querySelectorAll('[data-chemical-select]').forEach((select) => {\n                                        const value = select.value;\n                                        select.innerHTML = '<option value=\"\" disabled hidden>Select…</option>' + chemicalOptions;\n                                        if (value && select.querySelector(`option[value=\"${value}\"]`)) {\n                                                select.value = value;\n                                        }\n                                });\n                        };\n\n                        refreshSelects();\n\n                        namespace.modules.ingredients = function (root) {\n                                const state = { search: '', wheel: '', pyramid: '', potency: '', page: 1, pageSize: 10, editing: null };\n                                const list = root.querySelector('[data-list]');\n                                const empty = root.querySelector('[data-empty-state]');\n                                const searchInput = root.querySelector('[data-filter-search]');\n                                const wheelSelect = root.querySelector('[data-filter-wheel]');\n                                const pyramidSelect = root.querySelector('[data-filter-pyramid]');\n                                const potencySelect = root.querySelector('[data-filter-potency]');\n                                const pagination = root.querySelector('[data-pagination]');\n                                const paginationSummary = root.querySelector('[data-pagination-summary]');\n                                const paginationPages = root.querySelector('[data-pagination-pages]');\n                                const prevPageButton = root.querySelector('[data-page-prev]');\n                                const nextPageButton = root.querySelector('[data-page-next]');\n                                const createForm = root.querySelector('form[data-action=\"create\"]');\n                                const panel = root.querySelector('[data-edit-panel]');\n                                const editForm = panel ? panel.querySelector('form[data-action=\"edit\"]') : null;\n\n                                const escapeHtml = (value) => String(value ?? '').replace(/[&<>\"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', \"'\": '&#39;' }[char]));\n\n                                const uniqueStrings = (values) => Array.from(new Set(values.filter((value) => value && String(value).trim() !== ''))).sort((a, b) => String(a).localeCompare(String(b)));\n                                const uniqueNumbers = (values) => Array.from(new Set(values.filter((value) => Number.isFinite(value) && value !== 0))).sort((a, b) => a - b);\n\n                                const populateFilterOptions = () => {\n                                        if (wheelSelect) {\n                                                const current = wheelSelect.value;\n                                                const options = uniqueStrings(namespace.store.chemicals.map((item) => item.wheel || item.wheelPosition || ''));\n                                                wheelSelect.innerHTML = '<option value=\"\">All wheel positions</option>' + options.map((option) => `<option value=\"${escapeHtml(option)}\">${escapeHtml(option)}</option>`).join('');\n                                                if (current && options.includes(current)) {\n                                                        wheelSelect.value = current;\n                                                }\n                                        }\n\n                                        if (pyramidSelect) {\n                                                const current = pyramidSelect.value;\n                                                const options = uniqueStrings(namespace.store.chemicals.map((item) => item.pyramid || item.pyramidPosition || ''));\n                                                pyramidSelect.innerHTML = '<option value=\"\">All pyramid levels</option>' + options.map((option) => `<option value=\"${escapeHtml(option)}\">${escapeHtml(option)}</option>`).join('');\n                                                if (current && options.includes(current)) {\n                                                        pyramidSelect.value = current;\n                                                }\n                                        }\n\n                                        if (potencySelect) {\n                                                const current = potencySelect.value;\n                                                const options = uniqueNumbers(namespace.store.chemicals.map((item) => item.potency ?? item.strength ?? null));\n                                                potencySelect.innerHTML = '<option value=\"\">All potencies</option>' + options.map((option) => `<option value=\"${escapeHtml(String(option))}\">${escapeHtml(String(option))}</option>`).join('');\n                                                if (current && options.map((option) => String(option)).includes(current)) {\n                                                        potencySelect.value = current;\n                                                }\n                                        }\n                                };\n\n                                const formatPercentage = (value) => {\n                                        if (!Number.isFinite(value) || value === 0) return '';\n                                        const numeric = Number(value);\n                                        if (!Number.isFinite(numeric)) return '';\n                                        return `${numeric.toFixed(2)}%`;\n                                };\n\n                                const summariseUsage = (value) => {\n                                        if (!value) return '';\n                                        const trimmed = String(value).trim();\n                                        if (!trimmed) return '';\n                                        if (trimmed.length <= 140) return trimmed;\n                                        return `${trimmed.slice(0, 137)}…`;\n                                };\n\n                                const joinOtherNames = (names) => {\n                                        if (!Array.isArray(names)) return '';\n                                        const parts = names\n                                                .map((name) => (typeof name === 'string' ? name : name?.name || name?.Name || ''))\n                                                .map((name) => String(name).trim())\n                                                .filter((name) => name !== '');\n                                        return parts.join(', ');\n                                };\n\n                                const normaliseString = (value) => String(value ?? '').toLowerCase().trim();\n\n                                const formatDetails = (chemical) => {\n                                        const segments = [];\n                                        const recommended = formatPercentage(chemical.recommendedDilution ?? chemical.RecommendedDilution ?? null);\n                                        const maxIfra = formatPercentage(chemical.maxIfra ?? chemical.maxIFRA ?? chemical.MaxIFRAPercentage ?? null);\n                                        if (recommended) segments.push(`Recommended ${recommended}`);\n                                        if (maxIfra) segments.push(`Max IFRA ${maxIfra}`);\n                                        return segments.join(' • ');\n                                };\n\n                                const render = () => {\n                                        const chemicals = namespace.store.chemicals || [];\n                                        const terms = state.search ? state.search.split(/\\s+/).filter(Boolean) : [];\n                                        const filtered = chemicals.filter((item) => {\n                                                const wheel = item.wheel || item.wheelPosition || '';\n                                                const pyramid = item.pyramid || item.pyramidPosition || '';\n                                                const potency = item.potency ?? item.strength ?? null;\n                                                const searchPool = [\n                                                        item.name,\n                                                        item.type,\n                                                        item.casNumber,\n                                                        item.notes,\n                                                        item.duration,\n                                                        item.usage,\n                                                        item.historicRole,\n                                                        wheel,\n                                                        pyramid,\n                                                        joinOtherNames(item.otherNames),\n                                                        potency != null ? String(potency) : '',\n                                                ]\n                                                        .map(normaliseString)\n                                                        .join(' ');\n                                                const matchesSearch = terms.length ? terms.every((term) => searchPool.includes(term)) : true;\n                                                const matchesWheel = state.wheel ? wheel === state.wheel : true;\n                                                const matchesPyramid = state.pyramid ? pyramid === state.pyramid : true;\n                                                const matchesPotency = state.potency ? String(potency) === state.potency : true;\n                                                return matchesSearch && matchesWheel && matchesPyramid && matchesPotency;\n                                        });\n\n                                        const total = filtered.length;\n                                        const totalPages = total === 0 ? 1 : Math.ceil(total / state.pageSize);\n                                        if (state.page > totalPages) state.page = totalPages;\n                                        if (state.page < 1) state.page = 1;\n\n                                        const startIndex = (state.page - 1) * state.pageSize;\n                                        const pageItems = filtered.slice(startIndex, startIndex + state.pageSize);\n\n                                        if (!pageItems.length) {\n                                                if (empty) empty.classList.remove('hidden');\n                                                if (list) list.innerHTML = '';\n                                                if (pagination) pagination.classList.add('hidden');\n                                                if (paginationSummary) paginationSummary.textContent = total === 0 ? 'No aroma chemicals match your filters.' : 'Showing 0 aroma chemicals';\n                                                if (paginationPages) paginationPages.textContent = total === 0 ? 'Page 1 of 1' : `Page ${state.page} of ${totalPages}`;\n                                                if (prevPageButton) prevPageButton.disabled = true;\n                                                if (nextPageButton) nextPageButton.disabled = true;\n                                                return;\n                                        }\n\n                                        if (empty) empty.classList.add('hidden');\n                                        if (pagination) pagination.classList.remove('hidden');\n\n                                        if (list) {\n                                                list.innerHTML = pageItems\n                                                        .map((item) => {\n                                                                const wheel = item.wheel || item.wheelPosition || '';\n                                                                const pyramid = item.pyramid || item.pyramidPosition || '';\n                                                                const potency = item.potency ?? item.strength ?? null;\n                                                                const otherNames = joinOtherNames(item.otherNames);\n                                                                const details = formatDetails(item);\n                                                                const duration = item.duration || item.Duration || '';\n                                                                const usage = summariseUsage(item.usage || item.Usage || '');\n                                                                const historicRole = item.historicRole || item.HistoricRole || '';\n                                                                const displayName = item.name || item.IngredientName || ('Chemical #' + item.id);\n                                                                const typeLabel = item.type || item.Type || '';\n                                                                const casLabel = item.casNumber || item.CASNumber || '';\n                                                                const potencyLabel = Number.isFinite(potency) && potency !== 0 ? escapeHtml(String(potency)) : '<span class=\"text-white/40\">—</span>';\n                                                                const wheelLabel = wheel ? escapeHtml(wheel) : '<span class=\"text-white/40\">—</span>';\n                                                                const pyramidLabel = pyramid ? escapeHtml(pyramid) : '<span class=\"text-white/40\">—</span>';\n                                                                const detailsLabel = details ? `<div class=\"text-xs text-white/40\">${escapeHtml(details)}</div>` : '';\n                                                                const durationLabel = duration ? `<div>${escapeHtml(duration)}</div>` : '';\n                                                                const usageLabel = usage ? `<div class=\"text-xs text-white/50\">${escapeHtml(usage)}</div>` : '';\n                                                                const historicRoleLabel = historicRole ? `<div class=\"text-xs text-white/40\">${escapeHtml(historicRole)}</div>` : '';\n                                                                const otherNamesLabel = otherNames ? `<div class=\"text-xs text-white/40\">Also known as: ${escapeHtml(otherNames)}</div>` : '';\n                                                                const typeMarkup = typeLabel ? `<div class=\"text-xs uppercase tracking-[0.35em] text-white/40\">${escapeHtml(typeLabel)}</div>` : '';\n                                                                const casMarkup = casLabel ? `<div class=\"text-xs text-white/50\">CAS ${escapeHtml(casLabel)}</div>` : '';\n                                                                return `<tr data-id=\"${escapeHtml(item.id)}\" class=\"bg-black/25 text-white/80\">\n                                                                <td class=\"px-5 py-4\">\n                                                                        <div class=\"font-medium text-white\">${escapeHtml(displayName)}</div>\n                                                                        ${typeMarkup}\n                                                                        ${casMarkup}\n                                                                        ${otherNamesLabel}\n                                                                </td>\n                                                                <td class=\"px-5 py-4\">${wheelLabel}</td>\n                                                                <td class=\"px-5 py-4\">${pyramidLabel}</td>\n                                                                <td class=\"px-5 py-4\">\n                                                                        ${potencyLabel}\n                                                                        ${detailsLabel}\n                                                                </td>\n                                                                <td class=\"px-5 py-4\">\n                                                                        ${durationLabel}\n                                                                        ${usageLabel}\n                                                                        ${historicRoleLabel}\n                                                                </td>\n                                                        </tr>`;\n                                                        })\n                                                        .join('');\n                                        }\n\n                                        const start = startIndex + 1;\n                                        const end = startIndex + pageItems.length;\n                                        if (paginationSummary) paginationSummary.textContent = `Showing ${start}–${end} of ${total} aroma chemicals`;\n                                        if (paginationPages) paginationPages.textContent = `Page ${state.page} of ${totalPages}`;\n                                        if (prevPageButton) prevPageButton.disabled = state.page === 1;\n                                        if (nextPageButton) nextPageButton.disabled = state.page >= totalPages;\n                                };\n\n                                populateFilterOptions();\n                                render();\n\n                                on('formulas:updated', () => { refreshSelects(); render(); });\n                                on('ingredients:updated', render);\n                                on('chemicals:updated', () => { populateFilterOptions(); render(); });\n\n                                const openPanel = () => {\n                                        if (!panel) return;\n                                        panel.classList.remove('hidden');\n                                        panel.classList.add('flex');\n                                        document.body.classList.add('overflow-hidden');\n                                };\n\n                                const closePanel = () => {\n                                        if (!panel) return;\n                                        panel.classList.add('hidden');\n                                        panel.classList.remove('flex');\n                                        document.body.classList.remove('overflow-hidden');\n                                        state.editing = null;\n                                };\n\n                                if (searchInput) {\n                                        searchInput.addEventListener('input', (event) => {\n                                                state.search = normaliseString(event.target.value || '');\n                                                state.page = 1;\n                                                render();\n                                        });\n                                }\n\n                                if (wheelSelect) {\n                                        wheelSelect.addEventListener('change', (event) => {\n                                                state.wheel = event.target.value;\n                                                state.page = 1;\n                                                render();\n                                        });\n                                }\n\n                                if (pyramidSelect) {\n                                        pyramidSelect.addEventListener('change', (event) => {\n                                                state.pyramid = event.target.value;\n                                                state.page = 1;\n                                                render();\n                                        });\n                                }\n\n                                if (potencySelect) {\n                                        potencySelect.addEventListener('change', (event) => {\n                                                state.potency = event.target.value;\n                                                state.page = 1;\n                                                render();\n                                        });\n                                }\n\n                                if (prevPageButton) {\n                                        prevPageButton.addEventListener('click', () => {\n                                                if (state.page <= 1) return;\n                                                state.page -= 1;\n                                                render();\n                                        });\n                                }\n\n                                if (nextPageButton) {\n                                        nextPageButton.addEventListener('click', () => {\n                                                state.page += 1;\n                                                render();\n                                        });\n                                }\n\n                                if (createForm) {\n                                        createForm.addEventListener('submit', (event) => {\n                                                event.preventDefault();\n                                                const form = new FormData(createForm);\n                                                const formulaId = Number(form.get('formulaId'));\n                                                const aromaChemicalId = Number(form.get('aromaChemicalId'));\n                                                const amount = parseFloat(form.get('amount'));\n                                                const unit = form.get('unit') || 'g';\n                                                if (!formulaId || !aromaChemicalId || Number.isNaN(amount)) {\n                                                        return;\n                                                }\n                                                const now = new Date().toISOString();\n                                                namespace.store.ingredients.push({\n                                                        id: Date.now(),\n                                                        formulaId,\n                                                        aromaChemicalId,\n                                                        amount,\n                                                        unit,\n                                                        createdAt: now,\n                                                        updatedAt: now,\n                                                });\n                                                emit('ingredients:updated');\n                                                createForm.reset();\n                                        });\n                                }\n\n                                if (editForm) {\n                                        editForm.addEventListener('submit', (event) => {\n                                                event.preventDefault();\n                                                if (state.editing == null) return;\n                                                const form = new FormData(editForm);\n                                                const formulaId = Number(form.get('formulaId'));\n                                                const aromaChemicalId = Number(form.get('aromaChemicalId'));\n                                                const amount = parseFloat(form.get('amount'));\n                                                const unit = form.get('unit') || 'g';\n                                                namespace.store.ingredients = namespace.store.ingredients.map((item) => {\n                                                        if (Number(item.id) !== Number(state.editing)) {\n                                                                return item;\n                                                        }\n                                                        return {\n                                                                ...item,\n                                                                formulaId,\n                                                                aromaChemicalId,\n                                                                amount: Number.isNaN(amount) ? item.amount : amount,\n                                                                unit,\n                                                                updatedAt: new Date().toISOString(),\n                                                        };\n                                                });\n                                                emit('ingredients:updated');\n                                                closePanel();\n                                        });\n                                }\n\n                                root.addEventListener('click', (event) => {\n                                        const target = event.target.closest('[data-action]');\n                                        if (!target) return;\n                                        const id = Number(target.getAttribute('data-id'));\n                                        if (target.dataset.action === 'delete') {\n                                                namespace.store.ingredients = namespace.store.ingredients.filter((item) => Number(item.id) !== id);\n                                                emit('ingredients:updated');\n                                                return;\n                                        }\n                                        if (target.dataset.action === 'edit') {\n                                                const item = namespace.store.ingredients.find((entry) => Number(entry.id) === id);\n                                                if (!item || !editForm) return;\n                                                state.editing = id;\n                                                editForm.querySelector('[name=\"id\"]').value = id;\n                                                editForm.querySelector('[name=\"formulaId\"]').value = item.formulaId;\n                                                editForm.querySelector('[name=\"aromaChemicalId\"]').value = item.aromaChemicalId || '';\n                                                editForm.querySelector('[name=\"amount\"]').value = item.amount;\n                                                editForm.querySelector('[name=\"unit\"]').value = item.unit;\n                                                openPanel();\n                                        }\n                                });\n\n                                if (panel) {\n                                        panel.addEventListener('click', (event) => {\n                                                if (event.target === panel || event.target.closest('[data-role=\"close-panel\"]')) {\n                                                        closePanel();\n                                                }\n                                        });\n                                }\n                        };\n\n                        namespace.modules.formulas = function (root) {\n                                const state = { search: '', filter: 'all', editing: null };\n                                const list = root.querySelector('[data-list]');\n                                const empty = root.querySelector('[data-empty-state]');\n                                const searchInput = root.querySelector('[data-filter-search]');\n                                const filterSelect = root.querySelector('[data-filter-status]');\n                                const createForm = root.querySelector('form[data-action=\"create\"]');\n                                const panel = root.querySelector('[data-edit-panel]');\n                                const editForm = panel ? panel.querySelector('form[data-action=\"edit\"]') : null;\n\n                                const ingredientCount = (id) => namespace.store.ingredients.filter((item) => Number(item.formulaId) === Number(id)).length;\n\n                                const render = () => {\n                                        const rows = namespace.store.formulas.filter((item) => {\n                                                const text = `${item.name} ${item.notes} ${item.id}`.toLowerCase();\n                                                const matchesSearch = state.search ? text.includes(state.search) : true;\n                                                const matchesFilter = state.filter === 'all' ? true : state.filter === 'latest' ? item.isLatest : !item.isLatest;\n                                                return matchesSearch && matchesFilter;\n                                        });\n\n                                        if (!rows.length) {\n                                                if (empty) empty.classList.remove('hidden');\n                                                if (list) list.innerHTML = '';\n                                                return;\n                                        }\n\n                                        if (empty) empty.classList.add('hidden');\n\n                                        if (list) {\n                                                list.innerHTML = rows.map((item) => {\n                                                        return `<tr data-id=\"${item.id}\" class=\"bg-black/25 text-white/80\">\n                                                                <td class=\"px-5 py-4\">\n                                                                        <div class=\"font-medium text-white\">${item.name.replace(/</g, '&lt;')}</div>\n                                                                        <div class=\"text-xs uppercase tracking-[0.35em] text-white/40\">ID ${item.id}</div>\n                                                                </td>\n                                                                <td class=\"px-5 py-4\">v${item.version}</td>\n                                                                <td class=\"px-5 py-4\">${item.isLatest ? 'Current' : 'Archive'}</td>\n                                                                <td class=\"px-5 py-4\">${item.parentFormulaId || '—'}</td>\n                                                                <td class=\"px-5 py-4\">${ingredientCount(item.id)}</td>\n                                                                <td class=\"px-5 py-4\">${new Date(item.updatedAt).toLocaleDateString()}</td>\n                                                                <td class=\"px-5 py-4\">\n                                                                        <div class=\"flex items-center gap-2\">\n                                                                                <button type=\"button\" data-action=\"edit\" data-id=\"${item.id}\" class=\"rounded-full border border-white/20 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/70\">Edit</button>\n                                                                                <button type=\"button\" data-action=\"delete\" data-id=\"${item.id}\" class=\"rounded-full border border-rose-400/25 px-4 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-rose-200\">Remove</button>\n                                                                        </div>\n                                                                </td>\n                                                        </tr>`;\n                                                }).join('');\n                                        }\n                                };\n\n                                render();\n                                on('ingredients:updated', render);\n\n                                const openPanel = () => {\n                                        if (!panel) return;\n                                        panel.classList.remove('hidden');\n                                        panel.classList.add('flex');\n                                        document.body.classList.add('overflow-hidden');\n                                };\n\n                                const closePanel = () => {\n                                        if (!panel) return;\n                                        panel.classList.add('hidden');\n                                        panel.classList.remove('flex');\n                                        document.body.classList.remove('overflow-hidden');\n                                        state.editing = null;\n                                };\n\n                                if (searchInput) {\n                                        searchInput.addEventListener('input', (event) => {\n                                                state.search = (event.target.value || '').toLowerCase();\n                                                render();\n                                        });\n                                }\n\n                                if (filterSelect) {\n                                        filterSelect.addEventListener('change', (event) => {\n                                                state.filter = event.target.value;\n                                                render();\n                                        });\n                                }\n\n                                if (createForm) {\n                                        createForm.addEventListener('submit', (event) => {\n                                                event.preventDefault();\n                                                const form = new FormData(createForm);\n                                                const name = (form.get('name') || '').toString().trim();\n                                                const version = parseInt(form.get('version'), 10) || 1;\n                                                if (!name) return;\n                                                const now = new Date().toISOString();\n                                                namespace.store.formulas.push({\n                                                        id: Date.now(),\n                                                        name,\n                                                        notes: (form.get('notes') || '').toString(),\n                                                        version,\n                                                        isLatest: form.get('isLatest') !== null,\n                                                        parentFormulaId: form.get('parentFormulaId') || '',\n                                                        ingredients: [],\n                                                        createdAt: now,\n                                                        updatedAt: now,\n                                                });\n                                                emit('formulas:updated');\n                                                render();\n                                                createForm.reset();\n                                        });\n                                }\n\n                                if (editForm) {\n                                        editForm.addEventListener('submit', (event) => {\n                                                event.preventDefault();\n                                                if (state.editing == null) return;\n                                                const form = new FormData(editForm);\n                                                const name = (form.get('name') || '').toString().trim();\n                                                const version = parseInt(form.get('version'), 10) || 1;\n                                                namespace.store.formulas = namespace.store.formulas.map((item) => {\n                                                        if (Number(item.id) !== Number(state.editing)) {\n                                                                return item;\n                                                        }\n                                                        return {\n                                                                ...item,\n                                                                name: name || item.name,\n                                                                version,\n                                                                notes: (form.get('notes') || '').toString(),\n                                                                isLatest: form.get('isLatest') !== null,\n                                                                parentFormulaId: form.get('parentFormulaId') || '',\n                                                                updatedAt: new Date().toISOString(),\n                                                        };\n                                                });\n                                                emit('formulas:updated');\n                                                render();\n                                                closePanel();\n                                        });\n                                }\n\n                                root.addEventListener('click', (event) => {\n                                        const target = event.target.closest('[data-action]');\n                                        if (!target) return;\n                                        const id = Number(target.getAttribute('data-id'));\n                                        if (target.dataset.action === 'delete') {\n                                                namespace.store.formulas = namespace.store.formulas.filter((item) => Number(item.id) !== id);\n                                                namespace.store.ingredients = namespace.store.ingredients.filter((item) => Number(item.formulaId) !== id);\n                                                emit('formulas:updated');\n                                                emit('ingredients:updated');\n                                                render();\n                                                return;\n                                        }\n                                        if (target.dataset.action === 'edit') {\n                                                const item = namespace.store.formulas.find((entry) => Number(entry.id) === id);\n                                                if (!item || !editForm) return;\n                                                state.editing = id;\n                                                editForm.querySelector('[name=\"id\"]').value = id;\n                                                editForm.querySelector('[name=\"name\"]').value = item.name;\n                                                editForm.querySelector('[name=\"version\"]').value = item.version;\n                                                editForm.querySelector('[name=\"notes\"]').value = item.notes;\n                                                editForm.querySelector('[name=\"isLatest\"]').checked = !!item.isLatest;\n                                                editForm.querySelector('[name=\"parentFormulaId\"]').value = item.parentFormulaId || '';\n                                                openPanel();\n                                        }\n                                });\n\n                                if (panel) {\n                                        panel.addEventListener('click', (event) => {\n                                                if (event.target === panel || event.target.closest('[data-role=\"close-panel\"]')) {\n                                                        closePanel();\n                                                }\n                                        });\n                                }\n                        };\n\n                        namespace.modules.preferences = function (root) {\n                                const form = root.querySelector('form[data-action=\"preferences\"]');\n                                if (!form) {\n                                        return;\n                                }\n\n                                const success = root.querySelector('[data-success]');\n                                const error = root.querySelector('[data-error]');\n                                const submit = form.querySelector('[data-role=\"save\"]');\n                                const themeSelect = form.querySelector('select[name=\"theme\"]');\n                                const themeButtons = Array.from(root.querySelectorAll('[data-theme-choice]'));\n\n                                const updateButtons = function (activeValue) {\n                                        themeButtons.forEach(function (button) {\n                                                if (!button || !button.dataset) {\n                                                        return;\n                                                }\n                                                button.dataset.state = button.dataset.themeChoice === activeValue ? 'active' : 'inactive';\n                                        });\n                                };\n\n                                const ensureThemeSelection = function () {\n                                        if (themeSelect && themeSelect.value) {\n                                                return themeSelect.value;\n                                        }\n\n                                        const activeButton = themeButtons.find(function (button) {\n                                                return button && button.dataset && button.dataset.state === 'active' && button.dataset.themeChoice;\n                                        });\n                                        if (activeButton && activeButton.dataset.themeChoice) {\n                                                if (themeSelect) {\n                                                        themeSelect.value = activeButton.dataset.themeChoice;\n                                                }\n                                                return activeButton.dataset.themeChoice;\n                                        }\n\n                                        const fallbackButton = themeButtons.find(function (button) {\n                                                return button && button.dataset && button.dataset.themeChoice;\n                                        });\n                                        if (fallbackButton && fallbackButton.dataset.themeChoice) {\n                                                if (themeSelect) {\n                                                        themeSelect.value = fallbackButton.dataset.themeChoice;\n                                                }\n                                                return fallbackButton.dataset.themeChoice;\n                                        }\n\n                                        return '';\n                                };\n\n                                if (themeSelect) {\n                                        const resolvedTheme = ensureThemeSelection();\n                                        updateButtons(resolvedTheme);\n                                        themeSelect.addEventListener('change', function () {\n                                                const value = ensureThemeSelection();\n                                                updateButtons(value);\n                                                if (namespace.updateTheme) {\n                                                        namespace.updateTheme(value);\n                                                }\n                                        });\n                                }\n\n                                themeButtons.forEach(function (button) {\n                                        button.addEventListener('click', function () {\n                                                const value = button.dataset.themeChoice;\n                                                if (!value || !themeSelect) {\n                                                        return;\n                                                }\n                                                if (themeSelect.value !== value) {\n                                                        themeSelect.value = value;\n                                                        themeSelect.dispatchEvent(new Event('change', { bubbles: true }));\n                                                }\n                                        });\n                                });\n\n                                form.addEventListener('submit', async function (event) {\n                                        event.preventDefault();\n\n                                        if (error) {\n                                                error.classList.add('hidden');\n                                        }\n                                        if (success) {\n                                                success.classList.add('hidden');\n                                        }\n                                        if (submit) {\n                                                submit.setAttribute('disabled', 'true');\n                                                submit.setAttribute('data-loading', 'true');\n                                        }\n\n                                        try {\n                                                const formData = new FormData(form);\n                                                const selectedTheme = ensureThemeSelection();\n                                                if (selectedTheme) {\n                                                        formData.set('theme', selectedTheme);\n                                                }\n                                                const response = await fetch(form.getAttribute('action') || '/app/preferences', {\n                                                        method: 'POST',\n                                                        body: formData,\n                                                        headers: {\n                                                                Accept: 'application/json',\n                                                        },\n                                                        credentials: 'same-origin',\n                                                });\n\n                                                if (!response.ok) {\n                                                        throw new Error('preferences:request-failed');\n                                                }\n\n                                                const payload = await response.json().catch(function () {\n                                                        return {};\n                                                });\n\n                                                const savedTheme = typeof payload.theme === 'string' && payload.theme.trim()\n                                                        ? payload.theme.trim()\n                                                        : (themeSelect ? themeSelect.value : '');\n\n                                                if (savedTheme) {\n                                                        updateButtons(savedTheme);\n                                                        if (themeSelect) {\n                                                                themeSelect.value = savedTheme;\n                                                        }\n                                                        if (namespace.updateTheme) {\n                                                                namespace.updateTheme(savedTheme);\n                                                        }\n                                                }\n\n                                                if (success) {\n                                                        success.classList.remove('hidden');\n                                                        window.setTimeout(function () {\n                                                                success.classList.add('hidden');\n                                                        }, 1800);\n                                                }\n                                        } catch (err) {\n                                                if (error) {\n                                                        error.classList.remove('hidden');\n                                                        window.setTimeout(function () {\n                                                                error.classList.add('hidden');\n                                                        }, 2200);\n                                                }\n                                        } finally {\n                                                if (submit) {\n                                                        submit.removeAttribute('data-loading');\n                                                        submit.removeAttribute('disabled');\n                                                }\n                                        }\n                                });\n                        };\n                })();\n        </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
