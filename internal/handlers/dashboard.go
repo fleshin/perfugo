@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -48,17 +49,40 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 
 func loadWorkspaceData(r *http.Request) ([]models.Formula, []models.FormulaIngredient, []models.AromaChemical) {
 	ctx := r.Context()
-	formulas := []models.Formula{}
-	ingredients := []models.FormulaIngredient{}
-	chemicals := []models.AromaChemical{}
+	formulas := loadFormulas(ctx)
+	ingredients := loadFormulaIngredients(ctx)
+	chemicals := loadAromaChemicals(ctx)
+
+	applog.Debug(ctx, "workspace dataset loaded",
+		"formulas", len(formulas),
+		"ingredients", len(ingredients),
+		"chemicals", len(chemicals),
+	)
+
+	return formulas, ingredients, chemicals
+}
+
+func loadFormulas(ctx context.Context) []models.Formula {
+	results := []models.Formula{}
+	if database == nil {
+		return results
+	}
 
 	if err := database.WithContext(ctx).
 		Preload("Ingredients").
 		Preload("Ingredients.AromaChemical").
 		Preload("Ingredients.SubFormula").
 		Order("name asc").
-		Find(&formulas).Error; err != nil {
+		Find(&results).Error; err != nil {
 		applog.Error(ctx, "failed to load formulas for workspace", "error", err)
+	}
+	return results
+}
+
+func loadFormulaIngredients(ctx context.Context) []models.FormulaIngredient {
+	results := []models.FormulaIngredient{}
+	if database == nil {
+		return results
 	}
 
 	if err := database.WithContext(ctx).
@@ -66,17 +90,26 @@ func loadWorkspaceData(r *http.Request) ([]models.Formula, []models.FormulaIngre
 		Preload("SubFormula").
 		Preload("Formula").
 		Order("formula_id asc").
-		Find(&ingredients).Error; err != nil {
+		Find(&results).Error; err != nil {
 		applog.Error(ctx, "failed to load formula ingredients for workspace", "error", err)
+	}
+	return results
+}
+
+func loadAromaChemicals(ctx context.Context) []models.AromaChemical {
+	results := []models.AromaChemical{}
+	if database == nil {
+		return results
 	}
 
 	if err := database.WithContext(ctx).
+		Model(&models.AromaChemical{}).
+		Preload("OtherNames").
 		Order("ingredient_name asc").
-		Find(&chemicals).Error; err != nil {
+		Find(&results).Error; err != nil {
 		applog.Error(ctx, "failed to load aroma chemicals for workspace", "error", err)
 	}
-
-	return formulas, ingredients, chemicals
+	return results
 }
 
 func workspaceSectionFromPath(path string) string {
