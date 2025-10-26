@@ -57,6 +57,9 @@ func Preferences(w http.ResponseWriter, r *http.Request) {
 
 	applog.Debug(ctx, "workspace theme preference persisted", "userID", userID, "theme", requestedTheme)
 
+	sessionManager.Put(ctx, sessionUserThemeKey, requestedTheme)
+	applog.Debug(ctx, "session theme updated", "userID", userID, "theme", requestedTheme)
+
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(preferencesResponse{Theme: requestedTheme}); err != nil {
 		applog.Error(ctx, "failed to encode preferences response", "error", err)
@@ -79,8 +82,21 @@ func loadCurrentUserTheme(r *http.Request) string {
 	theme := models.DefaultTheme
 	applog.Debug(ctx, "begin theme resolution", "defaultTheme", theme)
 
-	if sessionManager == nil || database == nil {
-		applog.Debug(ctx, "theme resolution dependencies missing", "hasSession", sessionManager != nil, "hasDatabase", database != nil, "resolvedTheme", theme)
+	if sessionManager == nil {
+		applog.Debug(ctx, "theme resolution dependencies missing", "hasSession", false, "resolvedTheme", theme)
+		return theme
+	}
+
+	storedTheme := sessionManager.GetString(ctx, sessionUserThemeKey)
+	if storedTheme != "" {
+		normalized := models.NormalizeTheme(storedTheme)
+		applog.Debug(ctx, "resolved theme from session", "storedTheme", storedTheme, "normalizedTheme", normalized)
+		return normalized
+	}
+	applog.Debug(ctx, "no theme found in session")
+
+	if database == nil {
+		applog.Debug(ctx, "theme resolution dependencies missing", "hasDatabase", false, "resolvedTheme", theme)
 		return theme
 	}
 
@@ -90,7 +106,7 @@ func loadCurrentUserTheme(r *http.Request) string {
 		return theme
 	}
 
-	applog.Debug(ctx, "loading theme preference", "userID", userID)
+	applog.Debug(ctx, "loading theme preference from database", "userID", userID)
 
 	var user models.User
 	if err := database.WithContext(ctx).Select("theme").First(&user, userID).Error; err != nil {
@@ -103,7 +119,9 @@ func loadCurrentUserTheme(r *http.Request) string {
 
 	if user.Theme != "" {
 		normalized := models.NormalizeTheme(user.Theme)
-		applog.Debug(ctx, "resolved stored theme", "userID", userID, "storedTheme", user.Theme, "normalizedTheme", normalized)
+		applog.Debug(ctx, "resolved stored theme from database", "userID", userID, "storedTheme", user.Theme, "normalizedTheme", normalized)
+		sessionManager.Put(ctx, sessionUserThemeKey, normalized)
+		applog.Debug(ctx, "session theme updated from database value", "userID", userID, "theme", normalized)
 		return normalized
 	}
 
