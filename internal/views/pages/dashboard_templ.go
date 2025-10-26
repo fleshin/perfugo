@@ -203,7 +203,7 @@ func workspaceInterior(section string, meta workspaceSectionMeta, snapshot Works
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"space-y-10\"><section class=\"app-card px-8 py-10\"><div class=\"flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between\"><div class=\"space-y-4\">")
+                templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"space-y-8\"><section class=\"app-card px-6 py-6 sm:px-7 sm:py-7\"><div class=\"flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between\"><div class=\"space-y-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -226,7 +226,7 @@ func workspaceInterior(section string, meta workspaceSectionMeta, snapshot Works
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"space-y-2\"><h1 class=\"text-3xl font-semibold tracking-tight text-[var(--app-text)] sm:text-4xl\">")
+                templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"space-y-1\"><h1 class=\"text-3xl font-semibold tracking-tight text-[var(--app-text)] sm:text-4xl\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -267,7 +267,7 @@ func workspaceInterior(section string, meta workspaceSectionMeta, snapshot Works
 			return templ_7745c5c3_Err
 		}
 		if meta.Description != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<p class=\"max-w-3xl text-sm leading-relaxed app-muted\">")
+                        templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<p class=\"max-w-3xl text-sm leading-snug app-muted\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -290,7 +290,7 @@ func workspaceInterior(section string, meta workspaceSectionMeta, snapshot Works
 			return templ_7745c5c3_Err
 		}
 		if meta.MetricValue != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"app-card app-card--flat px-6 py-5 text-right\">")
+                        templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"app-card app-card--flat px-5 py-4 text-right\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -313,7 +313,7 @@ func workspaceInterior(section string, meta workspaceSectionMeta, snapshot Works
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<p class=\"mt-2 text-2xl font-semibold text-[var(--app-text)]\">")
+                        templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<p class=\"mt-1 text-2xl font-semibold text-[var(--app-text)]\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
