@@ -1,68 +1,69 @@
 package pages
 
 import (
-        "fmt"
-        "strings"
+	"fmt"
+	"strings"
 
-        templpkg "github.com/a-h/templ"
-        "perfugo/internal/views/components"
-        "perfugo/internal/views/layout"
+	"perfugo/internal/views/components"
+	"perfugo/internal/views/layout"
 )
 
 const defaultWorkspaceSection = "ingredients"
 
 type workspaceSectionMeta struct {
-        Badge        string
-        Title        string
-        Subtitle     string
-        Description  string
-        MetricLabel  string
-        MetricValue  string
+	Badge       string
+	Title       string
+	Subtitle    string
+	Description string
+	MetricLabel string
+	MetricValue string
 }
 
 templ Workspace(section string, snapshot WorkspaceSnapshot) {
-        @layout.Layout(
-                "Perfugo Atelier",
-                components.Sidebar(sidebarData(NormalizeWorkspaceSection(section))),
-                workspaceShell(NormalizeWorkspaceSection(section), snapshot, true),
-                true,
-                layout.ThemeByID(snapshot.Theme),
-        )
+	@layout.Layout(
+		"Perfugo Atelier",
+		components.Sidebar(sidebarData(NormalizeWorkspaceSection(section))),
+		workspaceShell(NormalizeWorkspaceSection(section), snapshot, true),
+		true,
+		layout.ThemeByID(snapshot.Theme),
+	)
 }
 
 templ WorkspaceSection(section string, snapshot WorkspaceSnapshot) {
-        @workspaceInterior(NormalizeWorkspaceSection(section), workspaceMeta(NormalizeWorkspaceSection(section), snapshot), snapshot)
+	@workspaceInterior(NormalizeWorkspaceSection(section), workspaceMeta(NormalizeWorkspaceSection(section), snapshot), snapshot)
 }
 
 func sidebarData(active string) components.SidebarData {
-        normalized := NormalizeWorkspaceSection(active)
-        return components.SidebarData{
-                Active: normalized,
-                Features: []components.SidebarLink{
-                        {Label: "Ingredients", Path: "/app/ingredients", Section: "ingredients", Icon: "🧴", UseHTMX: true},
-                        {Label: "Formulas", Path: "/app/formulas", Section: "formulas", Icon: "🧪", UseHTMX: true},
-                        {Label: "Reports", Path: "/app/reports", Section: "reports", Icon: "📊", UseHTMX: true},
-                },
-                Secondary: []components.SidebarLink{
-                        {Label: "Preferences", Path: "/app/preferences", Section: "preferences", Icon: "⚙️", UseHTMX: true},
-                        {Label: "Logout", Path: "/logout", Section: "logout", Icon: "⟡", SubtleTag: "safe exit"},
-                },
-        }
+	normalized := NormalizeWorkspaceSection(active)
+	return components.SidebarData{
+		Active: normalized,
+		Features: []components.SidebarLink{
+			{Label: "Ingredients", Path: "/app/ingredients", Section: "ingredients", Icon: "🧴", UseHTMX: true},
+			{Label: "Formulas", Path: "/app/formulas", Section: "formulas", Icon: "🧪", UseHTMX: true},
+			{Label: "Reports", Path: "/app/reports", Section: "reports", Icon: "📊", UseHTMX: true},
+		},
+		Secondary: []components.SidebarLink{
+			{Label: "Preferences", Path: "/app/preferences", Section: "preferences", Icon: "⚙️", UseHTMX: true},
+			{Label: "Logout", Path: "/logout", Section: "logout", Icon: "⟡", SubtleTag: "safe exit"},
+		},
+	}
 }
 
 templ workspaceShell(section string, snapshot WorkspaceSnapshot, includeSeeds bool) {
-        <div class="workspace-shell w-full">
-                <div class="mx-auto w-full max-w-6xl px-6 py-14 sm:px-8 lg:py-16">
-                        <div id="workspace-content" class="space-y-12"
-                                if includeSeeds {
-                                        data-seeds={ snapshot.SeedsJSON() }
-                                }
-                        >
-                                @workspaceInterior(section, workspaceMeta(section, snapshot), snapshot)
-                        </div>
-                </div>
-                if includeSeeds {
-                        <script>
+	<div class="workspace-shell w-full">
+		<div class="mx-auto w-full max-w-6xl px-6 py-14 sm:px-8 lg:py-16">
+			<div
+				id="workspace-content"
+				class="space-y-12"
+				if includeSeeds {
+					data-seeds={ snapshot.SeedsJSON() }
+				}
+			>
+				@workspaceInterior(section, workspaceMeta(section, snapshot), snapshot)
+			</div>
+		</div>
+		if includeSeeds {
+			<script>
                                 (function () {
                                         const container = document.getElementById("workspace-content");
                                         if (!container || !container.dataset) {
@@ -84,143 +85,143 @@ templ workspaceShell(section string, snapshot WorkspaceSnapshot, includeSeeds bo
                                         }
                                 })();
                         </script>
-                        @workspaceModulesScript()
-                }
-        </div>
+			@workspaceModulesScript()
+		}
+	</div>
 }
 
 templ workspaceInterior(section string, meta workspaceSectionMeta, snapshot WorkspaceSnapshot) {
-        <div class="space-y-10">
-                <section class="app-card px-8 py-10">
-                        <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-                                <div class="space-y-4">
-                                        if meta.Badge != "" {
-                                                <span class="app-badge">{ meta.Badge }</span>
-                                        }
-                                        <div class="space-y-2">
-                                                <h1 class="text-3xl font-semibold tracking-tight text-[var(--app-text)] sm:text-4xl">{ meta.Title }</h1>
-                                                if meta.Subtitle != "" {
-                                                        <p class="text-sm font-medium uppercase tracking-[0.28em] app-muted">{ meta.Subtitle }</p>
-                                                }
-                                        </div>
-                                        if meta.Description != "" {
-                                                <p class="max-w-3xl text-sm leading-relaxed app-muted">{ meta.Description }</p>
-                                        }
-                                </div>
-                                if meta.MetricValue != "" {
-                                        <div class="app-card app-card--flat px-6 py-5 text-right">
-                                                if meta.MetricLabel != "" {
-                                                        <p class="text-[0.65rem] uppercase tracking-[0.35em] app-muted">{ meta.MetricLabel }</p>
-                                                }
-                                                <p class="mt-2 text-2xl font-semibold text-[var(--app-text)]">{ meta.MetricValue }</p>
-                                        </div>
-                                }
-                        </div>
-                </section>
-                <div>
-                        @workspaceComponent(section, snapshot)
-                </div>
-        </div>
+	<div class="space-y-6">
+		<section class="app-card px-4 py-5">
+			<div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+				<div class="space-y-2">
+					if meta.Badge != "" {
+						<span class="app-badge">{ meta.Badge }</span>
+					}
+					<div class="space-y-1">
+						<h1 class="text-xl font-semibold tracking-tight text-[var(--app-text)] sm:text-xl">{ meta.Title }</h1>
+						if meta.Subtitle != "" {
+							<p class="text-sm font-medium uppercase tracking-[0.28em] app-muted">{ meta.Subtitle }</p>
+						}
+					</div>
+					if meta.Description != "" {
+						<p class="max-w-3xl text-sm leading-snug app-muted">{ meta.Description }</p>
+					}
+				</div>
+				//				if meta.MetricValue != "" {
+				//					<div class="app-card app-card--flat px-4 py-3 text-right">
+				//						if meta.MetricLabel != "" {
+				//							<p class="text-[0.65rem] uppercase tracking-[0.35em] app-muted">{ meta.MetricLabel }</p>
+				//						}
+				//						<p class="mt-1 text-2xl font-semibold text-[var(--app-text)]">{ meta.MetricValue }</p>
+				//					</div>
+				//				}
+			</div>
+		</section>
+		<div>
+			@workspaceComponent(section, snapshot)
+		</div>
+	</div>
 }
 
 func workspaceMeta(section string, snapshot WorkspaceSnapshot) workspaceSectionMeta {
-        switch section {
-        case "formulas":
-                return workspaceSectionMeta{
-                        Badge:       "Creative Engine",
-                        Title:       "Formula Atelier",
-                        Subtitle:    "Design immersive narratives",
-                        Description: "Architect accords, balance concentrations, and prepare production-ready briefs with precision.",
-                        MetricLabel: "Studio narratives",
-                        MetricValue: fmt.Sprintf("%d curated", len(snapshot.Formulas)),
-                }
-        case "reports":
-                return workspaceSectionMeta{
-                        Badge:       "Insight Loom",
-                        Title:       "Reports & Intelligence",
-                        Subtitle:    "Interpret atelier performance",
-                        Description: "Monitor launch cadence, ingredient momentum, and compliance readiness across the studio.",
-                        MetricLabel: "Last refresh",
-                        MetricValue: "12 Oct 2024",
-                }
-        case "preferences":
-                return workspaceSectionMeta{
-                        Badge:       "Profile Rituals",
-                        Title:       "Preferences",
-                        Subtitle:    "Shape your working atmosphere",
-                        Description: "Tailor notifications, visual ambience, and collaborative rhythms to your craft.",
-                        MetricLabel: "Account tier",
-                        MetricValue: "Perfugo Atelier",
-                }
-        default:
-                return workspaceSectionMeta{
-                        Badge:       "Material Library",
-                        Title:       "Ingredient Management",
-                        Subtitle:    "Curate the atelier foundation",
-                        Description: "Register, audit, and harmonise every essence that fuels the Perfugo experience.",
-                        MetricLabel: "Active lots",
-                        MetricValue: fmt.Sprintf("%d curated", len(snapshot.FormulaIngredients)),
-                }
-        }
+	switch section {
+	case "formulas":
+		return workspaceSectionMeta{
+			Badge:       "Creative Engine",
+			Title:       "Formula Atelier",
+			Subtitle:    "Design immersive narratives",
+			Description: "Architect accords, balance concentrations, and prepare production-ready briefs with precision.",
+			MetricLabel: "Studio narratives",
+			MetricValue: fmt.Sprintf("%d curated", len(snapshot.Formulas)),
+		}
+	case "reports":
+		return workspaceSectionMeta{
+			Badge:       "Insight Loom",
+			Title:       "Reports & Intelligence",
+			Subtitle:    "Interpret atelier performance",
+			Description: "Monitor launch cadence, ingredient momentum, and compliance readiness across the studio.",
+			MetricLabel: "Last refresh",
+			MetricValue: "12 Oct 2024",
+		}
+	case "preferences":
+		return workspaceSectionMeta{
+			Badge:       "Profile Rituals",
+			Title:       "Preferences",
+			Subtitle:    "Shape your working atmosphere",
+			Description: "Tailor notifications, visual ambience, and collaborative rhythms to your craft.",
+			MetricLabel: "Account tier",
+			MetricValue: "Perfugo Atelier",
+		}
+	default:
+		return workspaceSectionMeta{
+			Badge:       "Material Library",
+			Title:       "Ingredient Management",
+			Subtitle:    "Curate the atelier foundation",
+			Description: "Register, audit, and harmonise every essence that fuels the Perfugo experience.",
+			MetricLabel: "Active Ingredients",
+			MetricValue: fmt.Sprintf("%d curated", len(snapshot.FormulaIngredients)),
+		}
+	}
 }
 
 func workspaceComponent(section string, snapshot WorkspaceSnapshot) templpkg.Component {
-        switch section {
-        case "formulas":
-                return FormulaManagement(snapshot)
-        case "reports":
-                return ReportsOverview(defaultReportCards(), defaultReportTimeline(), defaultReportLeaders())
-        case "preferences":
-                return PreferencesPanel(snapshot.Theme, layout.ThemeOptions())
-        default:
-                return IngredientManagement(snapshot)
-        }
+	switch section {
+	case "formulas":
+		return FormulaManagement(snapshot)
+	case "reports":
+		return ReportsOverview(defaultReportCards(), defaultReportTimeline(), defaultReportLeaders())
+	case "preferences":
+		return PreferencesPanel(snapshot.Theme, layout.ThemeOptions())
+	default:
+		return IngredientManagement(snapshot)
+	}
 }
 
 func defaultReportCards() []ReportCard {
-        return []ReportCard{
-                {Title: "Production Velocity", Metric: "92%", Delta: "+6.3%", DeltaLabel: "vs prior run"},
-                {Title: "Compliance Readiness", Metric: "98.4%", Delta: "+1.1%", DeltaLabel: "safety dossiers"},
-                {Title: "Inventory Vitality", Metric: "74 days", Delta: "-8d", DeltaLabel: "average runway"},
-        }
+	return []ReportCard{
+		{Title: "Production Velocity", Metric: "92%", Delta: "+6.3%", DeltaLabel: "vs prior run"},
+		{Title: "Compliance Readiness", Metric: "98.4%", Delta: "+1.1%", DeltaLabel: "safety dossiers"},
+		{Title: "Inventory Vitality", Metric: "74 days", Delta: "-8d", DeltaLabel: "average runway"},
+	}
 }
 
 func defaultReportTimeline() []ReportEvent {
-        return []ReportEvent{
-                {Title: "Batch 8726 Released", Timestamp: "2024-10-12", Summary: "Aurum Nocturne extrait passed cold filtration."},
-                {Title: "Formula Audit", Timestamp: "2024-10-09", Summary: "Lumen Céleste cleared the atelier sensory panel."},
-                {Title: "Inventory Replenishment", Timestamp: "2024-10-05", Summary: "Ambroxan stability lot refreshed for production."},
-        }
+	return []ReportEvent{
+		{Title: "Batch 8726 Released", Timestamp: "2024-10-12", Summary: "Aurum Nocturne extrait passed cold filtration."},
+		{Title: "Formula Audit", Timestamp: "2024-10-09", Summary: "Lumen Céleste cleared the atelier sensory panel."},
+		{Title: "Inventory Replenishment", Timestamp: "2024-10-05", Summary: "Ambroxan stability lot refreshed for production."},
+	}
 }
 
 func defaultReportLeaders() []IngredientPerformance {
-        return []IngredientPerformance{
-                {Name: "Bergamot Essential", Velocity: "+18%", Trend: "Momentum"},
-                {Name: "Iris Pallida", Velocity: "+11%", Trend: "Steady"},
-                {Name: "Ambroxan", Velocity: "+9%", Trend: "Critical"},
-        }
+	return []IngredientPerformance{
+		{Name: "Bergamot Essential", Velocity: "+18%", Trend: "Momentum"},
+		{Name: "Iris Pallida", Velocity: "+11%", Trend: "Steady"},
+		{Name: "Ambroxan", Velocity: "+9%", Trend: "Critical"},
+	}
 }
 
 func NormalizeWorkspaceSection(section string) string {
-        normalized := strings.ToLower(strings.TrimSpace(section))
-        if normalized == "" {
-                return defaultWorkspaceSection
-        }
-        if ValidWorkspaceSection(normalized) {
-                return normalized
-        }
-        return defaultWorkspaceSection
+	normalized := strings.ToLower(strings.TrimSpace(section))
+	if normalized == "" {
+		return defaultWorkspaceSection
+	}
+	if ValidWorkspaceSection(normalized) {
+		return normalized
+	}
+	return defaultWorkspaceSection
 }
 
 func ValidWorkspaceSection(section string) bool {
-        switch section {
-        case "ingredients", "formulas", "reports", "preferences":
-                return true
-        default:
-                return false
-        }
+	switch section {
+	case "ingredients", "formulas", "reports", "preferences":
+		return true
+	default:
+		return false
+	}
 }
 
 func DefaultWorkspaceSection() string {
-        return defaultWorkspaceSection
+	return defaultWorkspaceSection
 }

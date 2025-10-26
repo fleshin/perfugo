@@ -69,49 +69,6 @@ func AromaChemicalPotencyLabel(strength int) string {
 
 templ IngredientManagement(snapshot WorkspaceSnapshot) {
 	<section class="space-y-8" data-module="ingredients" data-module-key="ingredients">
-		<div class="grid gap-6 lg:grid-cols-3">
-			<div class="lg:col-span-2 space-y-6 rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-8 shadow-[0_30px_70px_rgba(0,0,0,0.35)] backdrop-blur-xl">
-				<header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-					<div>
-						<h3 class="text-lg text-white">Formula Ingredient</h3>
-						<p class="text-sm tracking-[0.4em] text-white/50">Mock CRUD powered by the in-memory database.</p>
-					</div>
-					<span class="rounded-full border border-white/15 px-4 py-2 text-[0.6rem] tracking-[0.45em] text-white/50">Mock DB Active</span>
-				</header>
-				<form class="grid gap-5 md:grid-cols-2" data-action="create">
-					<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-						Formula
-						<select name="formulaId" required data-formula-select class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/40 focus:outline-none"></select>
-					</label>
-					<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-						Aroma Chemical
-						<select name="aromaChemicalId" required data-chemical-select class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/40 focus:outline-none"></select>
-					</label>
-					<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-						Amount
-						<input type="number" step="0.01" min="0" name="amount" required placeholder="12.5" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"/>
-					</label>
-					<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-						Unit
-						<select name="unit" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/40 focus:outline-none">
-							<option value="g">g</option>
-							<option value="kg">kg</option>
-							<option value="ml">ml</option>
-							<option value="L">L</option>
-						</select>
-					</label>
-					<div class="md:col-span-2 flex flex-wrap items-center justify-end gap-3">
-						<button type="reset" class="rounded-full border border-white/15 px-6 py-2 text-[0.65rem] tracking-[0.45em] text-white/60 transition hover:border-white/30 hover:text-white">Reset</button>
-						<button type="submit" class="rounded-full bg-white px-6 py-2 text-[0.65rem] tracking-[0.45em] text-[#050509] shadow-[0_18px_45px_rgba(255,255,255,0.22)] transition hover:bg-white/90">Add Ingredient</button>
-					</div>
-				</form>
-			</div>
-			<aside class="space-y-4 rounded-3xl border border-white/10 bg-black/35 p-6 text-sm text-white/60 backdrop-blur-xl">
-				<h4 class="text-base text-white">Workspace Snapshot</h4>
-				<p>The mock connection ships with curated data: { len(snapshot.Formulas) } formulas, { len(snapshot.FormulaIngredients) } ingredients, and { len(snapshot.AromaChemicals) } aroma chemicals.</p>
-				<p>All mutations stay on the client so you can preview flows without touching production services.</p>
-			</aside>
-		</div>
 		<div class="rounded-3xl border border-white/10 bg-black/35 backdrop-blur-xl">
 			<header class="flex flex-col gap-3 px-6 pt-6 text-sm font-medium text-white/60 sm:flex-row sm:items-center sm:justify-between">
 				<span>Ledger</span>
@@ -133,105 +90,105 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
 					</div>
 				</div>
 			</header>
-                    <div data-chemical-editor class="hidden mt-6 space-y-5 rounded-3xl border border-white/10 bg-black/35 p-6 text-sm text-white/70 backdrop-blur-xl">
-                            <header class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                                    <div class="space-y-1">
-                                            <h4 class="text-lg font-semibold text-white" data-chemical-title>Ingredient Details</h4>
-                                            <p class="text-xs uppercase tracking-[0.35em] text-white/40" data-chemical-meta></p>
-                                            <p class="hidden text-xs text-white/50" data-chemical-readonly>This ingredient is read-only. Copy it to customise your own version.</p>
-                                    </div>
-                                    <div class="flex gap-3 text-[0.6rem] tracking-[0.45em]">
-                                            <button type="button" data-role="copy-selected" class="hidden rounded-full border border-white/15 px-4 py-2 text-white/60 transition hover:border-white/30 hover:text-white">Copy to Edit</button>
-                                    </div>
-                            </header>
-                            <form id="chemical-editor-form" data-chemical-form class="space-y-5">
-                                    <input type="hidden" name="id"/>
-                                    <div class="grid gap-4 md:grid-cols-2">
-                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-                                                    Ingredient Name
-                                                    <input type="text" name="ingredientName" required class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
-                                            </label>
-                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-                                                    CAS Number
-                                                    <input type="text" name="casNumber" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
-                                            </label>
-                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-                                                    Ingredient Type
-                                                    <input type="text" name="type" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
-                                            </label>
-                                            <label class="flex items-center justify-between rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-[0.6rem] tracking-[0.45em] text-white/60">
-                                                    <span>Publicly visible</span>
-                                                    <input type="checkbox" name="public" data-chemical-public class="h-4 w-4 rounded border-white/20 bg-black/40"/>
-                                            </label>
-                                    </div>
-                                    <div class="grid gap-4 md:grid-cols-3">
-                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-                                                    Pyramid Position
-                                                    <input type="text" name="pyramidPosition" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
-                                            </label>
-                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-                                                    Wheel Position
-                                                    <input type="text" name="wheelPosition" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
-                                            </label>
-                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-                                                    Strength
-                                                    <input type="number" name="strength" min="0" max="10" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
-                                            </label>
-                                    </div>
-                                    <div class="grid gap-4 md:grid-cols-4">
-                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-                                                    Recommended Dilution
-                                                    <input type="number" name="recommendedDilution" step="0.01" min="0" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
-                                            </label>
-                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-                                                    Dilution %
-                                                    <input type="number" name="dilutionPercentage" step="0.01" min="0" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
-                                            </label>
-                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-                                                    Max IFRA %
-                                                    <input type="number" name="maxIfraPercentage" step="0.01" min="0" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
-                                            </label>
-                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-                                                    Price per mg
-                                                    <input type="number" name="pricePerMg" step="0.0001" min="0" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
-                                            </label>
-                                    </div>
-                                    <div class="grid gap-4 md:grid-cols-3">
-                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-                                                    Duration
-                                                    <input type="text" name="duration" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
-                                            </label>
-                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-                                                    Historic Role
-                                                    <input type="text" name="historicRole" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
-                                            </label>
-                                            <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-                                                    Popularity
-                                                    <input type="number" name="popularity" min="0" max="10" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
-                                            </label>
-                                    </div>
-                                    <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-                                            Usage Guidance
-                                            <textarea name="usage" rows="3" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"></textarea>
-                                    </label>
-                                    <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-                                            Notes
-                                            <textarea name="notes" rows="4" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"></textarea>
-                                    </label>
-                                    <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-                                            Other Names (comma separated)
-                                            <textarea name="otherNames" rows="2" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"></textarea>
-                                    </label>
-                                    <div class="flex flex-wrap items-center justify-between gap-3 text-[0.6rem] tracking-[0.45em]">
-                                            <span data-chemical-message class="text-white/60"></span>
-                                            <div class="flex gap-3">
-                                                    <button type="button" data-role="cancel-chemical" class="rounded-full border border-white/15 px-4 py-2 text-white/60 transition hover:border-white/30 hover:text-white">Cancel</button>
-                                                    <button type="submit" class="rounded-full bg-white px-6 py-2 text-[#050509] shadow-[0_18px_50px_rgba(255,255,255,0.25)] transition hover:bg-white/90" data-role="save-chemical">Save</button>
-                                            </div>
-                                    </div>
-                            </form>
-                    </div>
-                    <div class="mt-4 overflow-hidden rounded-3xl border border-white/10">
+			<div data-chemical-editor class="hidden mt-6 space-y-5 rounded-3xl border border-white/10 bg-black/35 p-6 text-sm text-white/70 backdrop-blur-xl">
+				<header class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+					<div class="space-y-1">
+						<h4 class="text-lg font-semibold text-white" data-chemical-title>Ingredient Details</h4>
+						<p class="text-xs uppercase tracking-[0.35em] text-white/40" data-chemical-meta></p>
+						<p class="hidden text-xs text-white/50" data-chemical-readonly>This ingredient is read-only. Copy it to customise your own version.</p>
+					</div>
+					<div class="flex gap-3 text-[0.6rem] tracking-[0.45em]">
+						<button type="button" data-role="copy-selected" class="hidden rounded-full border border-white/15 px-4 py-2 text-white/60 transition hover:border-white/30 hover:text-white">Copy to Edit</button>
+					</div>
+				</header>
+				<form id="chemical-editor-form" data-chemical-form class="space-y-5">
+					<input type="hidden" name="id"/>
+					<div class="grid gap-4 md:grid-cols-2">
+						<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+							Ingredient Name
+							<input type="text" name="ingredientName" required class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+						</label>
+						<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+							CAS Number
+							<input type="text" name="casNumber" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+						</label>
+						<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+							Ingredient Type
+							<input type="text" name="type" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+						</label>
+						<label class="flex items-center justify-between rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-[0.6rem] tracking-[0.45em] text-white/60">
+							<span>Publicly visible</span>
+							<input type="checkbox" name="public" data-chemical-public class="h-4 w-4 rounded border-white/20 bg-black/40"/>
+						</label>
+					</div>
+					<div class="grid gap-4 md:grid-cols-3">
+						<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+							Pyramid Position
+							<input type="text" name="pyramidPosition" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+						</label>
+						<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+							Wheel Position
+							<input type="text" name="wheelPosition" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+						</label>
+						<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+							Strength
+							<input type="number" name="strength" min="0" max="10" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+						</label>
+					</div>
+					<div class="grid gap-4 md:grid-cols-4">
+						<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+							Recommended Dilution
+							<input type="number" name="recommendedDilution" step="0.01" min="0" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+						</label>
+						<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+							Dilution %
+							<input type="number" name="dilutionPercentage" step="0.01" min="0" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+						</label>
+						<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+							Max IFRA %
+							<input type="number" name="maxIfraPercentage" step="0.01" min="0" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+						</label>
+						<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+							Price per mg
+							<input type="number" name="pricePerMg" step="0.0001" min="0" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+						</label>
+					</div>
+					<div class="grid gap-4 md:grid-cols-3">
+						<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+							Duration
+							<input type="text" name="duration" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+						</label>
+						<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+							Historic Role
+							<input type="text" name="historicRole" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+						</label>
+						<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+							Popularity
+							<input type="number" name="popularity" min="0" max="10" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+						</label>
+					</div>
+					<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+						Usage Guidance
+						<textarea name="usage" rows="3" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"></textarea>
+					</label>
+					<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+						Notes
+						<textarea name="notes" rows="4" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"></textarea>
+					</label>
+					<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+						Other Names (comma separated)
+						<textarea name="otherNames" rows="2" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"></textarea>
+					</label>
+					<div class="flex flex-wrap items-center justify-between gap-3 text-[0.6rem] tracking-[0.45em]">
+						<span data-chemical-message class="text-white/60"></span>
+						<div class="flex gap-3">
+							<button type="button" data-role="cancel-chemical" class="rounded-full border border-white/15 px-4 py-2 text-white/60 transition hover:border-white/30 hover:text-white">Cancel</button>
+							<button type="submit" class="rounded-full bg-white px-6 py-2 text-[#050509] shadow-[0_18px_50px_rgba(255,255,255,0.25)] transition hover:bg-white/90" data-role="save-chemical">Save</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="mt-4 overflow-hidden rounded-3xl border border-white/10">
 				<table class="min-w-full divide-y divide-white/10 text-left text-sm text-white/70">
 					<thead class="bg-white/5 text-xs font-medium text-white/60">
 						<tr>
@@ -239,13 +196,13 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
 							<th class="px-5 py-4 font-medium">Pyramid</th>
 							<th class="px-5 py-4 font-medium">Wheel</th>
 							<th class="px-5 py-4 font-medium">Potency</th>
-                                                    <th class="px-5 py-4 font-medium">Updated</th>
-                                                    <th class="px-5 py-4 font-medium text-right">Actions</th>
-                                                </tr>
-                                        </thead>
-                                        <tbody data-list class="divide-y divide-white/10">
-                                                for _, chemical := range snapshot.AromaChemicals {
-                                                        <tr data-id={ chemical.ID } class="bg-black/25 text-white/80">
+							<th class="px-5 py-4 font-medium">Updated</th>
+							<th class="px-5 py-4 font-medium text-right">Actions</th>
+						</tr>
+					</thead>
+					<tbody data-list class="divide-y divide-white/10">
+						for _, chemical := range snapshot.AromaChemicals {
+							<tr data-id={ chemical.ID } class="bg-black/25 text-white/80">
 								<td class="px-5 py-4">
 									<div class="font-medium text-white">{ chemical.IngredientName }</div>
 									<div class="text-xs text-white/40">
@@ -265,18 +222,18 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
 									<div class="font-medium text-white">{ AromaChemicalPotencyLabel(chemical.Strength) }</div>
 									<div class="text-xs text-white/40">Strength { chemical.Strength }</div>
 								</td>
-                                                                <td class="px-5 py-4">{ chemical.UpdatedAt.UTC().Format("02 Jan 2006") }</td>
-                                                                <td class="px-5 py-4">
-                                                                        <div class="flex items-center justify-end gap-2 text-xs">
-                                                                                <button type="button" data-role="open-chemical" class="rounded-full border border-white/20 px-3 py-1 text-white/70 transition hover:border-white/40 hover:text-white">View</button>
-                                                                                <button type="button" data-role="edit-chemical" class="hidden rounded-full border border-white/20 px-3 py-1 text-white/70 transition hover:border-white/40 hover:text-white">Edit</button>
-                                                                                <button type="button" data-role="copy-chemical" class="rounded-full border border-white/20 px-3 py-1 text-white/70 transition hover:border-white/40 hover:text-white">Copy</button>
-                                                                                <button type="button" data-role="delete-chemical" class="hidden rounded-full border border-rose-400/40 px-3 py-1 text-rose-300 transition hover:border-rose-300 hover:text-rose-200">Delete</button>
-                                                                        </div>
-                                                                </td>
-                                                        </tr>
-                                                }
-                                        </tbody>
+								<td class="px-5 py-4">{ chemical.UpdatedAt.UTC().Format("02 Jan 2006") }</td>
+								<td class="px-5 py-4">
+									<div class="flex items-center justify-end gap-2 text-xs">
+										<button type="button" data-role="open-chemical" class="rounded-full border border-white/20 px-3 py-1 text-white/70 transition hover:border-white/40 hover:text-white">View</button>
+										<button type="button" data-role="edit-chemical" class="hidden rounded-full border border-white/20 px-3 py-1 text-white/70 transition hover:border-white/40 hover:text-white">Edit</button>
+										<button type="button" data-role="copy-chemical" class="rounded-full border border-white/20 px-3 py-1 text-white/70 transition hover:border-white/40 hover:text-white">Copy</button>
+										<button type="button" data-role="delete-chemical" class="hidden rounded-full border border-rose-400/40 px-3 py-1 text-rose-300 transition hover:border-rose-300 hover:text-rose-200">Delete</button>
+									</div>
+								</td>
+							</tr>
+						}
+					</tbody>
 				</table>
 				<div data-empty-state class="hidden px-6 py-16 text-center text-sm text-white/60">No aroma chemicals match your filters yet.</div>
 				<div data-pagination class="hidden flex-col gap-3 border-t border-white/10 px-6 py-4 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
@@ -1116,7 +1073,7 @@ templ workspaceModulesScript() {
                                                 type: (form.get('type') || '').toString().trim(),
                                                 pyramid_position: (form.get('pyramidPosition') || '').toString().trim(),
                                                 wheel_position: (form.get('wheelPosition') || '').toString().trim(),
-                                                strength: parseIntField(form.get('strength')), 
+                                                strength: parseIntField(form.get('strength')),
                                                 recommended_dilution: parseFloatField(form.get('recommendedDilution')),
                                                 dilution_percentage: parseFloatField(form.get('dilutionPercentage')),
                                                 max_ifra_percentage: parseFloatField(form.get('maxIfraPercentage')),
