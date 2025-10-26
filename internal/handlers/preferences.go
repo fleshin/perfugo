@@ -35,15 +35,32 @@ func Preferences(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := r.ParseForm(); err != nil {
-		applog.Debug(r.Context(), "failed to parse preferences form", "error", err)
-		http.Error(w, "invalid form submission", http.StatusBadRequest)
-		return
-	}
-
 	ctx := r.Context()
 
-	rawTheme := strings.TrimSpace(r.PostFormValue("theme"))
+	contentType := strings.ToLower(r.Header.Get("Content-Type"))
+	if strings.HasPrefix(contentType, "multipart/form-data") {
+		if err := r.ParseMultipartForm(32 << 10); err != nil {
+			applog.Debug(ctx, "failed to parse multipart preferences form", "error", err)
+			http.Error(w, "invalid form submission", http.StatusBadRequest)
+			return
+		}
+		if r.MultipartForm != nil {
+			defer r.MultipartForm.RemoveAll()
+		}
+	} else {
+		if err := r.ParseForm(); err != nil {
+			applog.Debug(ctx, "failed to parse preferences form", "error", err)
+			http.Error(w, "invalid form submission", http.StatusBadRequest)
+			return
+		}
+	}
+
+	rawTheme := strings.TrimSpace(r.FormValue("theme"))
+	if rawTheme == "" && r.MultipartForm != nil {
+		if values := r.MultipartForm.Value["theme"]; len(values) > 0 {
+			rawTheme = strings.TrimSpace(values[0])
+		}
+	}
 	applog.Debug(ctx, "preferences theme submission received", "userID", userID, "rawTheme", rawTheme)
 
 	requestedTheme := models.NormalizeTheme(rawTheme)
