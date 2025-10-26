@@ -113,21 +113,21 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
                         </aside>
                 </div>
                 <div class="rounded-3xl border border-white/10 bg-black/35 backdrop-blur-xl">
-                        <header class="flex flex-col gap-3 px-6 pt-6 text-sm uppercase tracking-[0.45em] text-white/50 sm:flex-row sm:items-center sm:justify-between">
+                        <header class="flex flex-col gap-3 px-6 pt-6 text-sm font-medium text-white/60 sm:flex-row sm:items-center sm:justify-between">
                                 <span>Ledger</span>
                                 <div class="flex w-full flex-col gap-3 sm:w-auto">
                                         <input type="search" data-filter-search placeholder="Search aroma chemical" class="w-full rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none sm:min-w-[18rem]"/>
                                         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                                                <select data-filter-pyramid class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-[0.55rem] uppercase tracking-[0.45em] text-white focus:border-white/40 focus:outline-none">
+                                                <select data-filter-pyramid class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white focus:border-white/40 focus:outline-none">
                                                         <option value="all">All pyramid positions</option>
                                                 </select>
-                                                <select data-filter-wheel class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-[0.55rem] uppercase tracking-[0.45em] text-white focus:border-white/40 focus:outline-none">
+                                                <select data-filter-wheel class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white focus:border-white/40 focus:outline-none">
                                                         <option value="all">All wheel families</option>
                                                 </select>
-                                                <select data-filter-potency class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-[0.55rem] uppercase tracking-[0.45em] text-white focus:border-white/40 focus:outline-none">
+                                                <select data-filter-potency class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white focus:border-white/40 focus:outline-none">
                                                         <option value="all">All potencies</option>
                                                 </select>
-                                                <select data-filter-type class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-[0.55rem] uppercase tracking-[0.45em] text-white focus:border-white/40 focus:outline-none">
+                                                <select data-filter-type class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white focus:border-white/40 focus:outline-none">
                                                         <option value="all">All ingredient types</option>
                                                 </select>
                                         </div>
@@ -135,7 +135,7 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
                         </header>
                         <div class="mt-4 overflow-hidden rounded-3xl border border-white/10">
                                 <table class="min-w-full divide-y divide-white/10 text-left text-sm text-white/70">
-                                        <thead class="bg-white/5 text-[0.6rem] uppercase tracking-[0.45em] text-white/45">
+                                        <thead class="bg-white/5 text-xs font-medium text-white/60">
                                                 <tr>
                                                         <th class="px-5 py-4 font-medium">Ingredient</th>
                                                         <th class="px-5 py-4 font-medium">Pyramid</th>
@@ -149,7 +149,7 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
                                                         <tr data-id={ chemical.ID } class="bg-black/25 text-white/80">
                                                                 <td class="px-5 py-4">
                                                                         <div class="font-medium text-white">{ chemical.IngredientName }</div>
-                                                                        <div class="text-xs uppercase tracking-[0.35em] text-white/40">
+                                                                        <div class="text-xs text-white/40">
                                                                                 if chemical.CASNumber != "" {
                                                                                         CAS { chemical.CASNumber }
                                                                                 } else {
@@ -164,7 +164,7 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
                                                                 <td class="px-5 py-4">{ DefaultDash(chemical.WheelPosition) }</td>
                                                                 <td class="px-5 py-4">
                                                                         <div class="font-medium text-white">{ AromaChemicalPotencyLabel(chemical.Strength) }</div>
-                                                                        <div class="text-xs uppercase tracking-[0.35em] text-white/40">Strength { chemical.Strength }</div>
+                                                                        <div class="text-xs text-white/40">Strength { chemical.Strength }</div>
                                                                 </td>
                                                                 <td class="px-5 py-4">{ chemical.UpdatedAt.UTC().Format("02 Jan 2006") }</td>
                                                         </tr>
@@ -172,10 +172,10 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
                                         </tbody>
                                 </table>
                                 <div data-empty-state class="hidden px-6 py-16 text-center text-sm text-white/60">No aroma chemicals match your filters yet.</div>
-                                <div data-pagination class="hidden flex-col gap-3 border-t border-white/10 px-6 py-4 text-[0.6rem] uppercase tracking-[0.45em] text-white/50 sm:flex-row sm:items-center sm:justify-between">
+                                <div data-pagination class="hidden flex-col gap-3 border-t border-white/10 px-6 py-4 text-xs text-white/50 sm:flex-row sm:items-center sm:justify-between">
                                         <span data-pagination-summary>Showing 0 of 0 aroma chemicals</span>
                                         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                                                <label class="flex items-center gap-2 text-[0.55rem] uppercase tracking-[0.45em] text-white/40">
+                                                <label class="flex items-center gap-2 text-xs text-white/40">
                                                         Rows
                                                         <select data-page-size class="rounded-full border border-white/15 bg-black/40 px-3 py-1 text-xs text-white focus:border-white/40 focus:outline-none">
                                                                 <option value="10">10</option>
@@ -184,8 +184,8 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
                                                         </select>
                                                 </label>
                                                 <div class="flex items-center gap-2">
-                                                        <button type="button" data-page="prev" class="rounded-full border border-white/20 px-4 py-2 text-[0.55rem] uppercase tracking-[0.45em] text-white/70 transition hover:border-white/40 hover:text-white">Previous</button>
-                                                        <button type="button" data-page="next" class="rounded-full border border-white/20 px-4 py-2 text-[0.55rem] uppercase tracking-[0.45em] text-white/70 transition hover:border-white/40 hover:text-white">Next</button>
+                                                        <button type="button" data-page="prev" class="rounded-full border border-white/20 px-4 py-2 text-xs text-white/70 transition hover:border-white/40 hover:text-white">Previous</button>
+                                                        <button type="button" data-page="next" class="rounded-full border border-white/20 px-4 py-2 text-xs text-white/70 transition hover:border-white/40 hover:text-white">Next</button>
                                                 </div>
                                         </div>
                                 </div>
