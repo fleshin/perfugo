@@ -1463,65 +1463,111 @@ templ workspaceModulesScript() {
                                 }
 
                                 if (createForm) {
-                                        createForm.addEventListener('submit', (event) => {
+                                        createForm.addEventListener('submit', async (event) => {
                                                 event.preventDefault();
                                                 const form = new FormData(createForm);
                                                 const formulaId = Number(form.get('formulaId'));
                                                 const aromaChemicalId = Number(form.get('aromaChemicalId'));
-                                                const amount = parseFloat(form.get('amount'));
-                                                const unit = form.get('unit') || 'g';
-                                                if (!formulaId || !aromaChemicalId || Number.isNaN(amount)) {
+                                                const amount = Number(form.get('amount'));
+                                                const unit = (form.get('unit') || 'g').toString();
+                                                if (!Number.isFinite(formulaId) || formulaId <= 0) {
                                                         return;
                                                 }
-                                                const now = new Date().toISOString();
-                                                namespace.store.ingredients.push({
-                                                        id: Date.now(),
-                                                        formulaId,
-                                                        aromaChemicalId,
+                                                if (!Number.isFinite(aromaChemicalId) || aromaChemicalId <= 0) {
+                                                        return;
+                                                }
+                                                if (!Number.isFinite(amount) || amount <= 0) {
+                                                        return;
+                                                }
+
+                                                const payload = {
+                                                        formula_id: formulaId,
+                                                        aroma_chemical_id: aromaChemicalId,
                                                         amount,
                                                         unit,
-                                                        createdAt: now,
-                                                        updatedAt: now,
-                                                });
-                                                emit('ingredients:updated');
-                                                createForm.reset();
+                                                };
+
+                                                try {
+                                                        const response = await fetchJSON('/app/api/formula-ingredients', {
+                                                                method: 'POST',
+                                                                body: JSON.stringify(payload),
+                                                        });
+                                                        if (!upsertIngredientInStore(response)) {
+                                                                throw new Error('invalid response payload');
+                                                        }
+                                                        emit('ingredients:updated');
+                                                        createForm.reset();
+                                                } catch (error) {
+                                                        console.error('Failed to create formula ingredient', error);
+                                                }
                                         });
                                 }
 
                                 if (editForm) {
-                                        editForm.addEventListener('submit', (event) => {
+                                        editForm.addEventListener('submit', async (event) => {
                                                 event.preventDefault();
-                                                if (state.editing == null) return;
+                                                if (state.editing == null) {
+                                                        return;
+                                                }
+                                                const id = Number(state.editing);
+                                                if (!Number.isFinite(id) || id <= 0) {
+                                                        return;
+                                                }
                                                 const form = new FormData(editForm);
                                                 const formulaId = Number(form.get('formulaId'));
                                                 const aromaChemicalId = Number(form.get('aromaChemicalId'));
-                                                const amount = parseFloat(form.get('amount'));
-                                                const unit = form.get('unit') || 'g';
-                                                namespace.store.ingredients = namespace.store.ingredients.map((item) => {
-                                                        if (Number(item.id) !== Number(state.editing)) {
-                                                                return item;
+                                                const amount = Number(form.get('amount'));
+                                                const unit = (form.get('unit') || 'g').toString();
+                                                if (!Number.isFinite(formulaId) || formulaId <= 0) {
+                                                        return;
+                                                }
+                                                if (!Number.isFinite(aromaChemicalId) || aromaChemicalId <= 0) {
+                                                        return;
+                                                }
+                                                if (!Number.isFinite(amount) || amount <= 0) {
+                                                        return;
+                                                }
+
+                                                const payload = {
+                                                        formula_id: formulaId,
+                                                        aroma_chemical_id: aromaChemicalId,
+                                                        amount,
+                                                        unit,
+                                                };
+
+                                                try {
+                                                        const response = await fetchJSON(`/app/api/formula-ingredients/${id}`, {
+                                                                method: 'PUT',
+                                                                body: JSON.stringify(payload),
+                                                        });
+                                                        if (!upsertIngredientInStore(response)) {
+                                                                throw new Error('invalid response payload');
                                                         }
-                                                        return {
-                                                                ...item,
-                                                                formulaId,
-                                                                aromaChemicalId,
-                                                                amount: Number.isNaN(amount) ? item.amount : amount,
-                                                                unit,
-                                                                updatedAt: new Date().toISOString(),
-                                                        };
-                                                });
-                                                emit('ingredients:updated');
-                                                closePanel();
+                                                        emit('ingredients:updated');
+                                                        state.editing = null;
+                                                        closePanel();
+                                                } catch (error) {
+                                                        console.error('Failed to update formula ingredient', error);
+                                                }
                                         });
                                 }
 
-                                root.addEventListener('click', (event) => {
+                                root.addEventListener('click', async (event) => {
                                         const target = event.target.closest('[data-action]');
                                         if (!target) return;
                                         const id = Number(target.getAttribute('data-id'));
+                                        if (!Number.isFinite(id) || id <= 0) {
+                                                return;
+                                        }
                                         if (target.dataset.action === 'delete') {
-                                                namespace.store.ingredients = namespace.store.ingredients.filter((item) => Number(item.id) !== id);
-                                                emit('ingredients:updated');
+                                                event.preventDefault();
+                                                try {
+                                                        await fetchJSON(`/app/api/formula-ingredients/${id}`, { method: 'DELETE' });
+                                                        namespace.store.ingredients = namespace.store.ingredients.filter((item) => Number(item.id) !== id);
+                                                        emit('ingredients:updated');
+                                                } catch (error) {
+                                                        console.error('Failed to delete formula ingredient', error);
+                                                }
                                                 return;
                                         }
                                         if (target.dataset.action === 'edit') {
@@ -1595,6 +1641,35 @@ templ workspaceModulesScript() {
                                         } else {
                                                 state.currentFormulaId = null;
                                         }
+                                };
+
+                                const normaliseIngredientPayload = (payload) => {
+                                        if (!payload) {
+                                                return null;
+                                        }
+                                        const normalized = toIngredients([payload]);
+                                        return normalized.length > 0 ? normalized[0] : null;
+                                };
+
+                                const upsertIngredientInStore = (payload) => {
+                                        const normalized = normaliseIngredientPayload(payload);
+                                        if (!normalized) {
+                                                return null;
+                                        }
+                                        let replaced = false;
+                                        const next = namespace.store.ingredients.map((item) => {
+                                                if (Number(item.id) === Number(normalized.id)) {
+                                                        replaced = true;
+                                                        return normalized;
+                                                }
+                                                return item;
+                                        });
+                                        if (replaced) {
+                                                namespace.store.ingredients = next;
+                                        } else {
+                                                namespace.store.ingredients = next.concat(normalized);
+                                        }
+                                        return normalized;
                                 };
 
                                 const setFormMessage = (text, tone) => {
