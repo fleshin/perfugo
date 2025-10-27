@@ -341,7 +341,12 @@ templ FormulaManagement(snapshot WorkspaceSnapshot) {
                                         <h4 class="text-base text-white">Formula Editor</h4>
                                         <p class="text-xs uppercase tracking-[0.45em] text-white/40">Updates stay local to this demo</p>
                                 </div>
-                                <span class="hidden text-xs uppercase tracking-[0.45em]" data-formula-message></span>
+                                <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
+                                        <button type="button" data-role="create-formula" class="rounded-full border border-white/20 px-5 py-2 text-[0.6rem] uppercase tracking-[0.45em] text-white/80 transition hover:border-white/40 hover:text-white">
+                                                Add Empty Formula
+                                        </button>
+                                        <span class="hidden text-xs uppercase tracking-[0.45em]" data-formula-message></span>
+                                </div>
                         </header>
                         <form class="space-y-6" data-formula-form>
                                 <input type="hidden" name="id"/>
@@ -1563,6 +1568,7 @@ templ workspaceModulesScript() {
                                 const resourceSearch = root.querySelector('[data-resource-search]');
                                 const saveButton = root.querySelector('[data-role="save-formula"]');
                                 const saveVersionButton = root.querySelector('[data-role="save-version"]');
+                                const createButton = root.querySelector('[data-role="create-formula"]');
 
                                 const escapeHTML = (value) => (value || '').toString().replace(/[&<]/g, (char) => (char === '&' ? '&amp;' : '&lt;'));
 
@@ -1927,6 +1933,37 @@ templ workspaceModulesScript() {
                                         setFormMessage('Ingredient removed from composition.', 'success');
                                 };
 
+                                const handleCreateEmptyFormula = () => {
+                                        const now = new Date().toISOString();
+                                        const baseName = 'Untitled Formula';
+                                        let candidate = baseName;
+                                        let suffix = 1;
+                                        const existingNames = new Set(namespace.store.formulas.map((item) => (item.name || '').toLowerCase()));
+
+                                        while (existingNames.has(candidate.toLowerCase())) {
+                                                suffix += 1;
+                                                candidate = `${baseName} ${suffix}`;
+                                        }
+
+                                        const newId = Date.now();
+                                        const newFormula = {
+                                                id: newId,
+                                                name: candidate,
+                                                notes: '',
+                                                version: 1,
+                                                isLatest: true,
+                                                parentFormulaId: '',
+                                                ingredients: [],
+                                                createdAt: now,
+                                                updatedAt: now,
+                                        };
+
+                                        namespace.store.formulas = namespace.store.formulas.concat(newFormula);
+                                        state.currentFormulaId = newId;
+                                        emit('formulas:updated');
+                                        setFormMessage('Empty formula created. Add details and save when ready.', 'success');
+                                };
+
                                 const handleSave = () => {
                                         const formula = getCurrentFormula();
                                         if (!form || !formula) {
@@ -2058,6 +2095,13 @@ templ workspaceModulesScript() {
                                         saveVersionButton.addEventListener('click', (event) => {
                                                 event.preventDefault();
                                                 handleSaveNewVersion();
+                                        });
+                                }
+
+                                if (createButton) {
+                                        createButton.addEventListener('click', (event) => {
+                                                event.preventDefault();
+                                                handleCreateEmptyFormula();
                                         });
                                 }
 
