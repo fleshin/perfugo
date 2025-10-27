@@ -300,157 +300,123 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
 }
 
 templ FormulaManagement(snapshot WorkspaceSnapshot) {
-	<section class="space-y-8" data-module="formulas" data-module-key="formulas">
-		<div class="grid gap-6 lg:grid-cols-3">
-			<div class="lg:col-span-2 space-y-6 rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-8 shadow-[0_30px_70px_rgba(0,0,0,0.35)] backdrop-blur-xl">
-				<header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-					<div>
-						<h3 class="text-lg text-white">Formula</h3>
-						<p class="text-sm tracking-[0.4em] text-white/50">Interact with the mock dataset built from real models.</p>
-					</div>
-					<span class="rounded-full border border-white/15 px-4 py-2 text-[0.6rem] tracking-[0.45em] text-white/50">Seeded User: avery@perfugo.app</span>
-				</header>
-				<form class="grid gap-5 md:grid-cols-2" data-action="create">
-					<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-						Name
-						<input type="text" name="name" required placeholder="Aurum Nocturne" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"/>
-					</label>
-					<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-						Version
-						<input type="number" name="version" min="1" step="1" value="1" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/40 focus:outline-none"/>
-					</label>
-					<label class="md:col-span-2 space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-						Notes
-						<textarea name="notes" rows="3" placeholder="Resinous amber core balanced with luminous citrus facets." class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"></textarea>
-					</label>
-					<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-						Latest Iteration
-						<div class="flex items-center gap-3 rounded-2xl border border-white/15 bg-black/40 px-4 py-3">
-							<input type="checkbox" name="isLatest" class="h-4 w-4 rounded border-white/20 bg-black/40" checked/>
-							<span class="text-sm text-white/70">Mark as current</span>
-						</div>
-					</label>
-					<label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-						Parent Formula
-						<select name="parentFormulaId" data-formula-select class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/40 focus:outline-none">
-							<option value="">None</option>
-						</select>
-					</label>
-					<div class="md:col-span-2 flex flex-wrap items-center justify-end gap-3">
-						<button type="reset" class="rounded-full border border-white/15 px-6 py-2 text-[0.65rem] tracking-[0.45em] text-white/60 transition hover:border-white/30 hover:text-white">Reset</button>
-						<button type="submit" class="rounded-full bg-white px-6 py-2 text-[0.65rem] tracking-[0.45em] text-[#050509] shadow-[0_18px_45px_rgba(255,255,255,0.22)] transition hover:bg-white/90">Add Formula</button>
-					</div>
-				</form>
-			</div>
-			<aside class="space-y-4 rounded-3xl border border-white/10 bg-black/35 p-6 text-sm text-white/60 backdrop-blur-xl">
-				<h4 class="text-base text-white">Mock Credentials</h4>
-				<p>Sign in with <code class="rounded bg-white/10 px-2 py-1 text-xs">avery@perfugo.app / atelier</code> when running the server.</p>
-				<p>The mock sqlite connection is created automatically when <code>DATABASE_USE_MOCK=1</code> or no DSN is provided.</p>
-			</aside>
-		</div>
-		<div class="rounded-3xl border border-white/10 bg-black/35 backdrop-blur-xl">
-			<header class="flex flex-col gap-3 px-6 pt-6 text-sm tracking-[0.45em] text-white/50 sm:flex-row sm:items-center sm:justify-between">
-				<span>Portfolio</span>
-				<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-					<input type="search" data-filter-search placeholder="Search formula" class="w-full rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"/>
-					<select data-filter-status class="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white focus:border-white/40 focus:outline-none">
-						<option value="all">All</option>
-						<option value="latest">Current</option>
-						<option value="archive">Archive</option>
-					</select>
-				</div>
-			</header>
-			<div class="mt-4 overflow-hidden rounded-3xl border border-white/10">
-				<table class="min-w-full divide-y divide-white/10 text-left text-sm text-white/70">
-					<thead class="bg-white/5 text-[0.6rem] tracking-[0.45em] text-white/45">
-						<tr>
-							<th class="px-5 py-4 font-medium">Formula</th>
-							<th class="px-5 py-4 font-medium">Version</th>
-							<th class="px-5 py-4 font-medium">Latest</th>
-							<th class="px-5 py-4 font-medium">Parent</th>
-							<th class="px-5 py-4 font-medium">Ingredients</th>
-							<th class="px-5 py-4 font-medium">Updated</th>
-							<th class="px-5 py-4 font-medium">Actions</th>
-						</tr>
-					</thead>
-					<tbody data-list class="divide-y divide-white/10">
-						for _, formula := range snapshot.Formulas {
-							<tr data-id={ formula.ID } class="bg-black/25 text-white/80">
-								<td class="px-5 py-4">
-									<div class="font-medium text-white">{ formula.Name }</div>
-									<div class="text-xs   text-white/40">ID { formula.ID }</div>
-								</td>
-								<td class="px-5 py-4">v{ formula.Version }</td>
-								<td class="px-5 py-4">
-									if formula.IsLatest {
-										<span class="rounded-full border border-emerald-300/30 bg-emerald-400/10 px-3 py-1 text-xs   text-emerald-100">Current</span>
-									} else {
-										<span class="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs   text-white/60">Archive</span>
-									}
-								</td>
-								<td class="px-5 py-4">
-									if formula.ParentFormulaID != nil {
-										<span class="text-white/70">#{ *formula.ParentFormulaID }</span>
-									} else {
-										<span class="text-white/50">—</span>
-									}
-								</td>
-								<td class="px-5 py-4">{ len(formula.Ingredients) }</td>
-								<td class="px-5 py-4">{ formula.UpdatedAt.UTC().Format("02 Jan 2006") }</td>
-								<td class="px-5 py-4">
-									<div class="flex items-center gap-2">
-										<button type="button" data-action="edit" data-id={ formula.ID } class="rounded-full border border-white/20 px-4 py-2 text-[0.6rem] tracking-[0.45em] text-white/70 transition hover:border-white/40 hover:text-white">Edit</button>
-										<button type="button" data-action="delete" data-id={ formula.ID } class="rounded-full border border-rose-400/25 px-4 py-2 text-[0.6rem] tracking-[0.45em] text-rose-200 transition hover:border-rose-300/40 hover:text-rose-100">Remove</button>
-									</div>
-								</td>
-							</tr>
-						}
-					</tbody>
-				</table>
-				<div data-empty-state class="hidden px-6 py-16 text-center text-sm text-white/60">No formulas yet. Compose a new entry above.</div>
-			</div>
-		</div>
-		<div data-edit-panel class="fixed inset-0 z-40 hidden items-center justify-center bg-black/80 px-6 py-10 backdrop-blur">
-			<div class="w-full max-w-lg space-y-5 rounded-3xl border border-white/10 bg-[#0a0a10] p-8 shadow-[0_40px_120px_rgba(0,0,0,0.55)]">
-				<header class="flex items-center justify-between">
-					<div>
-						<h4 class="text-lg text-white">Edit Formula</h4>
-						<p class="text-sm text-white/60">All adjustments persist only in memory.</p>
-					</div>
-					<button type="button" data-role="close-panel" class="rounded-full border border-white/15 px-3 py-1 text-[0.55rem] tracking-[0.5em] text-white/50 transition hover:border-white/30 hover:text-white">Close</button>
-				</header>
-				<form class="space-y-4" data-action="edit">
-					<input type="hidden" name="id"/>
-					<label class="space-y-2 text-[0.6rem] tracking-[0.45em] text-white/60">
-						Name
-						<input type="text" name="name" required class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
-					</label>
-					<label class="space-y-2 text-[0.6rem] tracking-[0.45em] text-white/60">
-						Version
-						<input type="number" min="1" step="1" name="version" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
-					</label>
-					<label class="space-y-2 text-[0.6rem] tracking-[0.45em] text-white/60">
-						Notes
-						<textarea name="notes" rows="3" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none"></textarea>
-					</label>
-					<label class="flex items-center justify-between rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-[0.6rem] tracking-[0.45em] text-white/60">
-						<span>Mark as latest</span>
-						<input type="checkbox" name="isLatest" class="h-4 w-4 rounded border-white/20 bg-black/40"/>
-					</label>
-					<label class="space-y-2 text-[0.6rem] tracking-[0.45em] text-white/60">
-						Parent Formula
-						<select name="parentFormulaId" data-formula-select class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none">
-							<option value="">None</option>
-						</select>
-					</label>
-					<div class="flex justify-end gap-3">
-						<button type="button" data-role="close-panel" class="rounded-full border border-white/15 px-5 py-2 text-[0.6rem] tracking-[0.45em] text-white/60 transition hover:border-white/30 hover:text-white">Cancel</button>
-						<button type="submit" class="rounded-full bg-white px-6 py-2 text-[0.6rem] tracking-[0.45em] text-[#050509] shadow-[0_18px_50px_rgba(255,255,255,0.25)] transition hover:bg-white/90">Save</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</section>
+        <section class="space-y-8" data-module="formulas" data-module-key="formulas">
+                <div class="space-y-6 rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-8 shadow-[0_30px_70px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+                        <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                                <div class="space-y-3">
+                                        <span class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1 text-[0.6rem] tracking-[0.45em] text-white/70">Formula Overview</span>
+                                        <h3 class="text-2xl font-semibold text-white" data-formula-title>Select a formula to begin</h3>
+                                        <p class="text-sm text-white/60" data-formula-meta>Choose a formula from the library below to view and edit its composition.</p>
+                                        <div class="flex flex-wrap gap-2 text-xs uppercase tracking-[0.45em] text-white/40" data-formula-flags></div>
+                                </div>
+                                <label class="flex w-full flex-col gap-2 text-xs tracking-[0.45em] text-white/60 sm:w-auto">
+                                        <span>Formula</span>
+                                        <select data-formula-picker class="w-full min-w-[14rem] rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none">
+                                                <option value="">Select…</option>
+                                        </select>
+                                </label>
+                        </div>
+                        <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 text-sm text-white/70" data-formula-summary>
+                                <div class="rounded-2xl border border-white/10 bg-black/30 p-4">
+                                        <dt class="text-xs uppercase tracking-[0.45em] text-white/40">Version</dt>
+                                        <dd class="mt-1 text-lg text-white" data-formula-version>—</dd>
+                                </div>
+                                <div class="rounded-2xl border border-white/10 bg-black/30 p-4">
+                                        <dt class="text-xs uppercase tracking-[0.45em] text-white/40">Status</dt>
+                                        <dd class="mt-1 text-lg text-white" data-formula-status>—</dd>
+                                </div>
+                                <div class="rounded-2xl border border-white/10 bg-black/30 p-4">
+                                        <dt class="text-xs uppercase tracking-[0.45em] text-white/40">Parent</dt>
+                                        <dd class="mt-1 text-lg text-white" data-formula-parent>—</dd>
+                                </div>
+                                <div class="rounded-2xl border border-white/10 bg-black/30 p-4">
+                                        <dt class="text-xs uppercase tracking-[0.45em] text-white/40">Ingredients</dt>
+                                        <dd class="mt-1 text-lg text-white" data-formula-ingredient-count>0</dd>
+                                </div>
+                        </dl>
+                </div>
+                <div class="space-y-6 rounded-3xl border border-white/10 bg-black/35 p-8 text-sm text-white/70 backdrop-blur-xl">
+                        <header class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                        <h4 class="text-base text-white">Formula Editor</h4>
+                                        <p class="text-xs uppercase tracking-[0.45em] text-white/40">Updates stay local to this demo</p>
+                                </div>
+                                <span class="hidden text-xs uppercase tracking-[0.45em]" data-formula-message></span>
+                        </header>
+                        <form class="space-y-6" data-formula-form>
+                                <input type="hidden" name="id"/>
+                                <div class="grid gap-5 md:grid-cols-2">
+                                        <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                Name
+                                                <input type="text" name="name" required class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/40 focus:outline-none" placeholder="Aurum Nocturne"/>
+                                        </label>
+                                        <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                Parent Formula
+                                                <select name="parentFormulaId" data-formula-select data-exclude-current class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/40 focus:outline-none">
+                                                        <option value="">None</option>
+                                                </select>
+                                        </label>
+                                        <label class="md:col-span-2 space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                Notes
+                                                <textarea name="notes" rows="3" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none" placeholder="Resinous amber core balanced with luminous citrus facets."></textarea>
+                                        </label>
+                                        <label class="flex items-center justify-between rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-[0.6rem] tracking-[0.45em] text-white/60">
+                                                <span>Mark as latest</span>
+                                                <input type="checkbox" name="isLatest" class="h-4 w-4 rounded border-white/20 bg-black/40"/>
+                                        </label>
+                                </div>
+                                <div class="space-y-4">
+                                        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                                <span class="text-xs uppercase tracking-[0.45em] text-white/40">Composition</span>
+                                                <span class="text-xs uppercase tracking-[0.45em] text-white/40" data-composition-count>0 ingredients</span>
+                                        </div>
+                                        <div class="overflow-hidden rounded-3xl border border-white/10">
+                                                <table class="min-w-full divide-y divide-white/10 text-left">
+                                                        <thead class="bg-white/5 text-[0.6rem] uppercase tracking-[0.45em] text-white/40">
+                                                                <tr>
+                                                                        <th class="px-5 py-4 font-medium">Type</th>
+                                                                        <th class="px-5 py-4 font-medium">Ingredient</th>
+                                                                        <th class="px-5 py-4 font-medium">Version</th>
+                                                                        <th class="px-5 py-4 font-medium">Amount</th>
+                                                                        <th class="px-5 py-4 font-medium">Unit</th>
+                                                                        <th class="px-5 py-4 font-medium text-right">Actions</th>
+                                                                </tr>
+                                                        </thead>
+                                                        <tbody data-composition-list class="divide-y divide-white/10 bg-black/30 text-sm text-white/70"></tbody>
+                                                </table>
+                                                <div data-composition-empty class="hidden px-6 py-10 text-center text-sm text-white/50">No ingredients assigned. Use the library below to add aroma chemicals or sub-formulas.</div>
+                                        </div>
+                                </div>
+                                <div class="flex flex-wrap items-center justify-end gap-3 text-[0.6rem] tracking-[0.45em]">
+                                        <button type="button" data-role="save-formula" class="rounded-full bg-white px-6 py-2 text-[#050509] shadow-[0_18px_45px_rgba(255,255,255,0.22)] transition hover:bg-white/90">Save</button>
+                                        <button type="button" data-role="save-version" class="rounded-full border border-white/20 px-6 py-2 text-white/80 transition hover:border-white/40 hover:text-white">Save as New Version</button>
+                                </div>
+                        </form>
+                </div>
+                <div class="rounded-3xl border border-white/10 bg-black/35 backdrop-blur-xl">
+                        <header class="flex flex-col gap-3 px-6 pt-6 text-sm tracking-[0.45em] text-white/50 sm:flex-row sm:items-center sm:justify-between">
+                                <span>Ingredients Library</span>
+                                <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                                        <input type="search" data-resource-search placeholder="Search ingredients" class="w-full rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none"/>
+                                </div>
+                        </header>
+                        <div class="mt-4 overflow-hidden rounded-3xl border border-white/10">
+                                <table class="min-w-full divide-y divide-white/10 text-left text-sm text-white/70">
+                                        <thead class="bg-white/5 text-[0.6rem] uppercase tracking-[0.45em] text-white/45">
+                                                <tr>
+                                                        <th class="px-5 py-4 font-medium">Type</th>
+                                                        <th class="px-5 py-4 font-medium">Name</th>
+                                                        <th class="px-5 py-4 font-medium">Version</th>
+                                                        <th class="px-5 py-4 font-medium">Details</th>
+                                                        <th class="px-5 py-4 font-medium text-right">Action</th>
+                                                </tr>
+                                        </thead>
+                                        <tbody data-resource-list class="divide-y divide-white/10"></tbody>
+                                </table>
+                                <div data-resource-empty class="hidden px-6 py-14 text-center text-sm text-white/60">No items match your search. Adjust the query to add them to this formula.</div>
+                        </div>
+                </div>
+        </section>
 }
 
 templ ReportsOverview(cards []ReportCard, timeline []ReportEvent, leaders []IngredientPerformance) {
@@ -605,15 +571,39 @@ templ workspaceModulesScript() {
                                 updatedAt: readValue(entry, 'UpdatedAt', 'updated_at') || new Date().toISOString(),
                         }));
 
-                        const toIngredients = (items) => (items || []).map((entry) => ({
-                                id: readValue(entry, 'ID', 'id'),
-                                formulaId: readValue(entry, 'FormulaID', 'formula_id'),
-                                aromaChemicalId: readValue(entry, 'AromaChemicalID', 'aroma_chemical_id') || null,
-                                amount: readValue(entry, 'Amount', 'amount') || 0,
-                                unit: readValue(entry, 'Unit', 'unit') || 'g',
-                                createdAt: readValue(entry, 'CreatedAt', 'created_at') || new Date().toISOString(),
-                                updatedAt: readValue(entry, 'UpdatedAt', 'updated_at') || new Date().toISOString(),
-                        }));
+                        const toIngredients = (items) => (items || []).map((entry) => {
+                                const aromaChemicalId = readValue(entry, 'AromaChemicalID', 'aroma_chemical_id');
+                                const subFormulaId = readValue(entry, 'SubFormulaID', 'sub_formula_id');
+                                const aromaChemical = readValue(entry, 'AromaChemical', 'aroma_chemical');
+                                const subFormula = readValue(entry, 'SubFormula', 'sub_formula');
+                                const type = subFormulaId ? 'formula' : 'chemical';
+                                const sourceName =
+                                        subFormula
+                                                ? readValue(subFormula, 'Name', 'name')
+                                                : aromaChemical
+                                                ? readValue(aromaChemical, 'IngredientName', 'ingredient_name')
+                                                : '';
+                                const sourceVersion =
+                                        subFormula
+                                                ? readValue(subFormula, 'Version', 'version') || 1
+                                                : aromaChemical
+                                                ? readValue(aromaChemical, 'Version', 'version') || 1
+                                                : 1;
+
+                                return {
+                                        id: readValue(entry, 'ID', 'id'),
+                                        formulaId: readValue(entry, 'FormulaID', 'formula_id'),
+                                        aromaChemicalId: aromaChemicalId || null,
+                                        subFormulaId: subFormulaId || null,
+                                        amount: readValue(entry, 'Amount', 'amount') || 0,
+                                        unit: readValue(entry, 'Unit', 'unit') || 'g',
+                                        createdAt: readValue(entry, 'CreatedAt', 'created_at') || new Date().toISOString(),
+                                        updatedAt: readValue(entry, 'UpdatedAt', 'updated_at') || new Date().toISOString(),
+                                        type,
+                                        name: sourceName || '',
+                                        version: sourceVersion,
+                                };
+                        });
 
                         const toChemicals = (items) => (items || []).map((entry) => {
                                 const id = readValue(entry, 'ID', 'id');
@@ -671,15 +661,19 @@ templ workspaceModulesScript() {
                         const on = (event, handler) => document.addEventListener(`perfugo:${event}`, handler);
 
                         const refreshSelects = () => {
-                                const formulaOptions = namespace.store.formulas
-                                        .map((formula) => `<option value="${formula.id}">${formula.name.replace(/</g, '&lt;')}</option>`)
-                                        .join('');
                                 document.querySelectorAll('[data-formula-select]').forEach((select) => {
+                                        const excludeCurrent = select.hasAttribute('data-exclude-current');
+                                        const currentAttr = select.getAttribute('data-current-formula');
+                                        const currentId = excludeCurrent && currentAttr ? Number(currentAttr) : null;
+                                        const options = namespace.store.formulas
+                                                .filter((formula) => !excludeCurrent || Number(formula.id) !== Number(currentId))
+                                                .map((formula) => `<option value="${formula.id}">${formula.name.replace(/</g, '&lt;')}</option>`)
+                                                .join('');
                                         const base = select.getAttribute('name') === 'parentFormulaId' ? '<option value="">None</option>' : '<option value="" disabled hidden>Select…</option>';
-                                        const value = select.value;
-                                        select.innerHTML = base + formulaOptions;
-                                        if (value && select.querySelector(`option[value="${value}"]`)) {
-                                                select.value = value;
+                                        const previous = select.value;
+                                        select.innerHTML = base + options;
+                                        if (previous && select.querySelector(`option[value="${previous}"]`)) {
+                                                select.value = previous;
                                         }
                                 });
 
@@ -1542,173 +1536,613 @@ templ workspaceModulesScript() {
                         };
 
                         namespace.modules.formulas = function (root) {
-                                const state = { search: '', filter: 'all', editing: null };
-                                const list = root.querySelector('[data-list]');
-                                const empty = root.querySelector('[data-empty-state]');
-                                const searchInput = root.querySelector('[data-filter-search]');
-                                const filterSelect = root.querySelector('[data-filter-status]');
-                                const createForm = root.querySelector('form[data-action="create"]');
-                                const panel = root.querySelector('[data-edit-panel]');
-                                const editForm = panel ? panel.querySelector('form[data-action="edit"]') : null;
+                                if (!root) {
+                                        return;
+                                }
 
-                                const ingredientCount = (id) => namespace.store.ingredients.filter((item) => Number(item.formulaId) === Number(id)).length;
+                                const state = {
+                                        currentFormulaId: null,
+                                        resourceSearch: '',
+                                };
 
-                                const render = () => {
-                                        const rows = namespace.store.formulas.filter((item) => {
-                                                const text = `${item.name} ${item.notes} ${item.id}`.toLowerCase();
-                                                const matchesSearch = state.search ? text.includes(state.search) : true;
-                                                const matchesFilter = state.filter === 'all' ? true : state.filter === 'latest' ? item.isLatest : !item.isLatest;
-                                                return matchesSearch && matchesFilter;
+                                const formulaPicker = root.querySelector('[data-formula-picker]');
+                                const form = root.querySelector('[data-formula-form]');
+                                const message = root.querySelector('[data-formula-message]');
+                                const title = root.querySelector('[data-formula-title]');
+                                const meta = root.querySelector('[data-formula-meta]');
+                                const flags = root.querySelector('[data-formula-flags]');
+                                const versionDisplay = root.querySelector('[data-formula-version]');
+                                const statusDisplay = root.querySelector('[data-formula-status]');
+                                const parentDisplay = root.querySelector('[data-formula-parent]');
+                                const ingredientCountDisplay = root.querySelector('[data-formula-ingredient-count]');
+                                const compositionList = root.querySelector('[data-composition-list]');
+                                const compositionEmpty = root.querySelector('[data-composition-empty]');
+                                const compositionCount = root.querySelector('[data-composition-count]');
+                                const resourceList = root.querySelector('[data-resource-list]');
+                                const resourceEmpty = root.querySelector('[data-resource-empty]');
+                                const resourceSearch = root.querySelector('[data-resource-search]');
+                                const saveButton = root.querySelector('[data-role="save-formula"]');
+                                const saveVersionButton = root.querySelector('[data-role="save-version"]');
+
+                                const escapeHTML = (value) => (value || '').toString().replace(/[&<]/g, (char) => (char === '&' ? '&amp;' : '&lt;'));
+
+                                const getCurrentFormula = () =>
+                                        namespace.store.formulas.find((item) => Number(item.id) === Number(state.currentFormulaId)) || null;
+
+                                const getComposition = () =>
+                                        namespace.store.ingredients.filter((item) => Number(item.formulaId) === Number(state.currentFormulaId));
+
+                                const ensureCurrentFormula = () => {
+                                        if (state.currentFormulaId && getCurrentFormula()) {
+                                                return;
+                                        }
+                                        if (namespace.store.formulas.length > 0) {
+                                                state.currentFormulaId = namespace.store.formulas[0].id;
+                                        } else {
+                                                state.currentFormulaId = null;
+                                        }
+                                };
+
+                                const setFormMessage = (text, tone) => {
+                                        if (!message) {
+                                                return;
+                                        }
+                                        message.textContent = text || '';
+                                        message.classList.remove('hidden', 'text-emerald-300', 'text-rose-300', 'text-white/40');
+                                        if (!text) {
+                                                message.classList.add('hidden');
+                                                return;
+                                        }
+                                        if (tone === 'success') {
+                                                message.classList.add('text-emerald-300');
+                                        } else if (tone === 'error') {
+                                                message.classList.add('text-rose-300');
+                                        } else {
+                                                message.classList.add('text-white/40');
+                                        }
+                                };
+
+                                const renderFormulaPicker = () => {
+                                        if (!formulaPicker) {
+                                                return;
+                                        }
+                                        const options = namespace.store.formulas
+                                                .slice()
+                                                .sort((a, b) => {
+                                                        const nameComparison = (a.name || '').localeCompare(b.name || '');
+                                                        if (nameComparison !== 0) {
+                                                                return nameComparison;
+                                                        }
+                                                        return (a.version || 0) - (b.version || 0);
+                                                })
+                                                .map(
+                                                        (formula) =>
+                                                                `<option value="${formula.id}">${escapeHTML(formula.name)} • v${formula.version}</option>`
+                                                )
+                                                .join('');
+                                        const current = state.currentFormulaId ? String(state.currentFormulaId) : '';
+                                        formulaPicker.innerHTML = '<option value="">Select…</option>' + options;
+                                        if (current && formulaPicker.querySelector(`option[value="${current}"]`)) {
+                                                formulaPicker.value = current;
+                                        } else {
+                                                formulaPicker.value = '';
+                                        }
+                                };
+
+                                const setFormEnabled = (enabled) => {
+                                        if (!form) {
+                                                return;
+                                        }
+                                        const controls = Array.from(form.querySelectorAll('input, textarea, select'));
+                                        controls.forEach((control) => {
+                                                if (control.type === 'hidden') {
+                                                        return;
+                                                }
+                                                control.disabled = !enabled;
                                         });
+                                        if (saveButton) {
+                                                saveButton.disabled = !enabled;
+                                        }
+                                        if (saveVersionButton) {
+                                                saveVersionButton.disabled = !enabled;
+                                        }
+                                };
 
-                                        if (!rows.length) {
-                                                if (empty) empty.classList.remove('hidden');
-                                                if (list) list.innerHTML = '';
+                                const renderOverview = () => {
+                                        const formula = getCurrentFormula();
+                                        const composition = formula ? getComposition() : [];
+                                        if (!title || !meta || !flags || !versionDisplay || !statusDisplay || !parentDisplay || !ingredientCountDisplay || !compositionCount) {
                                                 return;
                                         }
 
-                                        if (empty) empty.classList.add('hidden');
+                                        if (!formula) {
+                                                title.textContent = 'Select a formula to begin';
+                                                meta.textContent = 'Choose a formula from the library below to view and edit its composition.';
+                                                flags.innerHTML = '';
+                                                versionDisplay.textContent = '—';
+                                                statusDisplay.textContent = '—';
+                                                parentDisplay.textContent = '—';
+                                                ingredientCountDisplay.textContent = '0';
+                                                compositionCount.textContent = '0 ingredients';
+                                                return;
+                                        }
 
-                                        if (list) {
-                                                list.innerHTML = rows.map((item) => {
-                                                        return `<tr data-id="${item.id}" class="bg-black/25 text-white/80">
+                                        title.textContent = formula.name || 'Untitled formula';
+                                        meta.textContent = formula.notes && formula.notes.trim().length ? formula.notes : 'No notes recorded for this iteration.';
+                                        flags.innerHTML = [`ID #${formula.id}`]
+                                                .concat(formula.isLatest ? ['Current iteration'] : ['Archived iteration'])
+                                                .map((value) => `<span class="rounded-full border border-white/15 px-3 py-1">${escapeHTML(value)}</span>`)
+                                                .join('');
+                                        versionDisplay.textContent = `v${formula.version}`;
+                                        statusDisplay.textContent = formula.isLatest ? 'Current' : 'Archive';
+                                        parentDisplay.textContent = formula.parentFormulaId ? `#${formula.parentFormulaId}` : '—';
+                                        ingredientCountDisplay.textContent = String(composition.length);
+                                        const label = composition.length === 1 ? 'ingredient' : 'ingredients';
+                                        compositionCount.textContent = `${composition.length} ${label}`;
+                                };
+
+                                const populateForm = () => {
+                                        const formula = getCurrentFormula();
+                                        if (!form) {
+                                                return;
+                                        }
+                                        const idField = form.querySelector('input[name="id"]');
+                                        const nameField = form.querySelector('input[name="name"]');
+                                        const notesField = form.querySelector('textarea[name="notes"]');
+                                        const latestField = form.querySelector('input[name="isLatest"]');
+                                        const parentField = form.querySelector('select[name="parentFormulaId"]');
+
+                                        if (!formula) {
+                                                if (idField) idField.value = '';
+                                                if (nameField) nameField.value = '';
+                                                if (notesField) notesField.value = '';
+                                                if (latestField) latestField.checked = false;
+                                                if (parentField) {
+                                                        parentField.value = '';
+                                                        parentField.setAttribute('data-current-formula', '');
+                                                }
+                                                setFormEnabled(false);
+                                                refreshSelects();
+                                                return;
+                                        }
+
+                                        setFormEnabled(true);
+                                        if (idField) idField.value = formula.id || '';
+                                        if (nameField) nameField.value = formula.name || '';
+                                        if (notesField) notesField.value = formula.notes || '';
+                                        if (latestField) latestField.checked = Boolean(formula.isLatest);
+                                        if (parentField) parentField.value = formula.parentFormulaId || '';
+                                        if (parentField) {
+                                                parentField.setAttribute('data-current-formula', formula.id ? String(formula.id) : '');
+                                        }
+                                        refreshSelects();
+                                };
+
+                                const renderComposition = () => {
+                                        if (!compositionList || !compositionEmpty) {
+                                                return;
+                                        }
+                                        const items = getComposition();
+                                        if (!items.length) {
+                                                compositionList.innerHTML = '';
+                                                compositionEmpty.classList.remove('hidden');
+                                                return;
+                                        }
+
+                                        compositionEmpty.classList.add('hidden');
+                                        compositionList.innerHTML = items
+                                                .map((item) => {
+                                                        const isFormula = item.subFormulaId != null;
+                                                        const resourceId = isFormula ? item.subFormulaId : item.aromaChemicalId;
+                                                        const typeLabel = isFormula ? 'Formula' : 'Aroma Chemical';
+                                                        let name = item.name || '';
+                                                        if (!name) {
+                                                                if (isFormula) {
+                                                                        const source = namespace.store.formulas.find((entry) => Number(entry.id) === Number(resourceId));
+                                                                        name = source ? source.name : `Formula #${resourceId}`;
+                                                                } else {
+                                                                        const source = namespace.store.chemicals.find((entry) => Number(entry.id) === Number(resourceId));
+                                                                        name = source ? source.name : `Chemical #${resourceId}`;
+                                                                }
+                                                        }
+                                                        const amountValue = Number.isFinite(item.amount) ? item.amount : 0;
+                                                        const unitValue = item.unit || 'g';
+
+                                                        let versionControl = '';
+                                                        if (isFormula) {
+                                                                const selectedFormula = namespace.store.formulas.find((entry) => Number(entry.id) === Number(resourceId));
+                                                                const related = selectedFormula
+                                                                        ? namespace.store.formulas
+                                                                                  .filter((entry) => entry.name === selectedFormula.name)
+                                                                                  .sort((a, b) => (a.version || 0) - (b.version || 0))
+                                                                        : [];
+                                                                const options = (related.length ? related : namespace.store.formulas)
+                                                                        .map((entry) => {
+                                                                                const selected = Number(entry.id) === Number(resourceId) ? ' selected' : '';
+                                                                                return `<option value="${entry.id}"${selected}>v${entry.version}</option>`;
+                                                                        })
+                                                                        .join('');
+                                                                versionControl = `<select data-role="version" data-ingredient="${item.id}" data-type="formula" class="w-full rounded-2xl border border-white/15 bg-black/30 px-3 py-2 text-sm text-white focus:border-white/40 focus:outline-none">${options}</select>`;
+                                                        } else {
+                                                                versionControl = `<select data-role="version" data-ingredient="${item.id}" data-type="chemical" class="w-full rounded-2xl border border-white/15 bg-black/30 px-3 py-2 text-sm text-white/70 focus:outline-none" disabled><option value="${resourceId}" selected>v1</option></select>`;
+                                                        }
+
+                                                        return `<tr data-ingredient-id="${item.id}" class="bg-black/25">
+                                                                <td class="px-5 py-4 text-xs uppercase tracking-[0.45em] text-white/50">${typeLabel}</td>
                                                                 <td class="px-5 py-4">
-                                                                        <div class="font-medium text-white">${item.name.replace(/</g, '&lt;')}</div>
-                                                                        <div class="text-xs   text-white/40">ID ${item.id}</div>
+                                                                        <div class="text-sm text-white">${escapeHTML(name)}</div>
+                                                                        <div class="text-xs text-white/40">ID ${resourceId || '—'}</div>
                                                                 </td>
-                                                                <td class="px-5 py-4">v${item.version}</td>
-                                                                <td class="px-5 py-4">${item.isLatest ? 'Current' : 'Archive'}</td>
-                                                                <td class="px-5 py-4">${item.parentFormulaId || '—'}</td>
-                                                                <td class="px-5 py-4">${ingredientCount(item.id)}</td>
-                                                                <td class="px-5 py-4">${new Date(item.updatedAt).toLocaleDateString()}</td>
+                                                                <td class="px-5 py-4">${versionControl}</td>
                                                                 <td class="px-5 py-4">
-                                                                        <div class="flex items-center gap-2">
-                                                                                <button type="button" data-action="edit" data-id="${item.id}" class="rounded-full border border-white/20 px-4 py-2 text-[0.6rem] tracking-[0.45em] text-white/70">Edit</button>
-                                                                                <button type="button" data-action="delete" data-id="${item.id}" class="rounded-full border border-rose-400/25 px-4 py-2 text-[0.6rem] tracking-[0.45em] text-rose-200">Remove</button>
-                                                                        </div>
+                                                                        <input type="number" step="0.01" min="0" data-role="amount" data-ingredient="${item.id}" value="${amountValue}" class="w-24 rounded-2xl border border-white/15 bg-black/30 px-3 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+                                                                </td>
+                                                                <td class="px-5 py-4">
+                                                                        <input type="text" data-role="unit" data-ingredient="${item.id}" value="${escapeHTML(unitValue)}" class="w-20 rounded-2xl border border-white/15 bg-black/30 px-3 py-2 text-sm text-white focus:border-white/40 focus:outline-none"/>
+                                                                </td>
+                                                                <td class="px-5 py-4 text-right">
+                                                                        <button type="button" data-role="remove-ingredient" data-ingredient="${item.id}" class="rounded-full border border-white/20 px-4 py-2 text-[0.6rem] tracking-[0.45em] text-white/60 transition hover:border-white/40 hover:text-white">Remove</button>
                                                                 </td>
                                                         </tr>`;
-                                                }).join('');
+                                                })
+                                                .join('');
+                                };
+
+                                const renderResourceList = () => {
+                                        if (!resourceList || !resourceEmpty) {
+                                                return;
                                         }
-                                };
+                                        const query = state.resourceSearch ? state.resourceSearch.toLowerCase() : '';
+                                        const composition = getComposition();
+                                        const selectedFormulaId = state.currentFormulaId ? Number(state.currentFormulaId) : null;
+                                        const library = [
+                                                ...namespace.store.chemicals.map((chemical) => ({
+                                                        type: 'chemical',
+                                                        id: chemical.id,
+                                                        name: chemical.name,
+                                                        version: 1,
+                                                        details: chemical.type || chemical.wheel || chemical.pyramid || '—',
+                                                })),
+                                                ...namespace.store.formulas.map((formula) => ({
+                                                        type: 'formula',
+                                                        id: formula.id,
+                                                        name: formula.name,
+                                                        version: formula.version || 1,
+                                                        details: formula.isLatest ? 'Current iteration' : 'Archived iteration',
+                                                })),
+                                        ];
 
-                                render();
-                                on('ingredients:updated', render);
-
-                                const openPanel = () => {
-                                        if (!panel) return;
-                                        panel.classList.remove('hidden');
-                                        panel.classList.add('flex');
-                                        document.body.classList.add('overflow-hidden');
-                                };
-
-                                const closePanel = () => {
-                                        if (!panel) return;
-                                        panel.classList.add('hidden');
-                                        panel.classList.remove('flex');
-                                        document.body.classList.remove('overflow-hidden');
-                                        state.editing = null;
-                                };
-
-                                if (searchInput) {
-                                        searchInput.addEventListener('input', (event) => {
-                                                state.search = (event.target.value || '').toLowerCase();
-                                                render();
+                                        const filtered = library.filter((item) => {
+                                                if (item.type === 'formula' && selectedFormulaId != null && Number(item.id) === selectedFormulaId) {
+                                                        return false;
+                                                }
+                                                if (!query) {
+                                                        return true;
+                                                }
+                                                return (item.name || '').toLowerCase().includes(query);
                                         });
-                                }
 
-                                if (filterSelect) {
-                                        filterSelect.addEventListener('change', (event) => {
-                                                state.filter = event.target.value;
-                                                render();
+                                        const available = filtered.filter((item) =>
+                                                !composition.some((ingredient) => {
+                                                        if (item.type === 'formula') {
+                                                                return ingredient.subFormulaId != null && Number(ingredient.subFormulaId) === Number(item.id);
+                                                        }
+                                                        return ingredient.aromaChemicalId != null && Number(ingredient.aromaChemicalId) === Number(item.id);
+                                                })
+                                        );
+
+                                        if (!available.length) {
+                                                resourceList.innerHTML = '';
+                                                resourceEmpty.classList.remove('hidden');
+                                                return;
+                                        }
+
+                                        resourceEmpty.classList.add('hidden');
+                                        resourceList.innerHTML = available
+                                                .map(
+                                                        (item) => `<tr class="bg-black/25">
+                                                                <td class="px-5 py-4 text-xs uppercase tracking-[0.45em] text-white/50">${item.type === 'formula' ? 'Formula' : 'Aroma Chemical'}</td>
+                                                                <td class="px-5 py-4">
+                                                                        <div class="text-sm text-white">${escapeHTML(item.name)}</div>
+                                                                        <div class="text-xs text-white/40">ID ${item.id}</div>
+                                                                </td>
+                                                                <td class="px-5 py-4">v${item.version}</td>
+                                                                <td class="px-5 py-4 text-white/60">${escapeHTML(item.details || '—')}</td>
+                                                                <td class="px-5 py-4 text-right">
+                                                                        <button type="button" data-role="add-resource" data-type="${item.type}" data-id="${item.id}" class="rounded-full border border-white/20 px-4 py-2 text-[0.6rem] tracking-[0.45em] text-white/70 transition hover:border-white/40 hover:text-white">Add</button>
+                                                                </td>
+                                                        </tr>`
+                                                )
+                                                .join('');
+                                };
+
+                                const syncFormulaIngredients = () => {
+                                        const formula = getCurrentFormula();
+                                        if (!formula) {
+                                                return;
+                                        }
+                                        const ids = getComposition().map((item) => item.id);
+                                        namespace.store.formulas = namespace.store.formulas.map((entry) => {
+                                                if (Number(entry.id) !== Number(formula.id)) {
+                                                        return entry;
+                                                }
+                                                return {
+                                                        ...entry,
+                                                        ingredients: ids,
+                                                        updatedAt: new Date().toISOString(),
+                                                };
                                         });
-                                }
+                                        emit('formulas:updated');
+                                };
 
-                                if (createForm) {
-                                        createForm.addEventListener('submit', (event) => {
-                                                event.preventDefault();
-                                                const form = new FormData(createForm);
-                                                const name = (form.get('name') || '').toString().trim();
-                                                const version = parseInt(form.get('version'), 10) || 1;
-                                                if (!name) return;
-                                                const now = new Date().toISOString();
-                                                namespace.store.formulas.push({
-                                                        id: Date.now(),
+                                const addResourceToComposition = (type, id) => {
+                                        if (!state.currentFormulaId) {
+                                                setFormMessage('Select a formula before adding ingredients.', 'error');
+                                                return;
+                                        }
+                                        const now = new Date().toISOString();
+                                        const ingredientId = Date.now();
+                                        const base = {
+                                                id: ingredientId,
+                                                formulaId: state.currentFormulaId,
+                                                aromaChemicalId: null,
+                                                subFormulaId: null,
+                                                amount: 0,
+                                                unit: 'g',
+                                                createdAt: now,
+                                                updatedAt: now,
+                                                type,
+                                                name: '',
+                                                version: 1,
+                                        };
+                                        if (type === 'formula') {
+                                                base.subFormulaId = Number(id);
+                                                const source = namespace.store.formulas.find((entry) => Number(entry.id) === Number(id));
+                                                if (source) {
+                                                        base.name = source.name;
+                                                        base.version = source.version || 1;
+                                                } else {
+                                                        base.name = `Formula #${id}`;
+                                                }
+                                        } else {
+                                                base.aromaChemicalId = Number(id);
+                                                const source = namespace.store.chemicals.find((entry) => Number(entry.id) === Number(id));
+                                                if (source) {
+                                                        base.name = source.name;
+                                                } else {
+                                                        base.name = `Chemical #${id}`;
+                                                }
+                                                base.version = 1;
+                                        }
+                                        namespace.store.ingredients = namespace.store.ingredients.concat(base);
+                                        syncFormulaIngredients();
+                                        emit('ingredients:updated');
+                                        setFormMessage(type === 'formula' ? 'Sub-formula added to composition.' : 'Aroma chemical added to composition.', 'success');
+                                };
+
+                                const removeIngredient = (id) => {
+                                        namespace.store.ingredients = namespace.store.ingredients.filter((item) => Number(item.id) !== Number(id));
+                                        syncFormulaIngredients();
+                                        emit('ingredients:updated');
+                                        setFormMessage('Ingredient removed from composition.', 'success');
+                                };
+
+                                const handleSave = () => {
+                                        const formula = getCurrentFormula();
+                                        if (!form || !formula) {
+                                                setFormMessage('Select a formula to save changes.', 'error');
+                                                return;
+                                        }
+                                        const formData = new FormData(form);
+                                        const name = (formData.get('name') || '').toString().trim();
+                                        const notes = (formData.get('notes') || '').toString();
+                                        const isLatest = formData.get('isLatest') === 'on';
+                                        const parentFormula = formData.get('parentFormulaId');
+                                        const parentFormulaId = parentFormula && parentFormula.toString().length ? Number(parentFormula) : '';
+                                        const ingredientIds = getComposition().map((item) => item.id);
+                                        namespace.store.formulas = namespace.store.formulas.map((entry) => {
+                                                if (Number(entry.id) !== Number(formula.id)) {
+                                                        return entry;
+                                                }
+                                                return {
+                                                        ...entry,
+                                                        name: name || entry.name,
+                                                        notes,
+                                                        isLatest,
+                                                        parentFormulaId: parentFormulaId || '',
+                                                        ingredients: ingredientIds,
+                                                        updatedAt: new Date().toISOString(),
+                                                };
+                                        });
+                                        emit('formulas:updated');
+                                        setFormMessage('Formula updated.', 'success');
+                                };
+
+                                const handleSaveNewVersion = () => {
+                                        const formula = getCurrentFormula();
+                                        if (!form || !formula) {
+                                                setFormMessage('Select a formula to version.', 'error');
+                                                return;
+                                        }
+                                        const formData = new FormData(form);
+                                        const name = (formData.get('name') || '').toString().trim() || formula.name || 'Untitled formula';
+                                        const notes = (formData.get('notes') || '').toString();
+                                        const parentFormula = formData.get('parentFormulaId');
+                                        const parentFormulaId = parentFormula && parentFormula.toString().length ? Number(parentFormula) : '';
+                                        const related = namespace.store.formulas.filter((entry) => entry.name === name);
+                                        const nextVersion = related.reduce((max, entry) => Math.max(max, Number(entry.version) || 0), 0) + 1;
+                                        const now = new Date().toISOString();
+                                        const newId = Date.now();
+                                        const composition = getComposition();
+                                        const clonedIngredients = composition.map((item, index) => ({
+                                                id: newId + index + 1,
+                                                formulaId: newId,
+                                                aromaChemicalId: item.aromaChemicalId != null ? Number(item.aromaChemicalId) : null,
+                                                subFormulaId: item.subFormulaId != null ? Number(item.subFormulaId) : null,
+                                                amount: item.amount,
+                                                unit: item.unit,
+                                                createdAt: now,
+                                                updatedAt: now,
+                                                type: item.type || (item.subFormulaId != null ? 'formula' : 'chemical'),
+                                                name: item.name || '',
+                                                version: item.version || 1,
+                                        }));
+
+                                        namespace.store.formulas = namespace.store.formulas
+                                                .map((entry) => {
+                                                        if (entry.name === name) {
+                                                                return { ...entry, isLatest: false };
+                                                        }
+                                                        return entry;
+                                                })
+                                                .concat({
+                                                        id: newId,
                                                         name,
-                                                        notes: (form.get('notes') || '').toString(),
-                                                        version,
-                                                        isLatest: form.get('isLatest') !== null,
-                                                        parentFormulaId: form.get('parentFormulaId') || '',
-                                                        ingredients: [],
+                                                        version: nextVersion,
+                                                        notes,
+                                                        isLatest: true,
+                                                        parentFormulaId: parentFormulaId || '',
+                                                        ingredients: clonedIngredients.map((item) => item.id),
                                                         createdAt: now,
                                                         updatedAt: now,
                                                 });
-                                                emit('formulas:updated');
-                                                render();
-                                                createForm.reset();
+
+                                        namespace.store.ingredients = namespace.store.ingredients.concat(clonedIngredients);
+                                        state.currentFormulaId = newId;
+                                        emit('formulas:updated');
+                                        emit('ingredients:updated');
+                                        setFormMessage(`Saved as version v${nextVersion}.`, 'success');
+                                };
+
+                                const renderAll = () => {
+                                        ensureCurrentFormula();
+                                        renderFormulaPicker();
+                                        renderOverview();
+                                        populateForm();
+                                        renderComposition();
+                                        renderResourceList();
+                                };
+
+                                ensureCurrentFormula();
+                                renderAll();
+
+                                if (formulaPicker) {
+                                        formulaPicker.addEventListener('change', (event) => {
+                                                const value = event.target.value;
+                                                state.currentFormulaId = value ? Number(value) : null;
+                                                renderAll();
                                         });
                                 }
 
-                                if (editForm) {
-                                        editForm.addEventListener('submit', (event) => {
+                                if (form) {
+                                        form.addEventListener('submit', (event) => {
                                                 event.preventDefault();
-                                                if (state.editing == null) return;
-                                                const form = new FormData(editForm);
-                                                const name = (form.get('name') || '').toString().trim();
-                                                const version = parseInt(form.get('version'), 10) || 1;
-                                                namespace.store.formulas = namespace.store.formulas.map((item) => {
-                                                        if (Number(item.id) !== Number(state.editing)) {
+                                        });
+                                }
+
+                                if (resourceSearch) {
+                                        resourceSearch.addEventListener('input', (event) => {
+                                                state.resourceSearch = (event.target.value || '').toString();
+                                                renderResourceList();
+                                        });
+                                }
+
+                                if (saveButton) {
+                                        saveButton.addEventListener('click', (event) => {
+                                                event.preventDefault();
+                                                handleSave();
+                                        });
+                                }
+
+                                if (saveVersionButton) {
+                                        saveVersionButton.addEventListener('click', (event) => {
+                                                event.preventDefault();
+                                                handleSaveNewVersion();
+                                        });
+                                }
+
+                                if (compositionList) {
+                                        compositionList.addEventListener('input', (event) => {
+                                                const field = event.target;
+                                                if (!field || !field.dataset || !field.dataset.ingredient) {
+                                                        return;
+                                                }
+                                                const id = Number(field.dataset.ingredient);
+                                                namespace.store.ingredients = namespace.store.ingredients.map((item) => {
+                                                        if (Number(item.id) !== id) {
                                                                 return item;
                                                         }
-                                                        return {
-                                                                ...item,
-                                                                name: name || item.name,
-                                                                version,
-                                                                notes: (form.get('notes') || '').toString(),
-                                                                isLatest: form.get('isLatest') !== null,
-                                                                parentFormulaId: form.get('parentFormulaId') || '',
-                                                                updatedAt: new Date().toISOString(),
-                                                        };
+                                                        if (field.dataset.role === 'amount') {
+                                                                const amount = parseFloat(field.value);
+                                                                return { ...item, amount: Number.isNaN(amount) ? item.amount : amount, updatedAt: new Date().toISOString() };
+                                                        }
+                                                        if (field.dataset.role === 'unit') {
+                                                                return { ...item, unit: field.value || item.unit, updatedAt: new Date().toISOString() };
+                                                        }
+                                                        return item;
                                                 });
-                                                emit('formulas:updated');
-                                                render();
-                                                closePanel();
+                                                emit('ingredients:updated');
+                                        });
+
+                                        compositionList.addEventListener('change', (event) => {
+                                                const field = event.target;
+                                                if (!field || !field.dataset || field.dataset.role !== 'version') {
+                                                        return;
+                                                }
+                                                const ingredientId = Number(field.dataset.ingredient);
+                                                const newValue = Number(field.value);
+                                                namespace.store.ingredients = namespace.store.ingredients.map((item) => {
+                                                        if (Number(item.id) !== ingredientId) {
+                                                                return item;
+                                                        }
+                                                        if (field.dataset.type === 'formula') {
+                                                                return { ...item, subFormulaId: newValue, updatedAt: new Date().toISOString() };
+                                                        }
+                                                        return item;
+                                                });
+                                                emit('ingredients:updated');
+                                        });
+
+                                        compositionList.addEventListener('click', (event) => {
+                                                const button = event.target.closest('[data-role="remove-ingredient"]');
+                                                if (!button) {
+                                                        return;
+                                                }
+                                                const id = Number(button.getAttribute('data-ingredient'));
+                                                removeIngredient(id);
                                         });
                                 }
 
-                                root.addEventListener('click', (event) => {
-                                        const target = event.target.closest('[data-action]');
-                                        if (!target) return;
-                                        const id = Number(target.getAttribute('data-id'));
-                                        if (target.dataset.action === 'delete') {
-                                                namespace.store.formulas = namespace.store.formulas.filter((item) => Number(item.id) !== id);
-                                                namespace.store.ingredients = namespace.store.ingredients.filter((item) => Number(item.formulaId) !== id);
-                                                emit('formulas:updated');
-                                                emit('ingredients:updated');
-                                                render();
-                                                return;
-                                        }
-                                        if (target.dataset.action === 'edit') {
-                                                const item = namespace.store.formulas.find((entry) => Number(entry.id) === id);
-                                                if (!item || !editForm) return;
-                                                state.editing = id;
-                                                editForm.querySelector('[name="id"]').value = id;
-                                                editForm.querySelector('[name="name"]').value = item.name;
-                                                editForm.querySelector('[name="version"]').value = item.version;
-                                                editForm.querySelector('[name="notes"]').value = item.notes;
-                                                editForm.querySelector('[name="isLatest"]').checked = !!item.isLatest;
-                                                editForm.querySelector('[name="parentFormulaId"]').value = item.parentFormulaId || '';
-                                                openPanel();
-                                        }
+                                if (resourceList) {
+                                        resourceList.addEventListener('click', (event) => {
+                                                const button = event.target.closest('[data-role="add-resource"]');
+                                                if (!button) {
+                                                        return;
+                                                }
+                                                const type = button.getAttribute('data-type');
+                                                const id = Number(button.getAttribute('data-id'));
+                                                addResourceToComposition(type, id);
+                                        });
+                                }
+
+                                on('formulas:updated', () => {
+                                        ensureCurrentFormula();
+                                        renderFormulaPicker();
+                                        renderOverview();
+                                        populateForm();
+                                        renderComposition();
+                                        renderResourceList();
                                 });
 
-                                if (panel) {
-                                        panel.addEventListener('click', (event) => {
-                                                if (event.target === panel || event.target.closest('[data-role="close-panel"]')) {
-                                                        closePanel();
-                                                }
-                                        });
-                                }
+                                on('ingredients:updated', () => {
+                                        renderOverview();
+                                        renderComposition();
+                                        renderResourceList();
+                                });
+
+                                on('chemicals:updated', () => {
+                                        renderResourceList();
+                                });
                         };
 
                         namespace.modules.preferences = function (root) {
