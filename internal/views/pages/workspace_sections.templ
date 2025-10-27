@@ -309,26 +309,13 @@ templ FormulaManagement(snapshot WorkspaceSnapshot) {
                                         <p class="text-sm text-white/60" data-formula-meta>Choose a formula from the library below to view and edit its composition.</p>
                                         <div class="flex flex-wrap gap-2 text-xs uppercase tracking-[0.45em] text-white/40" data-formula-flags></div>
                                 </div>
-                               <div class="w-full sm:w-auto">
-                                       <div class="rounded-3xl border border-white/10 bg-black/30">
-                                               <div class="max-h-64 overflow-y-auto" data-formula-scroll>
-                                                       <table class="min-w-full divide-y divide-white/10 text-left text-sm text-white/70">
-                                                               <thead class="bg-white/5 text-[0.6rem] uppercase tracking-[0.45em] text-white/40">
-                                                                       <tr>
-                                                                               <th class="px-5 py-3 font-medium">Name</th>
-                                                                               <th class="px-5 py-3 font-medium">Version</th>
-                                                                               <th class="px-5 py-3 font-medium">Status</th>
-                                                                       </tr>
-                                                               </thead>
-                                                               <tbody data-formula-list class="divide-y divide-white/10"></tbody>
-                                                       </table>
-                                               </div>
-                                               <div data-formula-empty class="hidden px-5 py-6 text-center text-xs uppercase tracking-[0.45em] text-white/40">
-                                                       No formulas available
-                                               </div>
-                                       </div>
-                               </div>
-                       </div>
+                                <label class="flex w-full flex-col gap-2 text-xs tracking-[0.45em] text-white/60 sm:w-auto">
+                                        <span>Formula</span>
+                                        <select data-formula-picker class="w-full min-w-[14rem] rounded-2xl border border-white/15 bg-black/40 px-4 py-2 text-sm text-white focus:border-white/40 focus:outline-none">
+                                                <option value="">Select…</option>
+                                        </select>
+                                </label>
+                        </div>
                         <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 text-sm text-white/70" data-formula-summary>
                                 <div class="rounded-2xl border border-white/10 bg-black/30 p-4">
                                         <dt class="text-xs uppercase tracking-[0.45em] text-white/40">Version</dt>
@@ -368,8 +355,14 @@ templ FormulaManagement(snapshot WorkspaceSnapshot) {
                                                 Name
                                                 <input type="text" name="name" required class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/40 focus:outline-none" placeholder="Aurum Nocturne"/>
                                         </label>
-                                       <label class="md:col-span-2 space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
-                                               Notes
+                                        <label class="space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                Parent Formula
+                                                <select name="parentFormulaId" data-formula-select data-exclude-current class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white focus:border-white/40 focus:outline-none">
+                                                        <option value="">None</option>
+                                                </select>
+                                        </label>
+                                        <label class="md:col-span-2 space-y-2 text-[0.65rem] tracking-[0.45em] text-white/60">
+                                                Notes
                                                 <textarea name="notes" rows="3" class="w-full rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none" placeholder="Resinous amber core balanced with luminous citrus facets."></textarea>
                                         </label>
                                         <label class="flex items-center justify-between rounded-2xl border border-white/15 bg-black/40 px-4 py-3 text-[0.6rem] tracking-[0.45em] text-white/60">
@@ -672,18 +665,22 @@ templ workspaceModulesScript() {
                         const emit = (event) => document.dispatchEvent(new CustomEvent(`perfugo:${event}`));
                         const on = (event, handler) => document.addEventListener(`perfugo:${event}`, handler);
 
-                       const refreshSelects = () => {
-                               const options = namespace.store.formulas
-                                       .map((formula) => `<option value="${formula.id}">${formula.name.replace(/</g, '&lt;')}</option>`)
-                                       .join('');
-
-                               document.querySelectorAll('[data-formula-select]').forEach((select) => {
-                                       const previous = select.value;
-                                       select.innerHTML = '<option value="" disabled hidden>Select…</option>' + options;
-                                       if (previous && select.querySelector(`option[value="${previous}"]`)) {
-                                               select.value = previous;
-                                       }
-                               });
+                        const refreshSelects = () => {
+                                document.querySelectorAll('[data-formula-select]').forEach((select) => {
+                                        const excludeCurrent = select.hasAttribute('data-exclude-current');
+                                        const currentAttr = select.getAttribute('data-current-formula');
+                                        const currentId = excludeCurrent && currentAttr ? Number(currentAttr) : null;
+                                        const options = namespace.store.formulas
+                                                .filter((formula) => !excludeCurrent || Number(formula.id) !== Number(currentId))
+                                                .map((formula) => `<option value="${formula.id}">${formula.name.replace(/</g, '&lt;')}</option>`)
+                                                .join('');
+                                        const base = select.getAttribute('name') === 'parentFormulaId' ? '<option value="">None</option>' : '<option value="" disabled hidden>Select…</option>';
+                                        const previous = select.value;
+                                        select.innerHTML = base + options;
+                                        if (previous && select.querySelector(`option[value="${previous}"]`)) {
+                                                select.value = previous;
+                                        }
+                                });
 
                                 const chemicalOptions = namespace.store.chemicals
                                         .map((chemical) => `<option value="${chemical.id}">${chemical.name.replace(/</g, '&lt;')}</option>`)
@@ -743,7 +740,7 @@ templ workspaceModulesScript() {
                                 let selectedChemicalId = null;
                                 let submittingChemical = false;
 
-                               const escapeHTML = (value) => (value || '').toString().replace(/[&<]/g, (char) => (char === '&' ? '&amp;' : '&lt;'));
+                                const escapeHTML = (value) => (value || '').toString().replace(/[&<]/g, (char) => (char === '&' ? '&amp;' : '&lt;'));
                                 const dash = (value) => {
                                         if (typeof value !== 'string') {
                                                 return value == null ? '—' : String(value);
@@ -1553,10 +1550,8 @@ templ workspaceModulesScript() {
                                         resourceSearch: '',
                                 };
 
-                               const formulaList = root.querySelector('[data-formula-list]');
-                               const formulaScroll = root.querySelector('[data-formula-scroll]');
-                               const formulaEmpty = root.querySelector('[data-formula-empty]');
-                               const form = root.querySelector('[data-formula-form]');
+                                const formulaPicker = root.querySelector('[data-formula-picker]');
+                                const form = root.querySelector('[data-formula-form]');
                                 const message = root.querySelector('[data-formula-message]');
                                 const title = root.querySelector('[data-formula-title]');
                                 const meta = root.querySelector('[data-formula-meta]');
@@ -1577,34 +1572,22 @@ templ workspaceModulesScript() {
 
                                 const escapeHTML = (value) => (value || '').toString().replace(/[&<]/g, (char) => (char === '&' ? '&amp;' : '&lt;'));
 
-                               const getSortedFormulas = () =>
-                                       namespace.store.formulas
-                                               .slice()
-                                               .sort((a, b) => {
-                                                       const nameComparison = (a.name || '').localeCompare(b.name || '');
-                                                       if (nameComparison !== 0) {
-                                                               return nameComparison;
-                                                       }
-                                                       return (a.version || 0) - (b.version || 0);
-                                               });
-
                                 const getCurrentFormula = () =>
                                         namespace.store.formulas.find((item) => Number(item.id) === Number(state.currentFormulaId)) || null;
 
                                 const getComposition = () =>
                                         namespace.store.ingredients.filter((item) => Number(item.formulaId) === Number(state.currentFormulaId));
 
-                               const ensureCurrentFormula = () => {
-                                       if (state.currentFormulaId && getCurrentFormula()) {
-                                               return;
-                                       }
-                                       const ordered = getSortedFormulas();
-                                       if (ordered.length > 0) {
-                                               state.currentFormulaId = ordered[0].id;
-                                       } else {
-                                               state.currentFormulaId = null;
-                                       }
-                               };
+                                const ensureCurrentFormula = () => {
+                                        if (state.currentFormulaId && getCurrentFormula()) {
+                                                return;
+                                        }
+                                        if (namespace.store.formulas.length > 0) {
+                                                state.currentFormulaId = namespace.store.formulas[0].id;
+                                        } else {
+                                                state.currentFormulaId = null;
+                                        }
+                                };
 
                                 const setFormMessage = (text, tone) => {
                                         if (!message) {
@@ -1625,50 +1608,32 @@ templ workspaceModulesScript() {
                                         }
                                 };
 
-                               const renderFormulaList = () => {
-                                       if (!formulaList) {
-                                               return;
-                                       }
-                                       const formulas = getSortedFormulas();
-                                       const hasFormulas = formulas.length > 0;
-                                       if (formulaScroll) {
-                                               formulaScroll.classList.toggle('hidden', !hasFormulas);
-                                       }
-                                       if (formulaEmpty) {
-                                               formulaEmpty.classList.toggle('hidden', hasFormulas);
-                                       }
-                                       if (!hasFormulas) {
-                                               formulaList.innerHTML = '';
-                                               return;
-                                       }
-                                       const current = state.currentFormulaId != null ? Number(state.currentFormulaId) : null;
-                                       formulaList.innerHTML = formulas
-                                               .map((formula) => {
-                                                       const selected = current != null && Number(formula.id) === current;
-                                                       const statusLabel = formula.isLatest ? 'Current' : 'Archive';
-                                                       const rowClasses = [
-                                                               'cursor-pointer',
-                                                               'transition',
-                                                               'hover:bg-white/10',
-                                                               'focus-within:bg-white/10',
-                                                       ];
-                                                       if (selected) {
-                                                               rowClasses.push('bg-white/10');
-                                                       }
-                                                       const nameClass = selected ? 'text-white' : 'text-white/80';
-                                                       const versionClass = selected ? 'text-white' : 'text-white/70';
-                                                       const statusClass = selected ? 'text-emerald-300' : 'text-white/40';
-                                                       return `<tr data-formula-option data-id="${formula.id}" tabindex="0" aria-selected="${selected ? 'true' : 'false'}" class="${rowClasses.join(' ')}">
-                                                               <td class="px-5 py-3">
-                                                                       <div class="text-sm ${nameClass}">${escapeHTML(formula.name || 'Untitled formula')}</div>
-                                                                       <div class="text-xs text-white/40">ID #${formula.id}</div>
-                                                               </td>
-                                                               <td class="px-5 py-3 text-sm ${versionClass}">v${formula.version || 1}</td>
-                                                               <td class="px-5 py-3 text-xs uppercase tracking-[0.45em] ${statusClass}">${statusLabel}</td>
-                                                       </tr>`;
-                                               })
-                                               .join('');
-                               };
+                                const renderFormulaPicker = () => {
+                                        if (!formulaPicker) {
+                                                return;
+                                        }
+                                        const options = namespace.store.formulas
+                                                .slice()
+                                                .sort((a, b) => {
+                                                        const nameComparison = (a.name || '').localeCompare(b.name || '');
+                                                        if (nameComparison !== 0) {
+                                                                return nameComparison;
+                                                        }
+                                                        return (a.version || 0) - (b.version || 0);
+                                                })
+                                                .map(
+                                                        (formula) =>
+                                                                `<option value="${formula.id}">${escapeHTML(formula.name)} • v${formula.version}</option>`
+                                                )
+                                                .join('');
+                                        const current = state.currentFormulaId ? String(state.currentFormulaId) : '';
+                                        formulaPicker.innerHTML = '<option value="">Select…</option>' + options;
+                                        if (current && formulaPicker.querySelector(`option[value="${current}"]`)) {
+                                                formulaPicker.value = current;
+                                        } else {
+                                                formulaPicker.value = '';
+                                        }
+                                };
 
                                 const setFormEnabled = (enabled) => {
                                         if (!form) {
@@ -1731,12 +1696,17 @@ templ workspaceModulesScript() {
                                         const nameField = form.querySelector('input[name="name"]');
                                         const notesField = form.querySelector('textarea[name="notes"]');
                                         const latestField = form.querySelector('input[name="isLatest"]');
+                                        const parentField = form.querySelector('select[name="parentFormulaId"]');
 
                                         if (!formula) {
                                                 if (idField) idField.value = '';
                                                 if (nameField) nameField.value = '';
                                                 if (notesField) notesField.value = '';
                                                 if (latestField) latestField.checked = false;
+                                                if (parentField) {
+                                                        parentField.value = '';
+                                                        parentField.setAttribute('data-current-formula', '');
+                                                }
                                                 setFormEnabled(false);
                                                 refreshSelects();
                                                 return;
@@ -1747,6 +1717,10 @@ templ workspaceModulesScript() {
                                         if (nameField) nameField.value = formula.name || '';
                                         if (notesField) notesField.value = formula.notes || '';
                                         if (latestField) latestField.checked = Boolean(formula.isLatest);
+                                        if (parentField) parentField.value = formula.parentFormulaId || '';
+                                        if (parentField) {
+                                                parentField.setAttribute('data-current-formula', formula.id ? String(formula.id) : '');
+                                        }
                                         refreshSelects();
                                 };
 
@@ -2000,7 +1974,8 @@ templ workspaceModulesScript() {
                                         const name = (formData.get('name') || '').toString().trim();
                                         const notes = (formData.get('notes') || '').toString();
                                         const isLatest = formData.get('isLatest') === 'on';
-                                        const parentFormulaId = formula.parentFormulaId || '';
+                                        const parentFormula = formData.get('parentFormulaId');
+                                        const parentFormulaId = parentFormula && parentFormula.toString().length ? Number(parentFormula) : '';
                                         const ingredientIds = getComposition().map((item) => item.id);
                                         namespace.store.formulas = namespace.store.formulas.map((entry) => {
                                                 if (Number(entry.id) !== Number(formula.id)) {
@@ -2029,7 +2004,8 @@ templ workspaceModulesScript() {
                                         const formData = new FormData(form);
                                         const name = (formData.get('name') || '').toString().trim() || formula.name || 'Untitled formula';
                                         const notes = (formData.get('notes') || '').toString();
-                                        const parentFormulaId = formula.parentFormulaId || '';
+                                        const parentFormula = formData.get('parentFormulaId');
+                                        const parentFormulaId = parentFormula && parentFormula.toString().length ? Number(parentFormula) : '';
                                         const related = namespace.store.formulas.filter((entry) => entry.name === name);
                                         const nextVersion = related.reduce((max, entry) => Math.max(max, Number(entry.version) || 0), 0) + 1;
                                         const now = new Date().toISOString();
@@ -2077,7 +2053,7 @@ templ workspaceModulesScript() {
 
                                 const renderAll = () => {
                                         ensureCurrentFormula();
-                                        renderFormulaList();
+                                        renderFormulaPicker();
                                         renderOverview();
                                         populateForm();
                                         renderComposition();
@@ -2087,28 +2063,10 @@ templ workspaceModulesScript() {
                                 ensureCurrentFormula();
                                 renderAll();
 
-                                if (formulaList) {
-                                        formulaList.addEventListener('click', (event) => {
-                                                const row = event.target.closest('[data-formula-option]');
-                                                if (!row) {
-                                                        return;
-                                                }
-                                                const value = Number(row.getAttribute('data-id'));
-                                                state.currentFormulaId = Number.isFinite(value) ? value : null;
-                                                renderAll();
-                                        });
-
-                                        formulaList.addEventListener('keydown', (event) => {
-                                                if (event.key !== 'Enter' && event.key !== ' ') {
-                                                        return;
-                                                }
-                                                const row = event.target.closest('[data-formula-option]');
-                                                if (!row) {
-                                                        return;
-                                                }
-                                                event.preventDefault();
-                                                const value = Number(row.getAttribute('data-id'));
-                                                state.currentFormulaId = Number.isFinite(value) ? value : null;
+                                if (formulaPicker) {
+                                        formulaPicker.addEventListener('change', (event) => {
+                                                const value = event.target.value;
+                                                state.currentFormulaId = value ? Number(value) : null;
                                                 renderAll();
                                         });
                                 }
@@ -2213,7 +2171,7 @@ templ workspaceModulesScript() {
 
                                 on('formulas:updated', () => {
                                         ensureCurrentFormula();
-                                        renderFormulaList();
+                                        renderFormulaPicker();
                                         renderOverview();
                                         populateForm();
                                         renderComposition();
