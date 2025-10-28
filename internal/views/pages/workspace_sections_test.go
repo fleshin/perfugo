@@ -1,29 +1,13 @@
 package pages
 
 import (
+	"context"
+	"net/http/httptest"
+	"strings"
 	"testing"
+
+	"perfugo/models"
 )
-
-func TestThemeButtonState(t *testing.T) {
-	if themeButtonState("a", "a") != "active" {
-		t.Fatal("expected active state when theme matches")
-	}
-	if themeButtonState("a", "b") != "inactive" {
-		t.Fatal("expected inactive state when theme differs")
-	}
-}
-
-func TestFormatAuditDate(t *testing.T) {
-	if got := formatAuditDate("2024-03-01"); got != "01 Mar 2024" {
-		t.Fatalf("expected formatted date, got %s", got)
-	}
-	if got := formatAuditDate(""); got != "—" {
-		t.Fatalf("expected em dash for empty string, got %s", got)
-	}
-	if got := formatAuditDate("invalid"); got != "invalid" {
-		t.Fatalf("expected original value on parse failure, got %s", got)
-	}
-}
 
 func TestDefaultDash(t *testing.T) {
 	if DefaultDash("value") != "value" {
@@ -46,5 +30,41 @@ func TestAromaChemicalPotencyLabel(t *testing.T) {
 		if got := AromaChemicalPotencyLabel(strength); got != want {
 			t.Fatalf("potency label for %d: expected %s, got %s", strength, want, got)
 		}
+	}
+}
+
+func TestFilterAromaChemicals(t *testing.T) {
+	chemicals := []models.AromaChemical{{IngredientName: "Alpha", CASNumber: "111"}, {IngredientName: "Beta", Type: "Base"}}
+	filters := IngredientFilters{Query: "beta"}
+	filtered := FilterAromaChemicals(chemicals, filters)
+	if len(filtered) != 1 || filtered[0].IngredientName != "Beta" {
+		t.Fatalf("expected Beta chemical, got %+v", filtered)
+	}
+}
+
+func TestFilterFormulas(t *testing.T) {
+	formulas := []models.Formula{{Name: "Dawn", Notes: "citrus"}, {Name: "Dusk"}}
+	filters := FormulaFilters{Query: "cit"}
+	filtered := FilterFormulas(formulas, filters)
+	if len(filtered) != 1 || filtered[0].Name != "Dawn" {
+		t.Fatalf("expected Dawn formula, got %+v", filtered)
+	}
+}
+
+func TestFormulaIngredientsFor(t *testing.T) {
+	ingredients := []models.FormulaIngredient{{FormulaID: 1, Amount: 2}, {FormulaID: 2, Amount: 3}}
+	matches := FormulaIngredientsFor(ingredients, 1)
+	if len(matches) != 1 || matches[0].Amount != 2 {
+		t.Fatalf("expected ingredient for formula 1, got %+v", matches)
+	}
+}
+
+func TestPreferenceStatusTemplateRenders(t *testing.T) {
+	recorder := httptest.NewRecorder()
+	if err := PreferenceStatus("Saved").Render(context.Background(), recorder); err != nil {
+		t.Fatalf("expected status template to render: %v", err)
+	}
+	if body := recorder.Body.String(); !strings.Contains(body, "Saved") {
+		t.Fatalf("expected rendered status to contain message, got %s", body)
 	}
 }
