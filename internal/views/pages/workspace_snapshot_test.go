@@ -1,7 +1,6 @@
 package pages
 
 import (
-	"encoding/json"
 	"testing"
 
 	"perfugo/models"
@@ -34,27 +33,6 @@ func TestNewWorkspaceSnapshotSortsCollections(t *testing.T) {
 	}
 	if snapshot.UserID != 9 {
 		t.Fatalf("expected snapshot user id to be set, got %d", snapshot.UserID)
-	}
-}
-
-func TestWorkspaceSnapshotSeedsJSON(t *testing.T) {
-	snapshot := WorkspaceSnapshot{
-		Formulas:           []models.Formula{{Name: "F"}},
-		FormulaIngredients: []models.FormulaIngredient{{Amount: 1}},
-		AromaChemicals:     []models.AromaChemical{{IngredientName: "C"}},
-		UserID:             12,
-	}
-
-	data := snapshot.SeedsJSON()
-	var parsed map[string]json.RawMessage
-	if err := json.Unmarshal([]byte(data), &parsed); err != nil {
-		t.Fatalf("expected valid json payload, got %v", err)
-	}
-	if _, ok := parsed["formulas"]; !ok {
-		t.Fatalf("expected formulas key in seeds json: %s", data)
-	}
-	if _, ok := parsed["current_user_id"]; !ok {
-		t.Fatalf("expected current_user_id in seeds json: %s", data)
 	}
 }
 

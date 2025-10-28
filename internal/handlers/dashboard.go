@@ -23,17 +23,7 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 	applog.Debug(r.Context(), "rendering workspace", "htmx", isHTMX(r), "section", section)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
-	theme := loadCurrentUserTheme(r)
-	applog.Debug(r.Context(), "workspace theme resolved", "theme", theme)
-	userID, _ := currentUserID(r)
-
-	snapshot := pages.EmptyWorkspaceSnapshot()
-	snapshot.Theme = theme
-	snapshot.UserID = userID
-	if database != nil {
-		formulas, ingredients, chemicals := loadWorkspaceData(r, userID)
-		snapshot = pages.NewWorkspaceSnapshot(formulas, ingredients, chemicals, theme, userID)
-	}
+	snapshot := buildWorkspaceSnapshot(r)
 
 	var component templpkg.Component
 	if isHTMX(r) {
@@ -63,6 +53,21 @@ func loadWorkspaceData(r *http.Request, userID uint) ([]models.Formula, []models
 	)
 
 	return formulas, ingredients, chemicals
+}
+
+func buildWorkspaceSnapshot(r *http.Request) pages.WorkspaceSnapshot {
+	theme := loadCurrentUserTheme(r)
+	applog.Debug(r.Context(), "workspace theme resolved", "theme", theme)
+	userID, _ := currentUserID(r)
+
+	snapshot := pages.EmptyWorkspaceSnapshot()
+	snapshot.Theme = theme
+	snapshot.UserID = userID
+	if database != nil {
+		formulas, ingredients, chemicals := loadWorkspaceData(r, userID)
+		snapshot = pages.NewWorkspaceSnapshot(formulas, ingredients, chemicals, theme, userID)
+	}
+	return snapshot
 }
 
 func loadFormulas(ctx context.Context) []models.Formula {
