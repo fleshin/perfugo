@@ -112,15 +112,26 @@ templ IngredientTable(chemicals []models.AromaChemical, filters IngredientFilter
                                                                         <div class="text-xs text-white/50">Strength { chemical.Strength }</div>
                                                                 </td>
                                                                 <td class="px-5 py-4">
-                                                                        <button
-                                                                                type="button"
-                                                                                class="app-button"
-                                                                                hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/ingredients/detail?id=%d", chemical.ID)) }
-                                                                                hx-target="#ingredient-detail"
-                                                                                hx-swap="innerHTML"
-                                                                        >
-                                                                                View
-                                                                        </button>
+                                                                        <div class="flex justify-end gap-2">
+                                                                                <button
+                                                                                        type="button"
+                                                                                        class="app-button"
+                                                                                        hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/ingredients/detail?id=%d", chemical.ID)) }
+                                                                                        hx-target="#ingredient-detail"
+                                                                                        hx-swap="innerHTML"
+                                                                                >
+                                                                                        View
+                                                                                </button>
+                                                                                <button
+                                                                                        type="button"
+                                                                                        class="app-button app-button--ghost"
+                                                                                        hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/ingredients/edit?id=%d", chemical.ID)) }
+                                                                                        hx-target="#ingredient-detail"
+                                                                                        hx-swap="innerHTML"
+                                                                                >
+                                                                                        Edit
+                                                                                </button>
+                                                                        </div>
                                                                 </td>
                                                         </tr>
                                                 }
@@ -184,6 +195,148 @@ templ IngredientDetail(chemical *models.AromaChemical) {
                                 </div>
                         }
                 </div>
+        }
+}
+
+templ IngredientEditor(chemical *models.AromaChemical, status string) {
+        if chemical == nil {
+                <div class="space-y-3 text-center">
+                        <p class="text-sm font-semibold text-white">Select an ingredient to edit</p>
+                        <p class="text-sm app-muted">Choose an item from the ledger to adjust its properties.</p>
+                </div>
+        } else {
+                <form
+                        class="space-y-6"
+                        hx-post="/app/sections/ingredients/update"
+                        hx-target="#ingredient-detail"
+                        hx-swap="innerHTML"
+                >
+                        <input type="hidden" name="id" value={ fmt.Sprintf("%d", chemical.ID) } />
+                        if strings.TrimSpace(status) != "" {
+                                <div class="app-alert app-card--flat text-left text-sm">{ status }</div>
+                        }
+                        <div class="grid gap-4 sm:grid-cols-2">
+                                <div class="space-y-2">
+                                        <label class="text-xs uppercase tracking-[0.35em] app-muted" for="ingredient-name">
+                                                Ingredient name
+                                        </label>
+                                        <input
+                                                id="ingredient-name"
+                                                name="ingredient_name"
+                                                type="text"
+                                                class="app-input w-full"
+                                                required
+                                                value={ chemical.IngredientName }
+                                        />
+                                </div>
+                                <div class="space-y-2">
+                                        <label class="text-xs uppercase tracking-[0.35em] app-muted" for="cas-number">
+                                                CAS number
+                                        </label>
+                                        <input
+                                                id="cas-number"
+                                                name="cas_number"
+                                                type="text"
+                                                class="app-input w-full"
+                                                value={ chemical.CASNumber }
+                                        />
+                                </div>
+                                <div class="space-y-2">
+                                        <label class="text-xs uppercase tracking-[0.35em] app-muted" for="ingredient-type">
+                                                Type
+                                        </label>
+                                        <input
+                                                id="ingredient-type"
+                                                name="type"
+                                                type="text"
+                                                class="app-input w-full"
+                                                value={ chemical.Type }
+                                        />
+                                </div>
+                                <div class="space-y-2">
+                                        <label class="text-xs uppercase tracking-[0.35em] app-muted" for="ingredient-strength">
+                                                Strength
+                                        </label>
+                                        <input
+                                                id="ingredient-strength"
+                                                name="strength"
+                                                type="number"
+                                                class="app-input w-full"
+                                                value={ fmt.Sprintf("%d", chemical.Strength) }
+                                        />
+                                </div>
+                                <div class="space-y-2">
+                                        <label class="text-xs uppercase tracking-[0.35em] app-muted" for="pyramid-position">
+                                                Pyramid position
+                                        </label>
+                                        <input
+                                                id="pyramid-position"
+                                                name="pyramid_position"
+                                                type="text"
+                                                class="app-input w-full"
+                                                value={ chemical.PyramidPosition }
+                                        />
+                                </div>
+                                <div class="space-y-2">
+                                        <label class="text-xs uppercase tracking-[0.35em] app-muted" for="wheel-position">
+                                                Wheel position
+                                        </label>
+                                        <input
+                                                id="wheel-position"
+                                                name="wheel_position"
+                                                type="text"
+                                                class="app-input w-full"
+                                                value={ chemical.WheelPosition }
+                                        />
+                                </div>
+                                <div class="space-y-2">
+                                        <label class="text-xs uppercase tracking-[0.35em] app-muted" for="ingredient-duration">
+                                                Duration
+                                        </label>
+                                        <input
+                                                id="ingredient-duration"
+                                                name="duration"
+                                                type="text"
+                                                class="app-input w-full"
+                                                value={ chemical.Duration }
+                                        />
+                                </div>
+                        </div>
+                        <div class="grid gap-4 sm:grid-cols-2">
+                                <div class="space-y-2">
+                                        <label class="text-xs uppercase tracking-[0.35em] app-muted" for="ingredient-notes">
+                                                Notes
+                                        </label>
+                                        <textarea
+                                                id="ingredient-notes"
+                                                name="notes"
+                                                class="app-input w-full min-h-[7rem]"
+                                        >{ chemical.Notes }</textarea>
+                                </div>
+                                <div class="space-y-2">
+                                        <label class="text-xs uppercase tracking-[0.35em] app-muted" for="ingredient-usage">
+                                                Usage guidance
+                                        </label>
+                                        <textarea
+                                                id="ingredient-usage"
+                                                name="usage"
+                                                class="app-input w-full min-h-[7rem]"
+                                        >{ chemical.Usage }</textarea>
+                                </div>
+                        </div>
+                        <div class="flex items-center justify-end gap-2">
+                                <button
+                                        type="button"
+                                        class="app-button app-button--ghost"
+                                        hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/ingredients/detail?id=%d", chemical.ID)) }
+                                        hx-target="#ingredient-detail"
+                                        hx-swap="innerHTML"
+                                >
+                                        Cancel
+                                </button>
+                                <button type="submit" class="app-button">Save changes</button>
+                        </div>
+                </form>
         }
 }
 

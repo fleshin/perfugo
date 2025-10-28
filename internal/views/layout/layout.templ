@@ -165,6 +165,17 @@ templ Layout(title string, sidebar templpkg.Component, content templpkg.Componen
                                         transform: translateY(-1px);
                                 }
 
+                                .app-button--ghost {
+                                        background-color: transparent;
+                                        color: var(--app-text);
+                                        border: 1px solid var(--app-border);
+                                }
+
+                                .app-button--ghost:hover {
+                                        opacity: 1;
+                                        background-color: var(--app-input-bg);
+                                }
+
                                 .app-label {
                                         color: var(--app-text);
                                         font-weight: 500;
