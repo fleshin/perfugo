@@ -9,11 +9,12 @@ templ Layout(title string, sidebar templpkg.Component, content templpkg.Componen
                         <meta charset="utf-8"/>
                         <meta name="viewport" content="width=device-width, initial-scale=1"/>
                         <title>{ title }</title>
-                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css"/>
+                        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
                         <link rel="preconnect" href="https://fonts.googleapis.com"/>
                         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
                         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
                         <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+                        <script src="https://unpkg.com/hyperscript.org@0.9.12" defer></script>
                         <style>
                                 :root {
                                         --app-bg: #07090f;
@@ -366,6 +367,80 @@ templ Layout(title string, sidebar templpkg.Component, content templpkg.Componen
                                         </footer>
                                 </div>
                         </div>
+                        <script>
+                                window.addEventListener('DOMContentLoaded', function () {
+                                        const namespace = window.PerfugoWorkspace || (window.PerfugoWorkspace = {});
+                                        namespace.modules = namespace.modules || {};
+
+                                        namespace.initModules = function (container) {
+                                                if (!container) {
+                                                        return;
+                                                }
+                                                const moduleRoot = container.querySelector('[data-module]');
+                                                if (!moduleRoot) {
+                                                        return;
+                                                }
+                                                const name = moduleRoot.dataset.module;
+                                                const init = namespace.modules[name];
+                                                if (typeof init === 'function') {
+                                                        init(moduleRoot);
+                                                }
+                                        };
+
+                                        namespace.highlightActiveLink = function (path) {
+                                                const current = (path.replace(/^\/app\/?/, '') || 'ingredients').split('/')[0];
+                                                document.querySelectorAll('[data-nav-section]').forEach(function (link) {
+                                                        link.dataset.state = link.dataset.navSection === current ? 'active' : 'inactive';
+                                                });
+                                        };
+
+                                        namespace.updateTheme = function (identifier) {
+                                                if (typeof identifier !== 'string' || !identifier.trim()) {
+                                                        return;
+                                                }
+                                                document.body.dataset.theme = identifier.trim();
+                                        };
+
+                                        const assignSeeds = function (container) {
+                                                if (!container) {
+                                                        return;
+                                                }
+                                                if (namespace.seedsApplied) {
+                                                        return;
+                                                }
+                                                const seeds = container.dataset.seeds;
+                                                if (!seeds) {
+                                                        return;
+                                                }
+                                                try {
+                                                        window.PerfugoWorkspaceSeeds = window.PerfugoWorkspaceSeeds || JSON.parse(seeds);
+                                                        namespace.seedsApplied = true;
+                                                } catch (error) {
+                                                        console.warn('Perfugo workspace seeds parse error', error);
+                                                }
+                                        };
+
+                                        const container = document.getElementById('workspace-content');
+                                        if (container) {
+                                                assignSeeds(container);
+                                                namespace.initModules(container);
+                                                namespace.highlightActiveLink(window.location.pathname);
+                                        }
+
+                                        document.body.addEventListener('htmx:afterSwap', function (event) {
+                                                if (!event.detail || !event.detail.target) {
+                                                        return;
+                                                }
+                                                if (event.detail.target.id !== 'workspace-content') {
+                                                        return;
+                                                }
+                                                assignSeeds(event.detail.target);
+                                                namespace.initModules(event.detail.target);
+                                                const path = (event.detail.requestConfig && event.detail.requestConfig.path) || window.location.pathname;
+                                                namespace.highlightActiveLink(path);
+                                        });
+                                });
+                        </script>
                 </body>
         </html>
 }
