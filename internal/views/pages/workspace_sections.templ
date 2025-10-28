@@ -31,7 +31,7 @@ type IngredientPerformance struct {
 
 templ IngredientManagement(snapshot WorkspaceSnapshot) {
         <section class="space-y-8" data-module="ingredients">
-                <div class="app-card space-y-6 px-6 py-6">
+                <div class="app-card space-y-6 px-6 py-6 h-64 overflow-y-auto">
                         <form
                                 class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
                                 hx-get="/app/sections/ingredients/table"
