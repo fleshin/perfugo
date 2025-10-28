@@ -1,19 +1,15 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 	"strings"
 
 	"gorm.io/gorm"
 
 	applog "perfugo/internal/log"
+	"perfugo/internal/views/pages"
 	"perfugo/models"
 )
-
-type preferencesResponse struct {
-	Theme string `json:"theme"`
-}
 
 // Preferences updates the authenticated user's saved workspace preferences.
 func Preferences(w http.ResponseWriter, r *http.Request) {
@@ -77,9 +73,17 @@ func Preferences(w http.ResponseWriter, r *http.Request) {
 	sessionManager.Put(ctx, sessionUserThemeKey, requestedTheme)
 	applog.Debug(ctx, "session theme updated", "userID", userID, "theme", requestedTheme)
 
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(preferencesResponse{Theme: requestedTheme}); err != nil {
-		applog.Error(ctx, "failed to encode preferences response", "error", err)
+	snapshot := pages.EmptyWorkspaceSnapshot()
+	snapshot.Theme = requestedTheme
+	snapshot.UserID = userID
+	if database != nil {
+		formulas, ingredients, chemicals := loadWorkspaceData(r, userID)
+		snapshot = pages.NewWorkspaceSnapshot(formulas, ingredients, chemicals, requestedTheme, userID)
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := pages.WorkspaceSection("preferences", snapshot).Render(ctx, w); err != nil {
+		applog.Error(ctx, "failed to render preferences response", "error", err)
 	}
 }
 

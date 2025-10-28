@@ -22,13 +22,13 @@ type workspaceSectionMeta struct {
 }
 
 templ Workspace(section string, snapshot WorkspaceSnapshot) {
-	@layout.Layout(
-		"Perfugo Atelier",
-		components.Sidebar(sidebarData(NormalizeWorkspaceSection(section))),
-		workspaceShell(NormalizeWorkspaceSection(section), snapshot, true),
-		true,
-		layout.ThemeByID(snapshot.Theme),
-	)
+        @layout.Layout(
+                "Perfugo Atelier",
+                components.Sidebar(sidebarData(NormalizeWorkspaceSection(section))),
+                workspaceShell(NormalizeWorkspaceSection(section), snapshot),
+                true,
+                layout.ThemeByID(snapshot.Theme),
+        )
 }
 
 templ WorkspaceSection(section string, snapshot WorkspaceSnapshot) {
@@ -51,45 +51,17 @@ func sidebarData(active string) components.SidebarData {
 	}
 }
 
-templ workspaceShell(section string, snapshot WorkspaceSnapshot, includeSeeds bool) {
-	<div class="workspace-shell w-full">
-		<div class="mx-auto w-full max-w-6xl px-6 py-14 sm:px-8 lg:py-16">
-			<div
-				id="workspace-content"
-				class="space-y-12"
-				if includeSeeds {
-					data-seeds={ snapshot.SeedsJSON() }
-				}
-			>
-				@workspaceInterior(section, workspaceMeta(section, snapshot), snapshot)
-			</div>
-		</div>
-		if includeSeeds {
-			<script>
-                                (function () {
-                                        const container = document.getElementById("workspace-content");
-                                        if (!container || !container.dataset) {
-                                                return;
-                                        }
-                                        const seeds = container.dataset.seeds || container.getAttribute("data-seeds");
-                                        if (!seeds) {
-                                                return;
-                                        }
-                                        const namespace = window.PerfugoWorkspace || (window.PerfugoWorkspace = {});
-                                        if (namespace.seedsApplied) {
-                                                return;
-                                        }
-                                        try {
-                                                window.PerfugoWorkspaceSeeds = JSON.parse(seeds);
-                                                namespace.seedsApplied = true;
-                                        } catch (error) {
-                                                console.warn("Perfugo workspace seeds parse error", error);
-                                        }
-                                })();
-                        </script>
-			@workspaceModulesScript()
-		}
-	</div>
+templ workspaceShell(section string, snapshot WorkspaceSnapshot) {
+        <div class="workspace-shell w-full">
+                <div class="mx-auto w-full max-w-6xl px-6 py-14 sm:px-8 lg:py-16">
+                        <div
+                                id="workspace-content"
+                                class="space-y-12"
+                        >
+                                @workspaceInterior(section, workspaceMeta(section, snapshot), snapshot)
+                        </div>
+                </div>
+        </div>
 }
 
 templ workspaceInterior(section string, meta workspaceSectionMeta, snapshot WorkspaceSnapshot) {

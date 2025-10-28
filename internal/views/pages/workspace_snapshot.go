@@ -1,10 +1,9 @@
 package pages
 
 import (
-	"encoding/json"
-	"sort"
+        "sort"
 
-	"perfugo/models"
+        "perfugo/models"
 )
 
 // WorkspaceSnapshot aggregates relational data required to render the atelier workspace.
@@ -45,27 +44,6 @@ func NewWorkspaceSnapshot(formulas []models.Formula, ingredients []models.Formul
 // EmptyWorkspaceSnapshot returns a zero-value snapshot to simplify call sites when no data is available.
 func EmptyWorkspaceSnapshot() WorkspaceSnapshot {
 	return WorkspaceSnapshot{Theme: models.DefaultTheme}
-}
-
-// SeedsJSON encodes a subset of the snapshot so that the front-end modules can simulate CRUD interactions.
-func (s WorkspaceSnapshot) SeedsJSON() string {
-	payload := struct {
-		Formulas           []models.Formula           `json:"formulas"`
-		FormulaIngredients []models.FormulaIngredient `json:"formula_ingredients"`
-		AromaChemicals     []models.AromaChemical     `json:"aroma_chemicals"`
-		CurrentUserID      uint                       `json:"current_user_id"`
-	}{
-		Formulas:           s.Formulas,
-		FormulaIngredients: s.FormulaIngredients,
-		AromaChemicals:     s.AromaChemicals,
-		CurrentUserID:      s.UserID,
-	}
-
-	bytes, err := json.Marshal(payload)
-	if err != nil {
-		return "{}"
-	}
-	return string(bytes)
 }
 
 // IngredientDisplayName returns a user-friendly label for the formula ingredient's source.
