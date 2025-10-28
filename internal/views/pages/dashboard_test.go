@@ -44,8 +44,8 @@ func TestWorkspaceRendersWithFallbackSection(t *testing.T) {
 		t.Fatalf("render workspace: %v", err)
 	}
 	out := buf.String()
-	if !strings.Contains(out, "data-module-key=\"ingredients\"") {
-		t.Fatalf("expected workspace to render default section content: %s", out)
+	if !strings.Contains(out, "Aroma chemicals") || !strings.Contains(out, "id=\"ingredient-detail\"") {
+		t.Fatalf("expected workspace to render ingredient section content: %s", out)
 	}
 }
 
