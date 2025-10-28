@@ -25,20 +25,20 @@ func linkState(section, active string) string {
 }
 
 templ Sidebar(data SidebarData) {
-        <aside class="sidebar">
-                <div class="sidebar__brand">
-                        <span>Perfugo</span>
-                        <h1>Digital Atelier</h1>
-                        <p>Alchemy in motion</p>
+        <div class="flex min-h-screen flex-col gap-12 px-8 py-10 text-[var(--app-text)]">
+                <div class="space-y-1">
+                        <span class="text-xs font-semibold uppercase tracking-[0.28em] app-muted">Perfugo</span>
+                        <h1 class="text-2xl font-semibold text-[var(--app-text)]">Digital Atelier</h1>
+                        <p class="text-xs app-muted">Alchemy in motion</p>
                 </div>
-                <nav class="sidebar__nav">
-                        <p class="sidebar__label">Features</p>
-                        <ul>
-                                for _, item := range data.Features {
-                                        <li>
+                <div class="flex-1 space-y-10">
+                        <div class="space-y-4">
+                                <p class="text-[0.65rem] font-semibold uppercase tracking-[0.25em] app-muted">Features</p>
+                                <div class="space-y-3">
+                                        for _, item := range data.Features {
                                                 <a
                                                         href={ templpkg.URL(item.Path) }
-                                                        class="sidebar__link"
+                                                        class="app-nav-link"
                                                         data-nav-section={ item.Section }
                                                         data-state={ linkState(item.Section, data.Active) }
                                                         if item.UseHTMX {
@@ -48,47 +48,43 @@ templ Sidebar(data SidebarData) {
                                                                 hx-push-url="true"
                                                         }
                                                 >
-                                                        <span class="sidebar__link-text">
+                                                        <span class="flex items-center gap-3">
                                                                 if item.Icon != "" {
-                                                                        <span class="sidebar__icon">{ item.Icon }</span>
+                                                                        <span class="text-lg">{ item.Icon }</span>
                                                                 }
                                                                 <span>{ item.Label }</span>
                                                         </span>
-                                                        <span class="sidebar__meta">open</span>
+                                                        <span data-role="meta">open</span>
                                                 </a>
-                                        </li>
-                                }
-                        </ul>
-                </nav>
-                <div class="sidebar__footer">
-                        <ul>
-                                for _, item := range data.Secondary {
-                                        <li>
-                                                <a
-                                                        href={ templpkg.URL(item.Path) }
-                                                        class="sidebar__secondary"
-                                                        data-nav-section={ item.Section }
-                                                        data-state={ linkState(item.Section, data.Active) }
-                                                        if item.UseHTMX {
-                                                                hx-get={ templpkg.URL(item.Path) }
-                                                                hx-target="#workspace-content"
-                                                                hx-swap="innerHTML"
-                                                                hx-push-url="true"
-                                                        }
-                                                >
-                                                        <span class="sidebar__link-text">
-                                                                if item.Icon != "" {
-                                                                        <span class="sidebar__icon">{ item.Icon }</span>
-                                                                }
-                                                                <span>{ item.Label }</span>
-                                                        </span>
-                                                        if item.SubtleTag != "" {
-                                                                <span class="sidebar__tag">{ item.SubtleTag }</span>
-                                                        }
-                                                </a>
-                                        </li>
-                                }
-                        </ul>
+                                        }
+                                </div>
+                        </div>
                 </div>
-        </aside>
+                <div class="mt-auto space-y-3 border-t pt-8" style="border-color: var(--app-border);">
+                        for _, item := range data.Secondary {
+                                <a
+                                        href={ templpkg.URL(item.Path) }
+                                        class="app-secondary-link"
+                                        data-nav-section={ item.Section }
+                                        data-state={ linkState(item.Section, data.Active) }
+                                        if item.UseHTMX {
+                                                hx-get={ templpkg.URL(item.Path) }
+                                                hx-target="#workspace-content"
+                                                hx-swap="innerHTML"
+                                                hx-push-url="true"
+                                        }
+                                >
+                                        <span class="flex items-center gap-3">
+                                                if item.Icon != "" {
+                                                        <span class="text-base">{ item.Icon }</span>
+                                                }
+                                                <span>{ item.Label }</span>
+                                        </span>
+                                        if item.SubtleTag != "" {
+                                                <span class="app-secondary-tag">{ item.SubtleTag }</span>
+                                        }
+                                </a>
+                        }
+                </div>
+        </div>
 }
