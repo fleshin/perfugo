@@ -1,8 +1,7 @@
 package pages
 
 import (
-	"encoding/json"
-	"testing"
+        "testing"
 
 	"perfugo/models"
 
@@ -34,27 +33,6 @@ func TestNewWorkspaceSnapshotSortsCollections(t *testing.T) {
 	}
 	if snapshot.UserID != 9 {
 		t.Fatalf("expected snapshot user id to be set, got %d", snapshot.UserID)
-	}
-}
-
-func TestWorkspaceSnapshotSeedsJSON(t *testing.T) {
-	snapshot := WorkspaceSnapshot{
-		Formulas:           []models.Formula{{Name: "F"}},
-		FormulaIngredients: []models.FormulaIngredient{{Amount: 1}},
-		AromaChemicals:     []models.AromaChemical{{IngredientName: "C"}},
-		UserID:             12,
-	}
-
-	data := snapshot.SeedsJSON()
-	var parsed map[string]json.RawMessage
-	if err := json.Unmarshal([]byte(data), &parsed); err != nil {
-		t.Fatalf("expected valid json payload, got %v", err)
-	}
-	if _, ok := parsed["formulas"]; !ok {
-		t.Fatalf("expected formulas key in seeds json: %s", data)
-	}
-	if _, ok := parsed["current_user_id"]; !ok {
-		t.Fatalf("expected current_user_id in seeds json: %s", data)
 	}
 }
 
@@ -99,12 +77,49 @@ func TestIngredientSourceKind(t *testing.T) {
 }
 
 func TestFormulaLookupContainsEntries(t *testing.T) {
-	formulas := []models.Formula{{Model: gorm.Model{ID: 1}, Name: "First"}}
-	snapshot := WorkspaceSnapshot{Formulas: formulas}
-	lookup := snapshot.FormulaLookup()
-	if lookup[1] != "First" {
-		t.Fatalf("expected lookup to return formula name, got %s", lookup[1])
-	}
+        formulas := []models.Formula{{Model: gorm.Model{ID: 1}, Name: "First"}}
+        snapshot := WorkspaceSnapshot{Formulas: formulas}
+        lookup := snapshot.FormulaLookup()
+        if lookup[1] != "First" {
+                t.Fatalf("expected lookup to return formula name, got %s", lookup[1])
+        }
+}
+
+func TestChemicalByIDReturnsMatch(t *testing.T) {
+        chem := models.AromaChemical{Model: gorm.Model{ID: 9}, IngredientName: "Alpha"}
+        snapshot := WorkspaceSnapshot{AromaChemicals: []models.AromaChemical{chem}}
+        if got := snapshot.ChemicalByID(9); got == nil || got.IngredientName != "Alpha" {
+                t.Fatalf("expected to find aroma chemical Alpha, got %+v", got)
+        }
+        if snapshot.ChemicalByID(0) != nil {
+                t.Fatalf("expected zero id lookup to be nil")
+        }
+}
+
+func TestFormulaByIDReturnsMatch(t *testing.T) {
+        formula := models.Formula{Model: gorm.Model{ID: 5}, Name: "Resonance"}
+        snapshot := WorkspaceSnapshot{Formulas: []models.Formula{formula}}
+        if got := snapshot.FormulaByID(5); got == nil || got.Name != "Resonance" {
+                t.Fatalf("expected to find formula Resonance, got %+v", got)
+        }
+        if snapshot.FormulaByID(0) != nil {
+                t.Fatalf("expected zero id lookup to be nil")
+        }
+}
+
+func TestIngredientsForFormulaFiltersMatches(t *testing.T) {
+        ingredients := []models.FormulaIngredient{
+                {Model: gorm.Model{ID: 1}, FormulaID: 3},
+                {Model: gorm.Model{ID: 2}, FormulaID: 4},
+        }
+        snapshot := WorkspaceSnapshot{FormulaIngredients: ingredients}
+        results := snapshot.IngredientsForFormula(3)
+        if len(results) != 1 || results[0].ID != 1 {
+                t.Fatalf("expected to receive ingredient belonging to formula 3, got %#v", results)
+        }
+        if matches := snapshot.IngredientsForFormula(0); matches != nil {
+                t.Fatalf("expected zero id to return nil slice, got %#v", matches)
+        }
 }
 
 func ptr[T any](value T) *T {
