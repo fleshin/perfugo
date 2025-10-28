@@ -58,19 +58,19 @@ func IngredientManagement(snapshot WorkspaceSnapshot) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-               templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"space-y-8\" data-module=\"ingredients\"><div class=\"app-card flex h-[32rem] flex-col space-y-6 px-6 py-6\"><form class=\"flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between\" hx-get=\"/app/sections/ingredients/table\" hx-target=\"#ingredient-table\" hx-swap=\"outerHTML\"><div class=\"flex-1\"><label class=\"text-xs uppercase tracking-[0.35em] app-muted\" for=\"ingredient-search\">Search ingredients</label> <input id=\"ingredient-search\" type=\"search\" name=\"q\" value=\"\" placeholder=\"Filter by name, CAS number, or type\" class=\"app-input mt-2 w-full\" hx-trigger=\"keyup changed delay:300ms\"></div><button type=\"submit\" class=\"app-button w-full sm:w-auto\">Filter</button></form><div class=\"flex-1 overflow-hidden\">")
-                if templ_7745c5c3_Err != nil {
-                        return templ_7745c5c3_Err
-                }
-                templ_7745c5c3_Err = IngredientTable(
-                        FilterAromaChemicals(snapshot.AromaChemicals, IngredientFilters{}),
-                        IngredientFilters{},
-                        len(snapshot.AromaChemicals),
-                ).Render(ctx, templ_7745c5c3_Buffer)
-                if templ_7745c5c3_Err != nil {
-                        return templ_7745c5c3_Err
-                }
-                templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div><div id=\"ingredient-detail\" class=\"app-card px-6 py-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"space-y-8\" data-module=\"ingredients\"><div class=\"app-card space-y-6 px-6 py-6\"><form class=\"flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between\" hx-get=\"/app/sections/ingredients/table\" hx-target=\"#ingredient-table\" hx-swap=\"outerHTML\"><div class=\"flex-1\"><label class=\"text-xs uppercase tracking-[0.35em] app-muted\" for=\"ingredient-search\">Search ingredients</label> <input id=\"ingredient-search\" type=\"search\" name=\"q\" value=\"\" placeholder=\"Filter by name, CAS number, or type\" class=\"app-input mt-2 w-full\" hx-trigger=\"keyup changed delay:300ms\"></div><button type=\"submit\" class=\"app-button w-full sm:w-auto\">Filter</button></form>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = IngredientTable(
+			FilterAromaChemicals(snapshot.AromaChemicals, IngredientFilters{}),
+			IngredientFilters{},
+			len(snapshot.AromaChemicals),
+		).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div id=\"ingredient-detail\" class=\"app-card px-6 py-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -107,7 +107,7 @@ func IngredientTable(chemicals []models.AromaChemical, filters IngredientFilters
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-                templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"ingredient-table\" class=\"flex h-full flex-col space-y-4\"><div class=\"flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between\"><p class=\"text-xs uppercase tracking-[0.35em] app-muted\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"ingredient-table\" class=\"space-y-4\"><div class=\"flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between\"><p class=\"text-xs uppercase tracking-[0.35em] app-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -143,17 +143,17 @@ func IngredientTable(chemicals []models.AromaChemical, filters IngredientFilters
 				return templ_7745c5c3_Err
 			}
 		}
-                templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
-                if templ_7745c5c3_Err != nil {
-                        return templ_7745c5c3_Err
-                }
-                if len(chemicals) == 0 {
-                        templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"flex-1 overflow-y-auto rounded-3xl border border-white/15 bg-white/5 px-6 py-10 text-center text-sm app-muted\">No aroma chemicals match the current filter.</div>")
-                        if templ_7745c5c3_Err != nil {
-                                return templ_7745c5c3_Err
-                        }
-                } else {
-                        templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"flex-1 overflow-hidden rounded-3xl border border-white/10\"><div class=\"h-full overflow-y-auto\"><table class=\"min-w-full divide-y divide-white/10 text-left text-sm text-white/80\"><thead class=\"bg-white/5 text-xs font-medium uppercase tracking-[0.35em] text-white/50\"><tr><th class=\"px-5 py-4\">Ingredient</th><th class=\"px-5 py-4\">Pyramid</th><th class=\"px-5 py-4\">Wheel</th><th class=\"px-5 py-4\">Potency</th><th class=\"px-5 py-4 text-right\">Details</th></tr></thead> <tbody class=\"divide-y divide-white/10 bg-black/30\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if len(chemicals) == 0 {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"rounded-3xl border border-white/15 bg-white/5 px-6 py-10 text-center text-sm app-muted\">No aroma chemicals match the current filter.</div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"overflow-hidden rounded-3xl border border-white/10\"><table class=\"min-w-full divide-y divide-white/10 text-left text-sm text-white/80\"><thead class=\"bg-white/5 text-xs font-medium uppercase tracking-[0.35em] text-white/50\"><tr><th class=\"px-5 py-4\">Ingredient</th><th class=\"px-5 py-4\">Pyramid</th><th class=\"px-5 py-4\">Wheel</th><th class=\"px-5 py-4\">Potency</th><th class=\"px-5 py-4 text-right\">Details</th></tr></thead> <tbody class=\"divide-y divide-white/10 bg-black/30\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -265,7 +265,7 @@ func IngredientTable(chemicals []models.AromaChemical, filters IngredientFilters
 					return templ_7745c5c3_Err
 				}
 			}
-                        templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</tbody></table></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</tbody></table></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
