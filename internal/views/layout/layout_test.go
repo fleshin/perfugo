@@ -63,7 +63,10 @@ func TestLayoutRendersProvidedContent(t *testing.T) {
 }
 
 func TestBodyWrapperClassReflectsSidebarState(t *testing.T) {
-        if bodyWrapperClass(true) == bodyWrapperClass(false) {
-                t.Fatal("expected different body wrapper class depending on sidebar state")
-        }
+	if bodyWrapperClass(true) == bodyWrapperClass(false) {
+		t.Fatal("expected different body wrapper class depending on sidebar state")
+	}
+	if mainClass(true) == mainClass(false) {
+		t.Fatal("expected different main class depending on sidebar state")
+	}
 }

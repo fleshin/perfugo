@@ -29,12 +29,7 @@ type workspaceSectionMeta struct {
 	MetricValue string
 }
 
-type WorkspaceView struct {
-	SelectedChemicalID uint
-	SelectedFormulaID  uint
-}
-
-func Workspace(section string, snapshot WorkspaceSnapshot, view WorkspaceView) templ.Component {
+func Workspace(section string, snapshot WorkspaceSnapshot) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -58,7 +53,7 @@ func Workspace(section string, snapshot WorkspaceSnapshot, view WorkspaceView) t
 		templ_7745c5c3_Err = layout.Layout(
 			"Perfugo Atelier",
 			components.Sidebar(sidebarData(NormalizeWorkspaceSection(section))),
-			workspaceShell(NormalizeWorkspaceSection(section), snapshot, view),
+			workspaceShell(NormalizeWorkspaceSection(section), snapshot, true),
 			true,
 			layout.ThemeByID(snapshot.Theme),
 		).Render(ctx, templ_7745c5c3_Buffer)
@@ -69,7 +64,7 @@ func Workspace(section string, snapshot WorkspaceSnapshot, view WorkspaceView) t
 	})
 }
 
-func WorkspaceSection(section string, snapshot WorkspaceSnapshot, view WorkspaceView) templ.Component {
+func WorkspaceSection(section string, snapshot WorkspaceSnapshot) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -90,7 +85,7 @@ func WorkspaceSection(section string, snapshot WorkspaceSnapshot, view Workspace
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = workspaceInterior(NormalizeWorkspaceSection(section), workspaceMeta(NormalizeWorkspaceSection(section), snapshot), snapshot, view).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = workspaceInterior(NormalizeWorkspaceSection(section), workspaceMeta(NormalizeWorkspaceSection(section), snapshot), snapshot).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -114,7 +109,7 @@ func sidebarData(active string) components.SidebarData {
 	}
 }
 
-func workspaceShell(section string, snapshot WorkspaceSnapshot, view WorkspaceView) templ.Component {
+func workspaceShell(section string, snapshot WorkspaceSnapshot, includeSeeds bool) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -135,15 +130,52 @@ func workspaceShell(section string, snapshot WorkspaceSnapshot, view WorkspaceVi
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"workspace-shell\"><div class=\"workspace-shell__inner\"><div id=\"workspace-content\" class=\"workspace-content\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"workspace-shell w-full\"><div class=\"mx-auto w-full max-w-6xl px-6 py-14 sm:px-8 lg:py-16\"><div id=\"workspace-content\" class=\"space-y-12\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = workspaceInterior(section, workspaceMeta(section, snapshot), snapshot, view).Render(ctx, templ_7745c5c3_Buffer)
+		if includeSeeds {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " data-seeds=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(snapshot.SeedsJSON())
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 61, Col: 38}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, ">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div></div>")
+		templ_7745c5c3_Err = workspaceInterior(section, workspaceMeta(section, snapshot), snapshot).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if includeSeeds {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<script>\n                                (function () {\n                                        const container = document.getElementById(\"workspace-content\");\n                                        if (!container || !container.dataset) {\n                                                return;\n                                        }\n                                        const seeds = container.dataset.seeds || container.getAttribute(\"data-seeds\");\n                                        if (!seeds) {\n                                                return;\n                                        }\n                                        const namespace = window.PerfugoWorkspace || (window.PerfugoWorkspace = {});\n                                        if (namespace.seedsApplied) {\n                                                return;\n                                        }\n                                        try {\n                                                window.PerfugoWorkspaceSeeds = JSON.parse(seeds);\n                                                namespace.seedsApplied = true;\n                                        } catch (error) {\n                                                console.warn(\"Perfugo workspace seeds parse error\", error);\n                                        }\n                                })();\n                        </script> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = workspaceModulesScript().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -151,7 +183,7 @@ func workspaceShell(section string, snapshot WorkspaceSnapshot, view WorkspaceVi
 	})
 }
 
-func workspaceInterior(section string, meta workspaceSectionMeta, snapshot WorkspaceSnapshot, view WorkspaceView) templ.Component {
+func workspaceInterior(section string, meta workspaceSectionMeta, snapshot WorkspaceSnapshot) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -167,102 +199,102 @@ func workspaceInterior(section string, meta workspaceSectionMeta, snapshot Works
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"workspace-stack\"><section class=\"section-card\"><div class=\"section-intro\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"space-y-6\"><section class=\"app-card px-4 py-5\"><div class=\"flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between\"><div class=\"space-y-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if meta.Badge != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<span class=\"badge\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<span class=\"app-badge\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Badge)
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Badge)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 74, Col: 72}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 101, Col: 42}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</span>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"section-text\"><h1>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"space-y-1\"><h1 class=\"text-xl font-semibold tracking-tight text-[var(--app-text)] sm:text-xl\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Title)
+		var templ_7745c5c3_Var7 string
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 77, Col: 56}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 104, Col: 101}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</h1>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</h1>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if meta.Subtitle != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<p class=\"section-subtitle\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var7 string
-			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Subtitle)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 79, Col: 91}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</p>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if meta.Description != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<p class=\"section-description\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<p class=\"text-sm font-medium uppercase tracking-[0.28em] app-muted\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Description)
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Subtitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 83, Col: 89}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 106, Col: 91}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div></section><div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = workspaceComponent(section, snapshot, view).Render(ctx, templ_7745c5c3_Buffer)
+		if meta.Description != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<p class=\"max-w-3xl text-sm leading-snug app-muted\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var9 string
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Description)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 110, Col: 76}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</p>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div></section><div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></div>")
+		templ_7745c5c3_Err = workspaceComponent(section, snapshot).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -311,16 +343,16 @@ func workspaceMeta(section string, snapshot WorkspaceSnapshot) workspaceSectionM
 	}
 }
 
-func workspaceComponent(section string, snapshot WorkspaceSnapshot, view WorkspaceView) templpkg.Component {
+func workspaceComponent(section string, snapshot WorkspaceSnapshot) templpkg.Component {
 	switch section {
 	case "formulas":
-		return FormulaManagement(snapshot, view)
+		return FormulaManagement(snapshot)
 	case "reports":
 		return ReportsOverview(defaultReportCards(), defaultReportTimeline(), defaultReportLeaders())
 	case "preferences":
-		return PreferencesPanel(snapshot.Theme, layout.ThemeOptions(), false)
+		return PreferencesPanel(snapshot.Theme, layout.ThemeOptions())
 	default:
-		return IngredientManagement(snapshot, view)
+		return IngredientManagement(snapshot)
 	}
 }
 

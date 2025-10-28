@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"strconv"
 	"strings"
 
 	templpkg "github.com/a-h/templ"
@@ -36,40 +35,13 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 		snapshot = pages.NewWorkspaceSnapshot(formulas, ingredients, chemicals, theme, userID)
 	}
 
-	view := pages.WorkspaceView{}
-	if chemicalParam := r.URL.Query().Get("chemical"); chemicalParam != "" {
-		if id, err := strconv.Atoi(chemicalParam); err == nil && id > 0 {
-			view.SelectedChemicalID = uint(id)
-		}
-	}
-	if formulaParam := r.URL.Query().Get("formula"); formulaParam != "" {
-		if id, err := strconv.Atoi(formulaParam); err == nil && id > 0 {
-			view.SelectedFormulaID = uint(id)
-		}
-	}
-
-	if view.SelectedChemicalID == 0 && len(snapshot.AromaChemicals) > 0 {
-		view.SelectedChemicalID = uint(snapshot.AromaChemicals[0].ID)
-	}
-	if view.SelectedFormulaID == 0 && len(snapshot.Formulas) > 0 {
-		view.SelectedFormulaID = uint(snapshot.Formulas[0].ID)
-	}
-
 	var component templpkg.Component
-	target := r.Header.Get("HX-Target")
 	if isHTMX(r) {
 		applog.Debug(r.Context(), "rendering HTMX workspace partial")
-		switch target {
-		case "ingredient-detail":
-			component = pages.IngredientSelection(snapshot, view)
-		case "formula-detail":
-			component = pages.FormulaSelection(snapshot, view)
-		default:
-			component = pages.WorkspaceSection(section, snapshot, view)
-		}
+		component = pages.WorkspaceSection(section, snapshot)
 	} else {
 		applog.Debug(r.Context(), "rendering full workspace page")
-		component = pages.Workspace(section, snapshot, view)
+		component = pages.Workspace(section, snapshot)
 	}
 
 	if err := component.Render(r.Context(), w); err != nil {

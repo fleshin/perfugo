@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"encoding/json"
 	"sort"
 
 	"perfugo/models"
@@ -46,6 +47,27 @@ func EmptyWorkspaceSnapshot() WorkspaceSnapshot {
 	return WorkspaceSnapshot{Theme: models.DefaultTheme}
 }
 
+// SeedsJSON encodes a subset of the snapshot so that the front-end modules can simulate CRUD interactions.
+func (s WorkspaceSnapshot) SeedsJSON() string {
+	payload := struct {
+		Formulas           []models.Formula           `json:"formulas"`
+		FormulaIngredients []models.FormulaIngredient `json:"formula_ingredients"`
+		AromaChemicals     []models.AromaChemical     `json:"aroma_chemicals"`
+		CurrentUserID      uint                       `json:"current_user_id"`
+	}{
+		Formulas:           s.Formulas,
+		FormulaIngredients: s.FormulaIngredients,
+		AromaChemicals:     s.AromaChemicals,
+		CurrentUserID:      s.UserID,
+	}
+
+	bytes, err := json.Marshal(payload)
+	if err != nil {
+		return "{}"
+	}
+	return string(bytes)
+}
+
 // IngredientDisplayName returns a user-friendly label for the formula ingredient's source.
 func IngredientDisplayName(ingredient models.FormulaIngredient) string {
 	if ingredient.AromaChemical != nil && ingredient.AromaChemical.IngredientName != "" {
@@ -75,44 +97,4 @@ func (s WorkspaceSnapshot) FormulaLookup() map[uint]string {
 		lookup[uint(formula.ID)] = formula.Name
 	}
 	return lookup
-}
-
-// ChemicalByID returns the aroma chemical with the provided identifier if present.
-func (s WorkspaceSnapshot) ChemicalByID(id uint) *models.AromaChemical {
-	if id == 0 {
-		return nil
-	}
-	for i := range s.AromaChemicals {
-		if uint(s.AromaChemicals[i].ID) == id {
-			return &s.AromaChemicals[i]
-		}
-	}
-	return nil
-}
-
-// FormulaByID returns the formula with the provided identifier if present.
-func (s WorkspaceSnapshot) FormulaByID(id uint) *models.Formula {
-	if id == 0 {
-		return nil
-	}
-	for i := range s.Formulas {
-		if uint(s.Formulas[i].ID) == id {
-			return &s.Formulas[i]
-		}
-	}
-	return nil
-}
-
-// IngredientsForFormula returns ingredients that belong to the provided formula.
-func (s WorkspaceSnapshot) IngredientsForFormula(id uint) []models.FormulaIngredient {
-	if id == 0 {
-		return nil
-	}
-	results := make([]models.FormulaIngredient, 0)
-	for _, ingredient := range s.FormulaIngredients {
-		if uint(ingredient.FormulaID) == id {
-			results = append(results, ingredient)
-		}
-	}
-	return results
 }
