@@ -40,11 +40,11 @@ func TestDefaultWorkspaceSection(t *testing.T) {
 func TestWorkspaceRendersWithFallbackSection(t *testing.T) {
 	snapshot := EmptyWorkspaceSnapshot()
 	var buf bytes.Buffer
-	if err := Workspace("unknown", snapshot).Render(context.Background(), &buf); err != nil {
+	if err := Workspace("unknown", snapshot, WorkspaceView{}).Render(context.Background(), &buf); err != nil {
 		t.Fatalf("render workspace: %v", err)
 	}
 	out := buf.String()
-	if !strings.Contains(out, "data-module-key=\"ingredients\"") {
+	if !strings.Contains(out, "id=\"ingredient-heading\"") {
 		t.Fatalf("expected workspace to render default section content: %s", out)
 	}
 }

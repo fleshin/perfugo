@@ -92,7 +92,7 @@ func signupContent(message string, name string, email string) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"app-shell flex min-h-[calc(100vh-6rem)] items-center justify-center px-6 py-16 sm:px-10\"><div class=\"w-full max-w-lg\"><div class=\"app-card px-8 py-10 sm:px-12 sm:py-12\"><div class=\"space-y-3 text-center\"><span class=\"app-badge justify-center\">Perfugo</span><h1 class=\"text-3xl font-semibold tracking-tight sm:text-4xl\">Join the atelier</h1><p class=\"text-sm leading-relaxed app-muted\">Create an account to explore the Perfugo perfumery platform.</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"app-shell auth-shell\"><div class=\"auth-container auth-wide\"><div class=\"app-card auth-card\"><div class=\"space-y-3 text-center\"><span class=\"app-badge justify-center\">Perfugo</span><h1 class=\"text-3xl font-semibold tracking-tight sm:text-4xl\">Join the atelier</h1><p class=\"text-sm leading-relaxed app-muted\">Create an account to explore the Perfugo perfumery platform.</p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

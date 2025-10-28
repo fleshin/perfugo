@@ -13,26 +13,31 @@ import (
 const defaultWorkspaceSection = "ingredients"
 
 type workspaceSectionMeta struct {
-	Badge       string
-	Title       string
-	Subtitle    string
-	Description string
-	MetricLabel string
-	MetricValue string
+        Badge       string
+        Title       string
+        Subtitle    string
+        Description string
+        MetricLabel string
+        MetricValue string
 }
 
-templ Workspace(section string, snapshot WorkspaceSnapshot) {
-	@layout.Layout(
-		"Perfugo Atelier",
-		components.Sidebar(sidebarData(NormalizeWorkspaceSection(section))),
-		workspaceShell(NormalizeWorkspaceSection(section), snapshot, true),
-		true,
-		layout.ThemeByID(snapshot.Theme),
-	)
+type WorkspaceView struct {
+        SelectedChemicalID uint
+        SelectedFormulaID  uint
 }
 
-templ WorkspaceSection(section string, snapshot WorkspaceSnapshot) {
-	@workspaceInterior(NormalizeWorkspaceSection(section), workspaceMeta(NormalizeWorkspaceSection(section), snapshot), snapshot)
+templ Workspace(section string, snapshot WorkspaceSnapshot, view WorkspaceView) {
+        @layout.Layout(
+                "Perfugo Atelier",
+                components.Sidebar(sidebarData(NormalizeWorkspaceSection(section))),
+                workspaceShell(NormalizeWorkspaceSection(section), snapshot, view),
+                true,
+                layout.ThemeByID(snapshot.Theme),
+        )
+}
+
+templ WorkspaceSection(section string, snapshot WorkspaceSnapshot, view WorkspaceView) {
+        @workspaceInterior(NormalizeWorkspaceSection(section), workspaceMeta(NormalizeWorkspaceSection(section), snapshot), snapshot, view)
 }
 
 func sidebarData(active string) components.SidebarData {
@@ -51,79 +56,38 @@ func sidebarData(active string) components.SidebarData {
 	}
 }
 
-templ workspaceShell(section string, snapshot WorkspaceSnapshot, includeSeeds bool) {
-	<div class="workspace-shell w-full">
-		<div class="mx-auto w-full max-w-6xl px-6 py-14 sm:px-8 lg:py-16">
-			<div
-				id="workspace-content"
-				class="space-y-12"
-				if includeSeeds {
-					data-seeds={ snapshot.SeedsJSON() }
-				}
-			>
-				@workspaceInterior(section, workspaceMeta(section, snapshot), snapshot)
-			</div>
-		</div>
-		if includeSeeds {
-			<script>
-                                (function () {
-                                        const container = document.getElementById("workspace-content");
-                                        if (!container || !container.dataset) {
-                                                return;
-                                        }
-                                        const seeds = container.dataset.seeds || container.getAttribute("data-seeds");
-                                        if (!seeds) {
-                                                return;
-                                        }
-                                        const namespace = window.PerfugoWorkspace || (window.PerfugoWorkspace = {});
-                                        if (namespace.seedsApplied) {
-                                                return;
-                                        }
-                                        try {
-                                                window.PerfugoWorkspaceSeeds = JSON.parse(seeds);
-                                                namespace.seedsApplied = true;
-                                        } catch (error) {
-                                                console.warn("Perfugo workspace seeds parse error", error);
-                                        }
-                                })();
-                        </script>
-			@workspaceModulesScript()
-		}
-	</div>
+templ workspaceShell(section string, snapshot WorkspaceSnapshot, view WorkspaceView) {
+        <div class="workspace-shell">
+                <div class="workspace-shell__inner">
+                        <div id="workspace-content" class="workspace-content">
+                                @workspaceInterior(section, workspaceMeta(section, snapshot), snapshot, view)
+                        </div>
+                </div>
+        </div>
 }
 
-templ workspaceInterior(section string, meta workspaceSectionMeta, snapshot WorkspaceSnapshot) {
-	<div class="space-y-6">
-		<section class="app-card px-4 py-5">
-			<div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-				<div class="space-y-2">
-					if meta.Badge != "" {
-						<span class="app-badge">{ meta.Badge }</span>
-					}
-					<div class="space-y-1">
-						<h1 class="text-xl font-semibold tracking-tight text-[var(--app-text)] sm:text-xl">{ meta.Title }</h1>
-						if meta.Subtitle != "" {
-							<p class="text-sm font-medium uppercase tracking-[0.28em] app-muted">{ meta.Subtitle }</p>
-						}
-					</div>
-					if meta.Description != "" {
-						<p class="max-w-3xl text-sm leading-snug app-muted">{ meta.Description }</p>
-					}
-				</div>
-				//				if meta.MetricValue != "" {
-				//					<div class="app-card app-card--flat px-4 py-3 text-right">
-				//						if meta.MetricLabel != "" {
-				//							<p class="text-[0.65rem] uppercase tracking-[0.35em] app-muted">{ meta.MetricLabel }</p>
-				//						}
-				//						<p class="mt-1 text-2xl font-semibold text-[var(--app-text)]">{ meta.MetricValue }</p>
-				//					</div>
-				//				}
-			</div>
-		</section>
-		<div>
-			@workspaceComponent(section, snapshot)
-		</div>
-	</div>
+templ workspaceInterior(section string, meta workspaceSectionMeta, snapshot WorkspaceSnapshot, view WorkspaceView) {
+        <div class="workspace-stack">
+                <section class="section-card">
+                        <div class="section-intro">
+                                if meta.Badge != "" {
+                                        <span class="badge">{ meta.Badge }</span>
+                                }
+                                <div class="section-text">
+                                        <h1>{ meta.Title }</h1>
+                                        if meta.Subtitle != "" {
+                                                <p class="section-subtitle">{ meta.Subtitle }</p>
+                                        }
+                                </div>
+                                if meta.Description != "" {
+                                        <p class="section-description">{ meta.Description }</p>
+                                }
+                        </div>
+                </section>
+                <div>
+                        @workspaceComponent(section, snapshot, view)
+                </div>
+        </div>
 }
 
 func workspaceMeta(section string, snapshot WorkspaceSnapshot) workspaceSectionMeta {
@@ -167,17 +131,17 @@ func workspaceMeta(section string, snapshot WorkspaceSnapshot) workspaceSectionM
 	}
 }
 
-func workspaceComponent(section string, snapshot WorkspaceSnapshot) templpkg.Component {
-	switch section {
-	case "formulas":
-		return FormulaManagement(snapshot)
-	case "reports":
-		return ReportsOverview(defaultReportCards(), defaultReportTimeline(), defaultReportLeaders())
-	case "preferences":
-		return PreferencesPanel(snapshot.Theme, layout.ThemeOptions())
-	default:
-		return IngredientManagement(snapshot)
-	}
+func workspaceComponent(section string, snapshot WorkspaceSnapshot, view WorkspaceView) templpkg.Component {
+        switch section {
+        case "formulas":
+                return FormulaManagement(snapshot, view)
+        case "reports":
+                return ReportsOverview(defaultReportCards(), defaultReportTimeline(), defaultReportLeaders())
+        case "preferences":
+                return PreferencesPanel(snapshot.Theme, layout.ThemeOptions(), false)
+        default:
+                return IngredientManagement(snapshot, view)
+        }
 }
 
 func defaultReportCards() []ReportCard {
