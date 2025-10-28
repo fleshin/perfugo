@@ -58,7 +58,7 @@ func IngredientManagement(snapshot WorkspaceSnapshot) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"space-y-8\" data-module=\"ingredients\"><div class=\"app-card flex h-[32rem] flex-col space-y-6 px-6 py-6\"><form class=\"flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between\" hx-get=\"/app/sections/ingredients/table\" hx-target=\"#ingredient-table\" hx-swap=\"outerHTML\"><div class=\"flex-1\"><label class=\"text-xs uppercase tracking-[0.35em] app-muted\" for=\"ingredient-search\">Search ingredients</label> <input id=\"ingredient-search\" type=\"search\" name=\"q\" value=\"\" placeholder=\"Filter by name, CAS number, or type\" class=\"app-input mt-2 w-full\" hx-trigger=\"keyup changed delay:300ms\"></div><button type=\"submit\" class=\"app-button w-full sm:w-auto\">Filter</button></form><div class=\"flex-1 overflow-hidden\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<section class=\"space-y-8\" data-module=\"ingredients\"><div class=\"app-card space-y-6 px-6 py-6\"><form class=\"flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between\" hx-get=\"/app/sections/ingredients/table\" hx-target=\"#ingredient-table\" hx-swap=\"outerHTML\"><div class=\"flex-1\"><label class=\"text-xs uppercase tracking-[0.35em] app-muted\" for=\"ingredient-search\">Search ingredients</label> <input id=\"ingredient-search\" type=\"search\" name=\"q\" value=\"\" placeholder=\"Filter by name, CAS number, or type\" class=\"app-input mt-2 w-full\" hx-trigger=\"keyup changed delay:300ms\"></div><button type=\"submit\" class=\"app-button w-full sm:w-auto\">Filter</button></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -70,7 +70,7 @@ func IngredientManagement(snapshot WorkspaceSnapshot) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div></div><div id=\"ingredient-detail\" class=\"app-card px-6 py-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div id=\"ingredient-detail\" class=\"app-card px-6 py-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -107,14 +107,14 @@ func IngredientTable(chemicals []models.AromaChemical, filters IngredientFilters
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"ingredient-table\" class=\"flex h-full flex-col space-y-4 overflow-hidden\"><div class=\"flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between\"><p class=\"text-xs uppercase tracking-[0.35em] app-muted\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div id=\"ingredient-table\" class=\"space-y-4\"><div class=\"flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between\"><p class=\"text-xs uppercase tracking-[0.35em] app-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("Showing %d of %d ingredients", len(chemicals), total))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 75, Col: 100}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 73, Col: 100}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -132,7 +132,7 @@ func IngredientTable(chemicals []models.AromaChemical, filters IngredientFilters
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(filters.Query)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 78, Col: 91}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 76, Col: 91}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -148,12 +148,12 @@ func IngredientTable(chemicals []models.AromaChemical, filters IngredientFilters
 			return templ_7745c5c3_Err
 		}
 		if len(chemicals) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"flex-1 overflow-y-auto\"><div class=\"rounded-3xl border border-white/15 bg-white/5 px-6 py-10 text-center text-sm app-muted\">No aroma chemicals match the current filter.</div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"rounded-3xl border border-white/15 bg-white/5 px-6 py-10 text-center text-sm app-muted\">No aroma chemicals match the current filter.</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"flex-1 overflow-y-auto\"><div class=\"overflow-hidden rounded-3xl border border-white/10\"><table class=\"min-w-full divide-y divide-white/10 text-left text-sm text-white/80\"><thead class=\"bg-white/5 text-xs font-medium uppercase tracking-[0.35em] text-white/50\"><tr><th class=\"px-5 py-4\">Ingredient</th><th class=\"px-5 py-4\">Pyramid</th><th class=\"px-5 py-4\">Wheel</th><th class=\"px-5 py-4\">Potency</th><th class=\"px-5 py-4 text-right\">Details</th></tr></thead> <tbody class=\"divide-y divide-white/10 bg-black/30\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"overflow-hidden rounded-3xl border border-white/10\"><table class=\"min-w-full divide-y divide-white/10 text-left text-sm text-white/80\"><thead class=\"bg-white/5 text-xs font-medium uppercase tracking-[0.35em] text-white/50\"><tr><th class=\"px-5 py-4\">Ingredient</th><th class=\"px-5 py-4\">Pyramid</th><th class=\"px-5 py-4\">Wheel</th><th class=\"px-5 py-4\">Potency</th><th class=\"px-5 py-4 text-right\">Details</th></tr></thead> <tbody class=\"divide-y divide-white/10 bg-black/30\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -165,7 +165,7 @@ func IngredientTable(chemicals []models.AromaChemical, filters IngredientFilters
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(chemical.IngredientName)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 104, Col: 143}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 99, Col: 135}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -183,7 +183,7 @@ func IngredientTable(chemicals []models.AromaChemical, filters IngredientFilters
 					var templ_7745c5c3_Var6 string
 					templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(chemical.CASNumber)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 107, Col: 120}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 102, Col: 112}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 					if templ_7745c5c3_Err != nil {
@@ -202,7 +202,7 @@ func IngredientTable(chemicals []models.AromaChemical, filters IngredientFilters
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(DefaultDash(chemical.PyramidPosition))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 113, Col: 133}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 108, Col: 125}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -215,7 +215,7 @@ func IngredientTable(chemicals []models.AromaChemical, filters IngredientFilters
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(DefaultDash(chemical.WheelPosition))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 114, Col: 131}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 109, Col: 123}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -228,7 +228,7 @@ func IngredientTable(chemicals []models.AromaChemical, filters IngredientFilters
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(AromaChemicalPotencyLabel(chemical.Strength))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 116, Col: 164}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 111, Col: 156}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
@@ -241,7 +241,7 @@ func IngredientTable(chemicals []models.AromaChemical, filters IngredientFilters
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(chemical.Strength)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 117, Col: 143}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 112, Col: 135}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -254,7 +254,7 @@ func IngredientTable(chemicals []models.AromaChemical, filters IngredientFilters
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(templpkg.URL(fmt.Sprintf("/app/sections/ingredients/detail?id=%d", chemical.ID)))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 123, Col: 177}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 118, Col: 169}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -265,7 +265,7 @@ func IngredientTable(chemicals []models.AromaChemical, filters IngredientFilters
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</tbody></table></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</tbody></table></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -312,7 +312,7 @@ func IngredientDetail(chemical *models.AromaChemical) templ.Component {
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(chemical.IngredientName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 149, Col: 102}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 143, Col: 102}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -325,7 +325,7 @@ func IngredientDetail(chemical *models.AromaChemical) templ.Component {
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(chemical.UpdatedAt.UTC().Format("02 Jan 2006"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 151, Col: 96}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 145, Col: 96}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -338,7 +338,7 @@ func IngredientDetail(chemical *models.AromaChemical) templ.Component {
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(DefaultDash(chemical.CASNumber))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 157, Col: 111}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 151, Col: 111}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -351,7 +351,7 @@ func IngredientDetail(chemical *models.AromaChemical) templ.Component {
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(DefaultDash(chemical.Type))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 161, Col: 106}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 155, Col: 106}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -364,7 +364,7 @@ func IngredientDetail(chemical *models.AromaChemical) templ.Component {
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(DefaultDash(chemical.PyramidPosition))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 165, Col: 117}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 159, Col: 117}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
@@ -377,7 +377,7 @@ func IngredientDetail(chemical *models.AromaChemical) templ.Component {
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(DefaultDash(chemical.WheelPosition))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 169, Col: 115}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 163, Col: 115}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
@@ -390,7 +390,7 @@ func IngredientDetail(chemical *models.AromaChemical) templ.Component {
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(AromaChemicalPotencyLabel(chemical.Strength))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 173, Col: 124}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 167, Col: 124}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -403,7 +403,7 @@ func IngredientDetail(chemical *models.AromaChemical) templ.Component {
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(DefaultDash(chemical.Duration))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 177, Col: 110}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 171, Col: 110}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
@@ -421,7 +421,7 @@ func IngredientDetail(chemical *models.AromaChemical) templ.Component {
 				var templ_7745c5c3_Var21 string
 				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(chemical.Notes)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 183, Col: 105}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 177, Col: 105}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 				if templ_7745c5c3_Err != nil {
@@ -440,7 +440,7 @@ func IngredientDetail(chemical *models.AromaChemical) templ.Component {
 				var templ_7745c5c3_Var22 string
 				templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(chemical.Usage)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 189, Col: 105}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 183, Col: 105}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 				if templ_7745c5c3_Err != nil {
@@ -537,7 +537,7 @@ func FormulaList(formulas []models.Formula, filters FormulaFilters, total int) t
 		var templ_7745c5c3_Var25 string
 		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("Showing %d of %d formulas", len(formulas), total))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 237, Col: 96}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 231, Col: 96}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 		if templ_7745c5c3_Err != nil {
@@ -555,7 +555,7 @@ func FormulaList(formulas []models.Formula, filters FormulaFilters, total int) t
 			var templ_7745c5c3_Var26 string
 			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(filters.Query)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 240, Col: 91}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 234, Col: 91}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 			if templ_7745c5c3_Err != nil {
@@ -588,7 +588,7 @@ func FormulaList(formulas []models.Formula, filters FormulaFilters, total int) t
 				var templ_7745c5c3_Var27 string
 				templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(formula.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 261, Col: 124}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 255, Col: 124}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 				if templ_7745c5c3_Err != nil {
@@ -606,7 +606,7 @@ func FormulaList(formulas []models.Formula, filters FormulaFilters, total int) t
 					var templ_7745c5c3_Var28 string
 					templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(formula.Notes)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 263, Col: 130}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 257, Col: 130}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 					if templ_7745c5c3_Err != nil {
@@ -624,7 +624,7 @@ func FormulaList(formulas []models.Formula, filters FormulaFilters, total int) t
 				var templ_7745c5c3_Var29 string
 				templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(formula.Version)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 266, Col: 104}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 260, Col: 104}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 				if templ_7745c5c3_Err != nil {
@@ -637,7 +637,7 @@ func FormulaList(formulas []models.Formula, filters FormulaFilters, total int) t
 				var templ_7745c5c3_Var30 string
 				templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(templpkg.URL(fmt.Sprintf("/app/sections/formulas/detail?id=%d", formula.ID)))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 271, Col: 165}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 265, Col: 165}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 				if templ_7745c5c3_Err != nil {
@@ -695,7 +695,7 @@ func FormulaDetail(formula *models.Formula, ingredients []models.FormulaIngredie
 			var templ_7745c5c3_Var32 string
 			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(formula.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 296, Col: 91}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 290, Col: 91}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 			if templ_7745c5c3_Err != nil {
@@ -708,7 +708,7 @@ func FormulaDetail(formula *models.Formula, ingredients []models.FormulaIngredie
 			var templ_7745c5c3_Var33 string
 			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(formula.Version)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 297, Col: 114}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 291, Col: 114}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 			if templ_7745c5c3_Err != nil {
@@ -726,7 +726,7 @@ func FormulaDetail(formula *models.Formula, ingredients []models.FormulaIngredie
 				var templ_7745c5c3_Var34 string
 				templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(formula.Notes)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 302, Col: 104}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 296, Col: 104}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 				if templ_7745c5c3_Err != nil {
@@ -759,7 +759,7 @@ func FormulaDetail(formula *models.Formula, ingredients []models.FormulaIngredie
 					var templ_7745c5c3_Var35 string
 					templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(IngredientDisplayName(ingredient))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 323, Col: 137}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 317, Col: 137}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
 					if templ_7745c5c3_Err != nil {
@@ -772,7 +772,7 @@ func FormulaDetail(formula *models.Formula, ingredients []models.FormulaIngredie
 					var templ_7745c5c3_Var36 string
 					templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(IngredientSourceKind(ingredient))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 324, Col: 136}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 318, Col: 136}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 					if templ_7745c5c3_Err != nil {
@@ -785,7 +785,7 @@ func FormulaDetail(formula *models.Formula, ingredients []models.FormulaIngredie
 					var templ_7745c5c3_Var37 string
 					templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%.2f", ingredient.Amount))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 325, Col: 142}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 319, Col: 142}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 					if templ_7745c5c3_Err != nil {
@@ -798,7 +798,7 @@ func FormulaDetail(formula *models.Formula, ingredients []models.FormulaIngredie
 					var templ_7745c5c3_Var38 string
 					templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(ingredient.Unit)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 326, Col: 119}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 320, Col: 119}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 					if templ_7745c5c3_Err != nil {
@@ -856,7 +856,7 @@ func ReportsOverview(cards []ReportCard, events []ReportEvent, leaders []Ingredi
 			var templ_7745c5c3_Var40 string
 			templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(card.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 343, Col: 109}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 337, Col: 109}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 			if templ_7745c5c3_Err != nil {
@@ -869,7 +869,7 @@ func ReportsOverview(cards []ReportCard, events []ReportEvent, leaders []Ingredi
 			var templ_7745c5c3_Var41 string
 			templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(card.Metric)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 344, Col: 98}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 338, Col: 98}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 			if templ_7745c5c3_Err != nil {
@@ -882,7 +882,7 @@ func ReportsOverview(cards []ReportCard, events []ReportEvent, leaders []Ingredi
 			var templ_7745c5c3_Var42 string
 			templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs(card.Delta)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 345, Col: 112}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 339, Col: 112}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
 			if templ_7745c5c3_Err != nil {
@@ -895,7 +895,7 @@ func ReportsOverview(cards []ReportCard, events []ReportEvent, leaders []Ingredi
 			var templ_7745c5c3_Var43 string
 			templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(card.DeltaLabel)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 345, Col: 135}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 339, Col: 135}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
 			if templ_7745c5c3_Err != nil {
@@ -918,7 +918,7 @@ func ReportsOverview(cards []ReportCard, events []ReportEvent, leaders []Ingredi
 			var templ_7745c5c3_Var44 string
 			templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinStringErrs(event.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 354, Col: 97}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 348, Col: 97}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
 			if templ_7745c5c3_Err != nil {
@@ -931,7 +931,7 @@ func ReportsOverview(cards []ReportCard, events []ReportEvent, leaders []Ingredi
 			var templ_7745c5c3_Var45 string
 			templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.JoinStringErrs(formatAuditDate(event.Timestamp))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 355, Col: 139}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 349, Col: 139}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var45))
 			if templ_7745c5c3_Err != nil {
@@ -944,7 +944,7 @@ func ReportsOverview(cards []ReportCard, events []ReportEvent, leaders []Ingredi
 			var templ_7745c5c3_Var46 string
 			templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.JoinStringErrs(event.Summary)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 356, Col: 101}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 350, Col: 101}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var46))
 			if templ_7745c5c3_Err != nil {
@@ -967,7 +967,7 @@ func ReportsOverview(cards []ReportCard, events []ReportEvent, leaders []Ingredi
 			var templ_7745c5c3_Var47 string
 			templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.JoinStringErrs(item.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 366, Col: 65}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 360, Col: 65}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var47))
 			if templ_7745c5c3_Err != nil {
@@ -980,7 +980,7 @@ func ReportsOverview(cards []ReportCard, events []ReportEvent, leaders []Ingredi
 			var templ_7745c5c3_Var48 string
 			templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.JoinStringErrs(item.Velocity)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 367, Col: 126}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 361, Col: 126}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var48))
 			if templ_7745c5c3_Err != nil {
@@ -993,7 +993,7 @@ func ReportsOverview(cards []ReportCard, events []ReportEvent, leaders []Ingredi
 			var templ_7745c5c3_Var49 string
 			templ_7745c5c3_Var49, templ_7745c5c3_Err = templ.JoinStringErrs(item.Trend)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 367, Col: 144}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 361, Col: 144}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var49))
 			if templ_7745c5c3_Err != nil {
@@ -1045,7 +1045,7 @@ func PreferencesPanel(currentTheme string, themes []layout.ThemeDefinition) temp
 			var templ_7745c5c3_Var51 string
 			templ_7745c5c3_Var51, templ_7745c5c3_Err = templ.JoinStringErrs(option.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 390, Col: 131}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 384, Col: 131}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var51))
 			if templ_7745c5c3_Err != nil {
@@ -1058,7 +1058,7 @@ func PreferencesPanel(currentTheme string, themes []layout.ThemeDefinition) temp
 			var templ_7745c5c3_Var52 string
 			templ_7745c5c3_Var52, templ_7745c5c3_Err = templ.JoinStringErrs(option.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 391, Col: 124}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 385, Col: 124}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var52))
 			if templ_7745c5c3_Err != nil {
@@ -1071,7 +1071,7 @@ func PreferencesPanel(currentTheme string, themes []layout.ThemeDefinition) temp
 			var templ_7745c5c3_Var53 string
 			templ_7745c5c3_Var53, templ_7745c5c3_Err = templ.JoinStringErrs(option.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 396, Col: 89}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 390, Col: 89}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var53))
 			if templ_7745c5c3_Err != nil {
@@ -1084,7 +1084,7 @@ func PreferencesPanel(currentTheme string, themes []layout.ThemeDefinition) temp
 			var templ_7745c5c3_Var54 string
 			templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.JoinStringErrs(option.ID == currentTheme)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 397, Col: 107}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 391, Col: 107}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var54))
 			if templ_7745c5c3_Err != nil {
@@ -1139,7 +1139,7 @@ func PreferenceStatus(message string) templ.Component {
 		var templ_7745c5c3_Var56 string
 		templ_7745c5c3_Var56, templ_7745c5c3_Err = templ.JoinStringErrs(PreferenceStatusMessage(message))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 415, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/workspace_sections.templ`, Line: 409, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var56))
 		if templ_7745c5c3_Err != nil {
