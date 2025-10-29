@@ -68,3 +68,39 @@ func TestPreferenceStatusTemplateRenders(t *testing.T) {
 		t.Fatalf("expected rendered status to contain message, got %s", body)
 	}
 }
+
+func TestNextUntitledFormulaName(t *testing.T) {
+	cases := []struct {
+		name     string
+		existing []models.Formula
+		want     string
+	}{
+		{
+			name:     "no existing",
+			existing: nil,
+			want:     "Untitled Formula",
+		},
+		{
+			name: "fills gaps",
+			existing: []models.Formula{
+				{Name: "Untitled Formula"},
+				{Name: "Untitled Formula 2"},
+				{Name: "Citrus Bloom"},
+			},
+			want: "Untitled Formula 3",
+		},
+		{
+			name: "ignores casing",
+			existing: []models.Formula{
+				{Name: "untitled formula"},
+			},
+			want: "Untitled Formula 2",
+		},
+	}
+
+	for _, tc := range cases {
+		if got := NextUntitledFormulaName(tc.existing); got != tc.want {
+			t.Fatalf("%s: expected %s, got %s", tc.name, tc.want, got)
+		}
+	}
+}
