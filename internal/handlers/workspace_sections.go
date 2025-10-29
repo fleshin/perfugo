@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	templpkg "github.com/a-h/templ"
 	"gorm.io/gorm"
@@ -204,6 +206,299 @@ func FormulaDetail(w http.ResponseWriter, r *http.Request) {
 	ingredients := pages.FormulaIngredientsFor(snapshot.FormulaIngredients, id)
 
 	renderComponent(w, r, pages.FormulaDetail(formula, ingredients))
+}
+
+// FormulaEdit renders the edit form for a selected formula.
+func FormulaEdit(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	snapshot := buildWorkspaceSnapshot(r)
+	id := pages.ParseUint(r.URL.Query().Get("id"))
+	formula := pages.FindFormula(snapshot.Formulas, id)
+	ingredients := pages.FormulaIngredientsFor(snapshot.FormulaIngredients, id)
+
+	renderComponent(w, r, pages.FormulaEditor(formula, ingredients, snapshot.AromaChemicals, snapshot.Formulas, ""))
+}
+
+type formulaIngredientUpdate struct {
+	ID              uint
+	Amount          float64
+	Unit            string
+	AromaChemicalID *uint
+	SubFormulaID    *uint
+	RowKey          string
+}
+
+func parseIngredientSource(value string) (*uint, *uint, error) {
+	trimmed := strings.TrimSpace(value)
+	if trimmed == "" {
+		return nil, nil, errors.New("ingredient source missing")
+	}
+	parts := strings.SplitN(trimmed, ":", 2)
+	if len(parts) != 2 {
+		return nil, nil, fmt.Errorf("invalid ingredient source: %s", trimmed)
+	}
+	id := pages.ParseUint(parts[1])
+	if id == 0 {
+		return nil, nil, fmt.Errorf("invalid ingredient identifier: %s", trimmed)
+	}
+	switch parts[0] {
+	case "chem":
+		return &id, nil, nil
+	case "formula":
+		return nil, &id, nil
+	default:
+		return nil, nil, fmt.Errorf("unknown ingredient source prefix: %s", parts[0])
+	}
+}
+
+// FormulaUpdate processes edits submitted from the formula editor.
+func FormulaUpdate(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost && r.Method != http.MethodPut {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		applog.Error(r.Context(), "failed to parse formula form", "error", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	id := pages.ParseUint(r.FormValue("id"))
+	if id == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	snapshot := buildWorkspaceSnapshot(r)
+	formula := pages.FindFormula(snapshot.Formulas, id)
+	if formula == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	currentIngredients := pages.FormulaIngredientsFor(snapshot.FormulaIngredients, id)
+
+	name := strings.TrimSpace(r.FormValue("formula_name"))
+	if name == "" {
+		renderComponent(w, r, pages.FormulaEditor(formula, currentIngredients, snapshot.AromaChemicals, snapshot.Formulas, "Formula name is required."))
+		return
+	}
+
+	notes := strings.TrimSpace(r.FormValue("notes"))
+
+	versionInput := strings.TrimSpace(r.FormValue("version"))
+	versionValue := formula.Version
+	if versionInput != "" {
+		parsedVersion, err := strconv.Atoi(versionInput)
+		if err != nil {
+			renderComponent(w, r, pages.FormulaEditor(formula, currentIngredients, snapshot.AromaChemicals, snapshot.Formulas, "Version must be a whole number."))
+			return
+		}
+		if parsedVersion > 0 {
+			versionValue = parsedVersion
+		}
+	}
+
+	removals := map[string]struct{}{}
+	for _, key := range r.Form["ingredient_remove"] {
+		removals[strings.TrimSpace(key)] = struct{}{}
+	}
+
+	rowKeys := r.Form["ingredient_row_key"]
+	entryIDs := r.Form["ingredient_entry_id"]
+	sources := r.Form["ingredient_source"]
+	amounts := r.Form["ingredient_amount"]
+	units := r.Form["ingredient_unit"]
+
+	if len(rowKeys) != len(entryIDs) || len(rowKeys) != len(sources) || len(rowKeys) != len(amounts) || len(rowKeys) != len(units) {
+		applog.Error(r.Context(), "formula ingredient arrays misaligned",
+			"rowKeys", len(rowKeys),
+			"entryIDs", len(entryIDs),
+			"sources", len(sources),
+			"amounts", len(amounts),
+			"units", len(units),
+		)
+		renderComponent(w, r, pages.FormulaEditor(formula, currentIngredients, snapshot.AromaChemicals, snapshot.Formulas, "We couldn't process the ingredient list. Please try again."))
+		return
+	}
+
+	updates := make([]formulaIngredientUpdate, 0, len(rowKeys))
+	deletes := make([]uint, 0)
+	updatedIngredients := make([]models.FormulaIngredient, 0, len(rowKeys))
+
+	for i := range rowKeys {
+		rowKey := strings.TrimSpace(rowKeys[i])
+		entryID := pages.ParseUint(entryIDs[i])
+		source := strings.TrimSpace(sources[i])
+		amountInput := strings.TrimSpace(amounts[i])
+		unit := strings.TrimSpace(units[i])
+
+		if _, marked := removals[rowKey]; marked {
+			if entryID > 0 {
+				deletes = append(deletes, entryID)
+			}
+			continue
+		}
+
+		if source == "" && amountInput == "" && unit == "" && entryID == 0 {
+			continue
+		}
+
+		chemID, subID, err := parseIngredientSource(source)
+		if err != nil {
+			renderComponent(w, r, pages.FormulaEditor(formula, currentIngredients, snapshot.AromaChemicals, snapshot.Formulas, "Select an ingredient for each composition row before saving."))
+			return
+		}
+
+		if subID != nil && *subID == formula.ID {
+			renderComponent(w, r, pages.FormulaEditor(formula, currentIngredients, snapshot.AromaChemicals, snapshot.Formulas, "A formula cannot include itself as a sub-formula."))
+			return
+		}
+
+		amountValue := 0.0
+		if amountInput != "" {
+			parsedAmount, err := strconv.ParseFloat(amountInput, 64)
+			if err != nil {
+				renderComponent(w, r, pages.FormulaEditor(formula, currentIngredients, snapshot.AromaChemicals, snapshot.Formulas, "Ingredient amounts must be numbers."))
+				return
+			}
+			amountValue = parsedAmount
+		}
+
+		update := formulaIngredientUpdate{
+			ID:              entryID,
+			Amount:          amountValue,
+			Unit:            unit,
+			AromaChemicalID: chemID,
+			SubFormulaID:    subID,
+			RowKey:          rowKey,
+		}
+		updates = append(updates, update)
+
+		ingredientRecord := models.FormulaIngredient{
+			FormulaID:       formula.ID,
+			Amount:          amountValue,
+			Unit:            unit,
+			AromaChemicalID: chemID,
+			SubFormulaID:    subID,
+		}
+		ingredientRecord.ID = update.ID
+		if chemID != nil {
+			ingredientRecord.AromaChemical = pages.FindAromaChemical(snapshot.AromaChemicals, *chemID)
+		}
+		if subID != nil {
+			ingredientRecord.SubFormula = pages.FindFormula(snapshot.Formulas, *subID)
+		}
+		updatedIngredients = append(updatedIngredients, ingredientRecord)
+	}
+
+	status := "Formula updated successfully."
+
+	if database == nil {
+		formula.Name = name
+		formula.Notes = notes
+		if versionInput == "" || versionValue > 0 {
+			formula.Version = versionValue
+		}
+		renderComponent(w, r, pages.FormulaEditor(formula, updatedIngredients, snapshot.AromaChemicals, snapshot.Formulas, "Editing is unavailable because no database connection is configured."))
+		return
+	}
+
+	ctx := r.Context()
+	err := database.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		updatesMap := map[string]interface{}{
+			"name":  name,
+			"notes": notes,
+		}
+		if versionValue > 0 {
+			updatesMap["version"] = versionValue
+		}
+		if err := tx.Model(&models.Formula{}).Where("id = ?", id).Updates(updatesMap).Error; err != nil {
+			return err
+		}
+
+		if len(deletes) > 0 {
+			if err := tx.Where("id IN ?", deletes).Delete(&models.FormulaIngredient{}).Error; err != nil {
+				return err
+			}
+		}
+
+		for _, update := range updates {
+			if update.ID > 0 {
+				if err := tx.Model(&models.FormulaIngredient{}).
+					Where("id = ?", update.ID).
+					Updates(map[string]interface{}{
+						"amount":            update.Amount,
+						"unit":              update.Unit,
+						"aroma_chemical_id": update.AromaChemicalID,
+						"sub_formula_id":    update.SubFormulaID,
+					}).Error; err != nil {
+					return err
+				}
+			} else {
+				record := models.FormulaIngredient{
+					FormulaID:       id,
+					Amount:          update.Amount,
+					Unit:            update.Unit,
+					AromaChemicalID: update.AromaChemicalID,
+					SubFormulaID:    update.SubFormulaID,
+				}
+				if err := tx.Create(&record).Error; err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		applog.Error(ctx, "failed to update formula", "error", err, "formulaID", id)
+		renderComponent(w, r, pages.FormulaEditor(formula, currentIngredients, snapshot.AromaChemicals, snapshot.Formulas, "We couldn't save your changes. Please try again."))
+		return
+	}
+
+	refreshed := buildWorkspaceSnapshot(r)
+	updatedFormula := pages.FindFormula(refreshed.Formulas, id)
+	if updatedFormula == nil {
+		updatedFormula = formula
+	}
+	updatedComposition := pages.FormulaIngredientsFor(refreshed.FormulaIngredients, id)
+	renderComponent(w, r, pages.FormulaEditor(updatedFormula, updatedComposition, refreshed.AromaChemicals, refreshed.Formulas, status))
+}
+
+// FormulaIngredientRow returns an editable composition row for the formula editor.
+func FormulaIngredientRow(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		applog.Error(r.Context(), "failed to parse ingredient row request", "error", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	formulaID := pages.ParseUint(r.FormValue("formula_id"))
+	if formulaID == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	snapshot := buildWorkspaceSnapshot(r)
+	formula := pages.FindFormula(snapshot.Formulas, formulaID)
+	if formula == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	position := len(r.Form["ingredient_row_key"])
+	rowKey := fmt.Sprintf("new-%d", time.Now().UnixNano())
+	renderComponent(w, r, pages.FormulaIngredientEditorRow(rowKey, position, nil, snapshot.AromaChemicals, snapshot.Formulas, formula.ID))
 }
 
 func renderComponent(w http.ResponseWriter, r *http.Request, component templpkg.Component) {

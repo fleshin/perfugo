@@ -342,7 +342,7 @@ templ IngredientEditor(chemical *models.AromaChemical, status string) {
 
 templ FormulaManagement(snapshot WorkspaceSnapshot) {
         <section class="space-y-8" data-module="formulas">
-                <div class="app-card space-y-6 px-6 py-6">
+                <div class="app-card space-y-6 px-6 py-6 h-64 overflow-y-auto">
                         <form
                                 class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
                                 hx-get="/app/sections/formulas/list"
@@ -398,7 +398,7 @@ templ FormulaList(formulas []models.Formula, filters FormulaFilters, total int) 
                                                 <tr>
                                                         <th class="px-5 py-4">Formula</th>
                                                         <th class="px-5 py-4">Version</th>
-                                                        <th class="px-5 py-4 text-right">Open</th>
+                                                        <th class="px-5 py-4 text-right">Actions</th>
                                                 </tr>
                                         </thead>
                                         <tbody class="divide-y divide-white/10 bg-black/30">
@@ -421,6 +421,15 @@ templ FormulaList(formulas []models.Formula, filters FormulaFilters, total int) 
                                                                         >
                                                                                 View
                                                                         </button>
+                                                                        <button
+                                                                                type="button"
+                                                                                class="app-button app-button--ghost"
+                                                                                hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/formulas/edit?id=%d", formula.ID)) }
+                                                                                hx-target="#formula-detail"
+                                                                                hx-swap="innerHTML"
+                                                                        >
+                                                                                Edit
+                                                                        </button>
                                                                 </td>
                                                         </tr>
                                                 }
@@ -442,6 +451,17 @@ templ FormulaDetail(formula *models.Formula, ingredients []models.FormulaIngredi
                         <header class="space-y-1">
                                 <h3 class="text-xl font-semibold text-white">{ formula.Name }</h3>
                                 <p class="text-xs uppercase tracking-[0.35em] app-muted">Version { formula.Version }</p>
+                                <div class="flex justify-end">
+                                        <button
+                                                type="button"
+                                                class="app-button app-button--ghost"
+                                                hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/formulas/edit?id=%d", formula.ID)) }
+                                                hx-target="#formula-detail"
+                                                hx-swap="innerHTML"
+                                        >
+                                                Edit formula
+                                        </button>
+                                </div>
                         </header>
                         if strings.TrimSpace(formula.Notes) != "" {
                                 <div class="space-y-2">
@@ -480,6 +500,201 @@ templ FormulaDetail(formula *models.Formula, ingredients []models.FormulaIngredi
                         </div>
                 </div>
         }
+}
+
+templ FormulaEditor(
+        formula *models.Formula,
+        ingredients []models.FormulaIngredient,
+        chemicals []models.AromaChemical,
+        formulas []models.Formula,
+        status string,
+) {
+        if formula == nil {
+                <div class="space-y-3 text-center">
+                        <p class="text-sm font-semibold text-white">Select a formula to edit</p>
+                        <p class="text-sm app-muted">Choose a composition from the library to adjust its structure.</p>
+                </div>
+        } else {
+                <form
+                        class="space-y-6"
+                        hx-post="/app/sections/formulas/update"
+                        hx-target="#formula-detail"
+                        hx-swap="innerHTML"
+                >
+                        <input type="hidden" name="id" value={ fmt.Sprintf("%d", formula.ID) } />
+                        if strings.TrimSpace(status) != "" {
+                                <div class="app-alert app-card--flat text-left text-sm">{ status }</div>
+                        }
+                        <div class="grid gap-4 sm:grid-cols-2">
+                                <div class="space-y-2">
+                                        <label class="text-xs uppercase tracking-[0.35em] app-muted" for="formula-name">
+                                                Formula name
+                                        </label>
+                                        <input
+                                                id="formula-name"
+                                                name="formula_name"
+                                                type="text"
+                                                class="app-input w-full"
+                                                required
+                                                value={ formula.Name }
+                                        />
+                                </div>
+                                <div class="space-y-2">
+                                        <label class="text-xs uppercase tracking-[0.35em] app-muted" for="formula-version">
+                                                Version
+                                        </label>
+                                        <input
+                                                id="formula-version"
+                                                name="version"
+                                                type="number"
+                                                class="app-input w-full"
+                                                value={ fmt.Sprintf("%d", formula.Version) }
+                                        />
+                                </div>
+                        </div>
+                        <div class="space-y-2">
+                                <label class="text-xs uppercase tracking-[0.35em] app-muted" for="formula-notes">
+                                        Notes
+                                </label>
+                                <textarea
+                                        id="formula-notes"
+                                        name="notes"
+                                        class="app-input w-full min-h-[7rem]"
+                                >{ formula.Notes }</textarea>
+                        </div>
+                        <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                        <h4 class="text-sm font-semibold text-white">Composition</h4>
+                                        <button
+                                                type="button"
+                                                class="app-button app-button--ghost"
+                                                hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/formulas/ingredient-row?formula_id=%d", formula.ID)) }
+                                                hx-include="closest form"
+                                                hx-target="#formula-ingredient-rows"
+                                                hx-swap="beforeend"
+                                        >
+                                                Add ingredient
+                                        </button>
+                                </div>
+                                <div id="formula-ingredient-rows" class="space-y-4">
+                                        if len(ingredients) == 0 {
+                                                @FormulaIngredientEditorRow(
+                                                        fmt.Sprintf("new-%d", 0),
+                                                        0,
+                                                        nil,
+                                                        chemicals,
+                                                        formulas,
+                                                        formula.ID,
+                                                )
+                                        } else {
+                                                for index, ingredient := range ingredients {
+                                                        @FormulaIngredientEditorRow(
+                                                                FormulaIngredientRowKey(ingredient, index),
+                                                                index,
+                                                                &ingredient,
+                                                                chemicals,
+                                                                formulas,
+                                                                formula.ID,
+                                                        )
+                                                }
+                                        }
+                                </div>
+                        </div>
+                        <div class="flex items-center justify-end gap-2">
+                                <button
+                                        type="button"
+                                        class="app-button app-button--ghost"
+                                        hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/formulas/detail?id=%d", formula.ID)) }
+                                        hx-target="#formula-detail"
+                                        hx-swap="innerHTML"
+                                >
+                                        Cancel
+                                </button>
+                                <button type="submit" class="app-button">Save changes</button>
+                        </div>
+                </form>
+        }
+}
+
+templ FormulaIngredientEditorRow(
+        rowKey string,
+        index int,
+        ingredient *models.FormulaIngredient,
+        chemicals []models.AromaChemical,
+        formulas []models.Formula,
+        currentFormulaID uint,
+) {
+        <div id={ fmt.Sprintf("ingredient-row-%s", rowKey) } class="rounded-3xl border border-white/10 bg-black/30 px-5 py-5 space-y-4">
+                <input type="hidden" name="ingredient_row_key" value={ rowKey } />
+                <input type="hidden" name="ingredient_entry_id" value={ FormulaIngredientEntryID(ingredient) } />
+                <div class="grid gap-4 sm:grid-cols-4">
+                        <div class="space-y-2 sm:col-span-2">
+                                <label class="text-xs uppercase tracking-[0.35em] app-muted" for={ fmt.Sprintf("ingredient-source-%d", index) }>
+                                        Source ingredient
+                                </label>
+                                <select
+                                        id={ fmt.Sprintf("ingredient-source-%d", index) }
+                                        name="ingredient_source"
+                                        class="app-input w-full"
+                                >
+                                        <option value="">Select ingredient</option>
+                                        if len(chemicals) > 0 {
+                                                <optgroup label="Aroma Chemicals">
+                                                        for _, chemical := range chemicals {
+                                                                <option value={ fmt.Sprintf("chem:%d", chemical.ID) } selected={ FormulaIngredientSourceValue(ingredient) == fmt.Sprintf("chem:%d", chemical.ID) }>
+                                                                        { chemical.IngredientName }
+                                                                </option>
+                                                        }
+                                                </optgroup>
+                                        }
+                                        if len(formulas) > 0 {
+                                                <optgroup label="Sub-Formulas">
+                                                        for _, option := range formulas {
+                                                                if option.ID == currentFormulaID {
+                                                                        continue
+                                                                }
+                                                                <option value={ fmt.Sprintf("formula:%d", option.ID) } selected={ FormulaIngredientSourceValue(ingredient) == fmt.Sprintf("formula:%d", option.ID) }>
+                                                                        { option.Name }
+                                                                </option>
+                                                        }
+                                                </optgroup>
+                                        }
+                                </select>
+                        </div>
+                        <div class="space-y-2">
+                                <label class="text-xs uppercase tracking-[0.35em] app-muted" for={ fmt.Sprintf("ingredient-amount-%d", index) }>
+                                        Amount
+                                </label>
+                                <input
+                                        id={ fmt.Sprintf("ingredient-amount-%d", index) }
+                                        name="ingredient_amount"
+                                        type="number"
+                                        step="0.01"
+                                        class="app-input w-full"
+                                        value={ FormulaIngredientAmountValue(ingredient) }
+                                />
+                        </div>
+                        <div class="space-y-2">
+                                <label class="text-xs uppercase tracking-[0.35em] app-muted" for={ fmt.Sprintf("ingredient-unit-%d", index) }>
+                                        Unit
+                                </label>
+                                <input
+                                        id={ fmt.Sprintf("ingredient-unit-%d", index) }
+                                        name="ingredient_unit"
+                                        type="text"
+                                        class="app-input w-full"
+                                        value={ FormulaIngredientUnitValue(ingredient) }
+                                />
+                        </div>
+                </div>
+                <div class="flex items-center justify-between">
+                        <span class="text-xs uppercase tracking-[0.35em] app-muted">Ingredient { index + 1 }</span>
+                        <label class="flex items-center gap-2 text-xs uppercase tracking-[0.35em] app-muted">
+                                <input type="checkbox" name="ingredient_remove" value={ rowKey } class="app-checkbox" />
+                                Remove from formula
+                        </label>
+                </div>
+        </div>
 }
 
 templ ReportsOverview(cards []ReportCard, events []ReportEvent, leaders []IngredientPerformance) {
