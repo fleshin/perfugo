@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"fmt"
 	"sort"
 
 	"perfugo/models"
@@ -75,4 +76,50 @@ func (s WorkspaceSnapshot) FormulaLookup() map[uint]string {
 		lookup[uint(formula.ID)] = formula.Name
 	}
 	return lookup
+}
+
+// FormulaIngredientRowKey generates a stable identifier for an ingredient row within the editor form.
+func FormulaIngredientRowKey(ingredient models.FormulaIngredient, index int) string {
+	if ingredient.ID == 0 {
+		return fmt.Sprintf("new-%d", index)
+	}
+	return fmt.Sprintf("existing-%d", ingredient.ID)
+}
+
+// FormulaIngredientEntryID returns the identifier for the ingredient row, defaulting to zero for new entries.
+func FormulaIngredientEntryID(ingredient *models.FormulaIngredient) string {
+	if ingredient == nil || ingredient.ID == 0 {
+		return "0"
+	}
+	return fmt.Sprintf("%d", ingredient.ID)
+}
+
+// FormulaIngredientSourceValue returns the encoded select value for the ingredient's source.
+func FormulaIngredientSourceValue(ingredient *models.FormulaIngredient) string {
+	if ingredient == nil {
+		return ""
+	}
+	if ingredient.AromaChemicalID != nil {
+		return fmt.Sprintf("chem:%d", *ingredient.AromaChemicalID)
+	}
+	if ingredient.SubFormulaID != nil {
+		return fmt.Sprintf("formula:%d", *ingredient.SubFormulaID)
+	}
+	return ""
+}
+
+// FormulaIngredientAmountValue formats the ingredient amount for display in the editor.
+func FormulaIngredientAmountValue(ingredient *models.FormulaIngredient) string {
+	if ingredient == nil {
+		return ""
+	}
+	return fmt.Sprintf("%.2f", ingredient.Amount)
+}
+
+// FormulaIngredientUnitValue returns the unit text for the ingredient row.
+func FormulaIngredientUnitValue(ingredient *models.FormulaIngredient) string {
+	if ingredient == nil {
+		return ""
+	}
+	return ingredient.Unit
 }
