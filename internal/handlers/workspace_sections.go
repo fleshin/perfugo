@@ -208,6 +208,71 @@ func FormulaDetail(w http.ResponseWriter, r *http.Request) {
 	renderComponent(w, r, pages.FormulaDetail(formula, ingredients))
 }
 
+// FormulaCreate initialises a new, empty formula and opens it in the editor.
+func FormulaCreate(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	filters := pages.FormulaFiltersFromRequest(r)
+	snapshot := buildWorkspaceSnapshot(r)
+	filtered := pages.FilterFormulas(snapshot.Formulas, filters)
+	total := len(snapshot.Formulas)
+
+	if database == nil {
+		message := "Creating formulas is unavailable because no database connection is configured."
+		renderComponent(w, r, pages.FormulaCreationError(message, filtered, filters, total))
+		return
+	}
+
+	name := pages.NextUntitledFormulaName(snapshot.Formulas)
+	record := models.Formula{
+		Name:    name,
+		Version: 1,
+	}
+
+	ctx := r.Context()
+	if err := database.WithContext(ctx).Create(&record).Error; err != nil {
+		applog.Error(ctx, "failed to create formula", "error", err)
+		renderComponent(w, r, pages.FormulaCreationError("We couldn't start a new formula. Please try again.", filtered, filters, total))
+		return
+	}
+
+	refreshed := buildWorkspaceSnapshot(r)
+	created := pages.FindFormula(refreshed.Formulas, record.ID)
+	if created == nil {
+		created = &record
+	}
+	ingredients := pages.FormulaIngredientsFor(refreshed.FormulaIngredients, created.ID)
+
+	refreshedFiltered := pages.FilterFormulas(refreshed.Formulas, filters)
+	if filters.Query != "" {
+		found := false
+		for _, formula := range refreshedFiltered {
+			if formula.ID == created.ID {
+				found = true
+				break
+			}
+		}
+		if !found {
+			refreshedFiltered = append([]models.Formula{*created}, refreshedFiltered...)
+		}
+	}
+
+	status := "New formula created. Give it a name and start composing."
+	renderComponent(w, r, pages.FormulaCreationSuccess(
+		created,
+		ingredients,
+		refreshed.AromaChemicals,
+		refreshed.Formulas,
+		refreshedFiltered,
+		filters,
+		len(refreshed.Formulas),
+		status,
+	))
+}
+
 // FormulaEdit renders the edit form for a selected formula.
 func FormulaEdit(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
