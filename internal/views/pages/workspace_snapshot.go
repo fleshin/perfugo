@@ -3,6 +3,7 @@ package pages
 import (
 	"fmt"
 	"sort"
+	"strconv"
 
 	"perfugo/models"
 )
@@ -113,7 +114,7 @@ func FormulaIngredientAmountValue(ingredient *models.FormulaIngredient) string {
 	if ingredient == nil {
 		return ""
 	}
-	return fmt.Sprintf("%.2f", ingredient.Amount)
+	return strconv.FormatFloat(ingredient.Amount, 'f', -1, 64)
 }
 
 // FormulaIngredientUnitValue returns the unit text for the ingredient row.

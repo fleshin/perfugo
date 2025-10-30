@@ -342,7 +342,7 @@ templ IngredientEditor(chemical *models.AromaChemical, status string) {
 
 templ FormulaManagement(snapshot WorkspaceSnapshot) {
         <section class="space-y-8" data-module="formulas">
-                <div class="app-card space-y-6 px-6 py-6 h-64 overflow-y-auto">
+                <div class="app-card flex h-64 min-h-0 flex-col space-y-6 px-6 py-6">
                         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                                 <form
                                         class="flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-4 sm:flex-1"
@@ -378,11 +378,13 @@ templ FormulaManagement(snapshot WorkspaceSnapshot) {
                                         New formula
                                 </button>
                         </div>
-                        @FormulaList(
-                                FilterFormulas(snapshot.Formulas, FormulaFilters{}),
-                                FormulaFilters{},
-                                len(snapshot.Formulas),
-                        )
+                        <div class="flex-1 min-h-0 overflow-hidden">
+                                @FormulaList(
+                                        FilterFormulas(snapshot.Formulas, FormulaFilters{}),
+                                        FormulaFilters{},
+                                        len(snapshot.Formulas),
+                                )
+                        </div>
                 </div>
                 <div id="formula-detail" class="app-card px-6 py-6">
                         @FormulaDetail(nil, nil)
@@ -391,74 +393,73 @@ templ FormulaManagement(snapshot WorkspaceSnapshot) {
 }
 
 templ formulaListContent(formulas []models.Formula, filters FormulaFilters, total int) {
-        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                <p class="text-xs uppercase tracking-[0.35em] app-muted">
-                        { fmt.Sprintf("Showing %d of %d formulas", len(formulas), total) }
-                </p>
+        <div class="flex h-full min-h-0 flex-col space-y-4">
                 if strings.TrimSpace(filters.Query) != "" {
                         <p class="text-xs app-muted">Filtered by “{ filters.Query }”.</p>
                 }
+                if len(formulas) == 0 {
+                        <div class="flex-1 rounded-3xl border border-white/15 bg-white/5 px-6 py-10 text-center text-sm app-muted">
+                                No formulas match the current filter.
+                        </div>
+                } else {
+                        <div class="flex-1 min-h-0 overflow-hidden rounded-3xl border border-white/10">
+                                <div class="h-full overflow-y-auto">
+                                        <table class="min-w-full divide-y divide-white/10 text-left text-sm text-white/80">
+                                                <thead class="bg-white/5 text-xs font-medium uppercase tracking-[0.35em] text-white/50">
+                                                        <tr>
+                                                                <th class="px-5 py-4">Formula</th>
+                                                                <th class="px-5 py-4">Version</th>
+                                                                <th class="px-5 py-4 text-right">Actions</th>
+                                                        </tr>
+                                                </thead>
+                                                <tbody class="divide-y divide-white/10 bg-black/30">
+                                                        for _, formula := range formulas {
+                                                                <tr class="text-white/80">
+                                                                        <td class="px-5 py-4">
+                                                                                <div class="font-semibold text-white">{ formula.Name }</div>
+                                                                                if strings.TrimSpace(formula.Notes) != "" {
+                                                                                        <div class="text-xs text-white/50">{ formula.Notes }</div>
+                                                                                }
+                                                                        </td>
+                                                                        <td class="px-5 py-4">v{ formula.Version }</td>
+                                                                        <td class="px-5 py-4 text-right">
+                                                                                <button
+                                                                                        type="button"
+                                                                                        class="app-button"
+                                                                                        hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/formulas/detail?id=%d", formula.ID)) }
+                                                                                        hx-target="#formula-detail"
+                                                                                        hx-swap="innerHTML"
+                                                                                >
+                                                                                        View
+                                                                                </button>
+                                                                                <button
+                                                                                        type="button"
+                                                                                        class="app-button app-button--ghost"
+                                                                                        hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/formulas/edit?id=%d", formula.ID)) }
+                                                                                        hx-target="#formula-detail"
+                                                                                        hx-swap="innerHTML"
+                                                                                >
+                                                                                        Edit
+                                                                                </button>
+                                                                        </td>
+                                                                </tr>
+                                                        }
+                                                </tbody>
+                                        </table>
+                                </div>
+                        </div>
+                }
         </div>
-        if len(formulas) == 0 {
-                <div class="rounded-3xl border border-white/15 bg-white/5 px-6 py-10 text-center text-sm app-muted">
-                        No formulas match the current filter.
-                </div>
-        } else {
-                <div class="overflow-hidden rounded-3xl border border-white/10">
-                        <table class="min-w-full divide-y divide-white/10 text-left text-sm text-white/80">
-                                <thead class="bg-white/5 text-xs font-medium uppercase tracking-[0.35em] text-white/50">
-                                        <tr>
-                                                <th class="px-5 py-4">Formula</th>
-                                                <th class="px-5 py-4">Version</th>
-                                                <th class="px-5 py-4 text-right">Actions</th>
-                                        </tr>
-                                </thead>
-                                <tbody class="divide-y divide-white/10 bg-black/30">
-                                        for _, formula := range formulas {
-                                                <tr class="text-white/80">
-                                                        <td class="px-5 py-4">
-                                                                <div class="font-semibold text-white">{ formula.Name }</div>
-                                                                if strings.TrimSpace(formula.Notes) != "" {
-                                                                        <div class="text-xs text-white/50">{ formula.Notes }</div>
-                                                                }
-                                                        </td>
-                                                        <td class="px-5 py-4">v{ formula.Version }</td>
-                                                        <td class="px-5 py-4 text-right">
-                                                                <button
-                                                                        type="button"
-                                                                        class="app-button"
-                                                                        hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/formulas/detail?id=%d", formula.ID)) }
-                                                                        hx-target="#formula-detail"
-                                                                        hx-swap="innerHTML"
-                                                                >
-                                                                        View
-                                                                </button>
-                                                                <button
-                                                                        type="button"
-                                                                        class="app-button app-button--ghost"
-                                                                        hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/formulas/edit?id=%d", formula.ID)) }
-                                                                        hx-target="#formula-detail"
-                                                                        hx-swap="innerHTML"
-                                                                >
-                                                                        Edit
-                                                                </button>
-                                                        </td>
-                                                </tr>
-                                        }
-                                </tbody>
-                        </table>
-                </div>
-        }
 }
 
 templ FormulaList(formulas []models.Formula, filters FormulaFilters, total int) {
-        <div id="formula-list" class="space-y-4">
+        <div id="formula-list" class="h-full min-h-0">
                 @formulaListContent(formulas, filters, total)
         </div>
 }
 
 templ FormulaListOOB(formulas []models.Formula, filters FormulaFilters, total int) {
-        <div id="formula-list" hx-swap-oob="true" class="space-y-4">
+        <div id="formula-list" hx-swap-oob="true" class="h-full min-h-0">
                 @formulaListContent(formulas, filters, total)
         </div>
 }
@@ -543,6 +544,7 @@ templ FormulaEditor(
                         hx-post="/app/sections/formulas/update"
                         hx-target="#formula-detail"
                         hx-swap="innerHTML"
+                        hx-include="#formula-search"
                 >
                         <input type="hidden" name="id" value={ fmt.Sprintf("%d", formula.ID) } />
                         if strings.TrimSpace(status) != "" {
@@ -608,13 +610,13 @@ templ FormulaEditor(
                                                         chemicals,
                                                         formulas,
                                                         formula.ID,
-                                                )
+                                        )
                                         } else {
-                                                for index, ingredient := range ingredients {
+                                                for index := range ingredients {
                                                         @FormulaIngredientEditorRow(
-                                                                FormulaIngredientRowKey(ingredient, index),
+                                                                FormulaIngredientRowKey(ingredients[index], index),
                                                                 index,
-                                                                &ingredient,
+                                                                &ingredients[index],
                                                                 chemicals,
                                                                 formulas,
                                                                 formula.ID,

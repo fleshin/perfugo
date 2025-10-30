@@ -526,13 +526,37 @@ func FormulaUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	filters := pages.FormulaFiltersFromRequest(r)
 	refreshed := buildWorkspaceSnapshot(r)
 	updatedFormula := pages.FindFormula(refreshed.Formulas, id)
 	if updatedFormula == nil {
 		updatedFormula = formula
 	}
 	updatedComposition := pages.FormulaIngredientsFor(refreshed.FormulaIngredients, id)
-	renderComponent(w, r, pages.FormulaEditor(updatedFormula, updatedComposition, refreshed.AromaChemicals, refreshed.Formulas, status))
+	refreshedFiltered := pages.FilterFormulas(refreshed.Formulas, filters)
+	if filters.Query != "" && updatedFormula != nil {
+		found := false
+		for _, candidate := range refreshedFiltered {
+			if candidate.ID == updatedFormula.ID {
+				found = true
+				break
+			}
+		}
+		if !found {
+			refreshedFiltered = append([]models.Formula{*updatedFormula}, refreshedFiltered...)
+		}
+	}
+
+	renderComponent(w, r, pages.FormulaCreationSuccess(
+		updatedFormula,
+		updatedComposition,
+		refreshed.AromaChemicals,
+		refreshed.Formulas,
+		refreshedFiltered,
+		filters,
+		len(refreshed.Formulas),
+		status,
+	))
 }
 
 // FormulaIngredientRow returns an editable composition row for the formula editor.

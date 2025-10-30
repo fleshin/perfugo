@@ -1,11 +1,13 @@
 package pages
 
 import (
+	"bytes"
 	"context"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"gorm.io/gorm"
 	"perfugo/models"
 )
 
@@ -102,5 +104,47 @@ func TestNextUntitledFormulaName(t *testing.T) {
 		if got := NextUntitledFormulaName(tc.existing); got != tc.want {
 			t.Fatalf("%s: expected %s, got %s", tc.name, tc.want, got)
 		}
+	}
+}
+
+func TestFormulaEditorSelectsEachIngredientSource(t *testing.T) {
+	u := func(v uint) *uint { return &v }
+
+	formula := models.Formula{Model: gorm.Model{ID: 42}, Name: "Celestial Blend"}
+	chemicals := []models.AromaChemical{
+		{Model: gorm.Model{ID: 1}, IngredientName: "Ambroxan"},
+		{Model: gorm.Model{ID: 2}, IngredientName: "Bergamot"},
+	}
+	ingredients := []models.FormulaIngredient{
+		{
+			Model:           gorm.Model{ID: 101},
+			FormulaID:       formula.ID,
+			AromaChemicalID: u(1),
+			AromaChemical:   &chemicals[0],
+			Amount:          10,
+			Unit:            "g",
+		},
+		{
+			Model:           gorm.Model{ID: 102},
+			FormulaID:       formula.ID,
+			AromaChemicalID: u(2),
+			AromaChemical:   &chemicals[1],
+			Amount:          5,
+			Unit:            "g",
+		},
+	}
+
+	var buf bytes.Buffer
+	err := FormulaEditor(&formula, ingredients, chemicals, []models.Formula{formula}, "").Render(context.Background(), &buf)
+	if err != nil {
+		t.Fatalf("render formula editor: %v", err)
+	}
+
+	html := buf.String()
+	if strings.Count(html, `value="chem:1" selected`) != 1 {
+		t.Fatalf("expected chem:1 option selected once, got html: %s", html)
+	}
+	if strings.Count(html, `value="chem:2" selected`) != 1 {
+		t.Fatalf("expected chem:2 option selected once, got html: %s", html)
 	}
 }
