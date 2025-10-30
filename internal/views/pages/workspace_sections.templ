@@ -31,7 +31,7 @@ type IngredientPerformance struct {
 
 templ IngredientManagement(snapshot WorkspaceSnapshot) {
         <section class="space-y-8" data-module="ingredients">
-                <div class="app-card space-y-6 px-6 py-6 h-64 overflow-y-auto">
+                <div class="app-card flex h-64 min-h-0 flex-col space-y-6 px-6 py-6">
                         <form
                                 class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
                                 hx-get="/app/sections/ingredients/table"
@@ -54,11 +54,13 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
                                 </div>
                                 <button type="submit" class="app-button w-full sm:w-auto">Filter</button>
                         </form>
-                        @IngredientTable(
-                                FilterAromaChemicals(snapshot.AromaChemicals, IngredientFilters{}),
-                                IngredientFilters{},
-                                len(snapshot.AromaChemicals),
-                        )
+                        <div class="flex-1 min-h-0 overflow-hidden">
+                                @IngredientTable(
+                                        FilterAromaChemicals(snapshot.AromaChemicals, IngredientFilters{}),
+                                        IngredientFilters{},
+                                        len(snapshot.AromaChemicals),
+                                )
+                        </div>
                 </div>
                 <div id="ingredient-detail" class="app-card px-6 py-6">
                         @IngredientDetail(nil)
@@ -67,78 +69,77 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
 }
 
 templ IngredientTable(chemicals []models.AromaChemical, filters IngredientFilters, total int) {
-        <div id="ingredient-table" class="space-y-4">
-                <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                        <p class="text-xs uppercase tracking-[0.35em] app-muted">
-                                { fmt.Sprintf("Showing %d of %d ingredients", len(chemicals), total) }
-                        </p>
+        <div id="ingredient-table" class="h-full min-h-0">
+                <div class="flex h-full min-h-0 flex-col space-y-4">
                         if strings.TrimSpace(filters.Query) != "" {
                                 <p class="text-xs app-muted">Filtered by “{ filters.Query }”.</p>
                         }
+                        if len(chemicals) == 0 {
+                                <div class="flex-1 rounded-3xl border border-white/15 bg-white/5 px-6 py-10 text-center text-sm app-muted">
+                                        No aroma chemicals match the current filter.
+                                </div>
+                        } else {
+                                <div class="flex-1 min-h-0 overflow-hidden rounded-3xl border border-white/10">
+                                        <div class="h-full overflow-y-auto">
+                                                <table class="min-w-full divide-y divide-white/10 text-left text-sm text-white/80">
+                                                        <thead class="bg-white/5 text-xs font-medium uppercase tracking-[0.35em] text-white/50">
+                                                                <tr>
+                                                                        <th class="px-5 py-4">Ingredient</th>
+                                                                        <th class="px-5 py-4">Pyramid</th>
+                                                                        <th class="px-5 py-4">Wheel</th>
+                                                                        <th class="px-5 py-4">Potency</th>
+                                                                        <th class="px-5 py-4 text-right">Details</th>
+                                                                </tr>
+                                                        </thead>
+                                                        <tbody class="divide-y divide-white/10 bg-black/30">
+                                                                for _, chemical := range chemicals {
+                                                                        <tr class="text-white/80">
+                                                                                <td class="px-5 py-4">
+                                                                                        <div class="font-semibold text-white">{ chemical.IngredientName }</div>
+                                                                                        <div class="text-xs text-white/50">
+                                                                                                if chemical.CASNumber != "" {
+                                                                                                        CAS { chemical.CASNumber }
+                                                                                                } else {
+                                                                                                        CAS Unknown
+                                                                                                }
+                                                                                        </div>
+                                                                                </td>
+                                                                                <td class="px-5 py-4">{ DefaultDash(chemical.PyramidPosition) }</td>
+                                                                                <td class="px-5 py-4">{ DefaultDash(chemical.WheelPosition) }</td>
+                                                                                <td class="px-5 py-4">
+                                                                                        <div class="font-semibold text-white">{ AromaChemicalPotencyLabel(chemical.Strength) }</div>
+                                                                                        <div class="text-xs text-white/50">Strength { chemical.Strength }</div>
+                                                                                </td>
+                                                                                <td class="px-5 py-4">
+                                                                                        <div class="flex justify-end gap-2">
+                                                                                                <button
+                                                                                                        type="button"
+                                                                                                        class="app-button"
+                                                                                                        hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/ingredients/detail?id=%d", chemical.ID)) }
+                                                                                                        hx-target="#ingredient-detail"
+                                                                                                        hx-swap="innerHTML"
+                                                                                                >
+                                                                                                        View
+                                                                                                </button>
+                                                                                                <button
+                                                                                                        type="button"
+                                                                                                        class="app-button app-button--ghost"
+                                                                                                        hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/ingredients/edit?id=%d", chemical.ID)) }
+                                                                                                        hx-target="#ingredient-detail"
+                                                                                                        hx-swap="innerHTML"
+                                                                                                >
+                                                                                                        Edit
+                                                                                                </button>
+                                                                                        </div>
+                                                                                </td>
+                                                                        </tr>
+                                                                }
+                                                        </tbody>
+                                                </table>
+                                        </div>
+                                </div>
+                        }
                 </div>
-                if len(chemicals) == 0 {
-                        <div class="rounded-3xl border border-white/15 bg-white/5 px-6 py-10 text-center text-sm app-muted">
-                                No aroma chemicals match the current filter.
-                        </div>
-                } else {
-                        <div class="overflow-hidden rounded-3xl border border-white/10">
-                                <table class="min-w-full divide-y divide-white/10 text-left text-sm text-white/80">
-                                        <thead class="bg-white/5 text-xs font-medium uppercase tracking-[0.35em] text-white/50">
-                                                <tr>
-                                                        <th class="px-5 py-4">Ingredient</th>
-                                                        <th class="px-5 py-4">Pyramid</th>
-                                                        <th class="px-5 py-4">Wheel</th>
-                                                        <th class="px-5 py-4">Potency</th>
-                                                        <th class="px-5 py-4 text-right">Details</th>
-                                                </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-white/10 bg-black/30">
-                                                for _, chemical := range chemicals {
-                                                        <tr class="text-white/80">
-                                                                <td class="px-5 py-4">
-                                                                        <div class="font-semibold text-white">{ chemical.IngredientName }</div>
-                                                                        <div class="text-xs text-white/50">
-                                                                                if chemical.CASNumber != "" {
-                                                                                        CAS { chemical.CASNumber }
-                                                                                } else {
-                                                                                        CAS Unknown
-                                                                                }
-                                                                        </div>
-                                                                </td>
-                                                                <td class="px-5 py-4">{ DefaultDash(chemical.PyramidPosition) }</td>
-                                                                <td class="px-5 py-4">{ DefaultDash(chemical.WheelPosition) }</td>
-                                                                <td class="px-5 py-4">
-                                                                        <div class="font-semibold text-white">{ AromaChemicalPotencyLabel(chemical.Strength) }</div>
-                                                                        <div class="text-xs text-white/50">Strength { chemical.Strength }</div>
-                                                                </td>
-                                                                <td class="px-5 py-4">
-                                                                        <div class="flex justify-end gap-2">
-                                                                                <button
-                                                                                        type="button"
-                                                                                        class="app-button"
-                                                                                        hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/ingredients/detail?id=%d", chemical.ID)) }
-                                                                                        hx-target="#ingredient-detail"
-                                                                                        hx-swap="innerHTML"
-                                                                                >
-                                                                                        View
-                                                                                </button>
-                                                                                <button
-                                                                                        type="button"
-                                                                                        class="app-button app-button--ghost"
-                                                                                        hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/ingredients/edit?id=%d", chemical.ID)) }
-                                                                                        hx-target="#ingredient-detail"
-                                                                                        hx-swap="innerHTML"
-                                                                                >
-                                                                                        Edit
-                                                                                </button>
-                                                                        </div>
-                                                                </td>
-                                                        </tr>
-                                                }
-                                        </tbody>
-                                </table>
-                        </div>
-                }
         </div>
 }
 
@@ -693,7 +694,7 @@ templ FormulaIngredientEditorRow(
                                         if len(chemicals) > 0 {
                                                 <optgroup label="Aroma Chemicals">
                                                         for _, chemical := range chemicals {
-                                                                <option value={ fmt.Sprintf("chem:%d", chemical.ID) } selected={ FormulaIngredientSourceValue(ingredient) == fmt.Sprintf("chem:%d", chemical.ID) }>
+                                                                <option value={ fmt.Sprintf("chem:%d", chemical.ID) } selected?={ FormulaIngredientSourceValue(ingredient) == fmt.Sprintf("chem:%d", chemical.ID) }>
                                                                         { chemical.IngredientName }
                                                                 </option>
                                                         }
@@ -705,7 +706,7 @@ templ FormulaIngredientEditorRow(
                                                                 if option.ID == currentFormulaID {
                                                                         continue
                                                                 }
-                                                                <option value={ fmt.Sprintf("formula:%d", option.ID) } selected={ FormulaIngredientSourceValue(ingredient) == fmt.Sprintf("formula:%d", option.ID) }>
+                                                                <option value={ fmt.Sprintf("formula:%d", option.ID) } selected?={ FormulaIngredientSourceValue(ingredient) == fmt.Sprintf("formula:%d", option.ID) }>
                                                                         { option.Name }
                                                                 </option>
                                                         }

@@ -100,11 +100,19 @@ func FormulaIngredientSourceValue(ingredient *models.FormulaIngredient) string {
 	if ingredient == nil {
 		return ""
 	}
-	if ingredient.AromaChemicalID != nil {
+	if ingredient.AromaChemicalID != nil && *ingredient.AromaChemicalID != 0 {
 		return fmt.Sprintf("chem:%d", *ingredient.AromaChemicalID)
 	}
-	if ingredient.SubFormulaID != nil {
+	if ingredient.AromaChemical != nil && ingredient.AromaChemical.ID != 0 {
+		id := uint(ingredient.AromaChemical.ID)
+		return fmt.Sprintf("chem:%d", id)
+	}
+	if ingredient.SubFormulaID != nil && *ingredient.SubFormulaID != 0 {
 		return fmt.Sprintf("formula:%d", *ingredient.SubFormulaID)
+	}
+	if ingredient.SubFormula != nil && ingredient.SubFormula.ID != 0 {
+		id := uint(ingredient.SubFormula.ID)
+		return fmt.Sprintf("formula:%d", id)
 	}
 	return ""
 }

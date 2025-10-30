@@ -85,6 +85,23 @@ func TestFormulaLookupContainsEntries(t *testing.T) {
 	}
 }
 
+func TestFormulaIngredientSourceValueFallsBackToAssociations(t *testing.T) {
+	ing := models.FormulaIngredient{
+		AromaChemical: &models.AromaChemical{Model: gorm.Model{ID: 11}, IngredientName: "Iso E Super"},
+	}
+	if got := FormulaIngredientSourceValue(&ing); got != "chem:11" {
+		t.Fatalf("expected chem fallback, got %s", got)
+	}
+
+	formula := models.Formula{Model: gorm.Model{ID: 7}, Name: "Base Accord"}
+	ing = models.FormulaIngredient{
+		SubFormula: &formula,
+	}
+	if got := FormulaIngredientSourceValue(&ing); got != "formula:7" {
+		t.Fatalf("expected formula fallback, got %s", got)
+	}
+}
+
 func ptr[T any](value T) *T {
 	return &value
 }
