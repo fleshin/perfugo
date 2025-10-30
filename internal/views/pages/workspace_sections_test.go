@@ -107,6 +107,26 @@ func TestNextUntitledFormulaName(t *testing.T) {
 	}
 }
 
+func TestNextCopiedFormulaName(t *testing.T) {
+	base := "Aurora"
+	existing := []models.Formula{
+		{Name: "Aurora"},
+		{Name: "Aurora (Copy)"},
+		{Name: "Aurora (Copy 2)"},
+	}
+	if got := NextCopiedFormulaName(existing, base); got != "Aurora (Copy 3)" {
+		t.Fatalf("expected unique copy name, got %s", got)
+	}
+
+	if got := NextCopiedFormulaName(existing, "Celeste"); got != "Celeste (Copy)" {
+		t.Fatalf("expected first copy suffix, got %s", got)
+	}
+
+	if got := NextCopiedFormulaName(existing, "   "); got != "Untitled Formula" {
+		t.Fatalf("expected fallback to untitled, got %s", got)
+	}
+}
+
 func TestFormulaEditorSelectsEachIngredientSource(t *testing.T) {
 	u := func(v uint) *uint { return &v }
 

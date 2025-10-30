@@ -356,18 +356,17 @@ func FormulaUpdate(w http.ResponseWriter, r *http.Request) {
 
 	notes := strings.TrimSpace(r.FormValue("notes"))
 
-	versionInput := strings.TrimSpace(r.FormValue("version"))
-	versionValue := formula.Version
-	if versionInput != "" {
-		parsedVersion, err := strconv.Atoi(versionInput)
-		if err != nil {
-			renderComponent(w, r, pages.FormulaEditor(formula, currentIngredients, snapshot.AromaChemicals, snapshot.Formulas, "Version must be a whole number."))
-			return
-		}
-		if parsedVersion > 0 {
-			versionValue = parsedVersion
-		}
+	action := strings.TrimSpace(r.FormValue("form_action"))
+	if action == "" {
+		action = "update"
 	}
+
+	versionValue := formula.Version
+	if action == "new_version" {
+		versionValue = formula.Version + 1
+	}
+
+	filters := pages.FormulaFiltersFromRequest(r)
 
 	removals := map[string]struct{}{}
 	for _, key := range r.Form["ingredient_remove"] {
@@ -467,7 +466,7 @@ func FormulaUpdate(w http.ResponseWriter, r *http.Request) {
 	if database == nil {
 		formula.Name = name
 		formula.Notes = notes
-		if versionInput == "" || versionValue > 0 {
+		if action == "new_version" {
 			formula.Version = versionValue
 		}
 		renderComponent(w, r, pages.FormulaEditor(formula, updatedIngredients, snapshot.AromaChemicals, snapshot.Formulas, "Editing is unavailable because no database connection is configured."))
@@ -475,6 +474,74 @@ func FormulaUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := r.Context()
+
+	if action == "save_as" {
+		copyName := pages.NextCopiedFormulaName(snapshot.Formulas, name)
+		newFormula := models.Formula{
+			Name:     copyName,
+			Notes:    notes,
+			Version:  1,
+			IsLatest: true,
+		}
+
+		err := database.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+			if err := tx.Create(&newFormula).Error; err != nil {
+				return err
+			}
+			for _, update := range updates {
+				record := models.FormulaIngredient{
+					FormulaID:       newFormula.ID,
+					Amount:          update.Amount,
+					Unit:            update.Unit,
+					AromaChemicalID: update.AromaChemicalID,
+					SubFormulaID:    update.SubFormulaID,
+				}
+				if err := tx.Create(&record).Error; err != nil {
+					return err
+				}
+			}
+			return nil
+		})
+		if err != nil {
+			applog.Error(ctx, "failed to save formula copy", "error", err, "formulaID", id)
+			renderComponent(w, r, pages.FormulaEditor(formula, currentIngredients, snapshot.AromaChemicals, snapshot.Formulas, "We couldn't create a copy of this formula. Please try again."))
+			return
+		}
+
+		refreshed := buildWorkspaceSnapshot(r)
+		created := pages.FindFormula(refreshed.Formulas, newFormula.ID)
+		if created == nil {
+			created = &newFormula
+		}
+		newComposition := pages.FormulaIngredientsFor(refreshed.FormulaIngredients, newFormula.ID)
+		refreshedFiltered := pages.FilterFormulas(refreshed.Formulas, filters)
+		if filters.Query != "" {
+			found := false
+			for _, candidate := range refreshedFiltered {
+				if candidate.ID == created.ID {
+					found = true
+					break
+				}
+			}
+			if !found {
+				refreshedFiltered = append([]models.Formula{*created}, refreshedFiltered...)
+			}
+		}
+
+		statusCopy := fmt.Sprintf("Saved copy as %s.", created.Name)
+		renderComponent(w, r, pages.FormulaCreationSuccess(
+			created,
+			newComposition,
+			refreshed.AromaChemicals,
+			refreshed.Formulas,
+			refreshedFiltered,
+			filters,
+			len(refreshed.Formulas),
+			statusCopy,
+		))
+		return
+	}
+
 	err := database.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		updatesMap := map[string]interface{}{
 			"name":  name,
@@ -526,7 +593,6 @@ func FormulaUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filters := pages.FormulaFiltersFromRequest(r)
 	refreshed := buildWorkspaceSnapshot(r)
 	updatedFormula := pages.FindFormula(refreshed.Formulas, id)
 	if updatedFormula == nil {
@@ -545,6 +611,9 @@ func FormulaUpdate(w http.ResponseWriter, r *http.Request) {
 		if !found {
 			refreshedFiltered = append([]models.Formula{*updatedFormula}, refreshedFiltered...)
 		}
+	}
+	if action == "new_version" {
+		status = fmt.Sprintf("Version bumped to %d and saved.", versionValue)
 	}
 
 	renderComponent(w, r, pages.FormulaCreationSuccess(

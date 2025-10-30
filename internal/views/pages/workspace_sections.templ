@@ -624,10 +624,10 @@ templ FormulaEditor(
                                         </label>
                                         <input
                                                 id="formula-version"
-                                                name="version"
-                                                type="number"
+                                                type="text"
                                                 class="app-input w-full"
-                                                value={ fmt.Sprintf("%d", formula.Version) }
+                                                value={ fmt.Sprintf("v%d", formula.Version) }
+                                                disabled
                                         />
                                 </div>
                         </div>
@@ -689,7 +689,9 @@ templ FormulaEditor(
                                 >
                                         Cancel
                                 </button>
-                                <button type="submit" class="app-button">Save changes</button>
+                                <button type="submit" name="form_action" value="new_version" class="app-button app-button--ghost">New version</button>
+                                <button type="submit" name="form_action" value="save_as" class="app-button app-button--ghost">Save as</button>
+                                <button type="submit" name="form_action" value="update" class="app-button">Save changes</button>
                         </div>
                 </form>
         }
