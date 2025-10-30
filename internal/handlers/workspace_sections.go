@@ -590,6 +590,175 @@ func FormulaIngredientRow(w http.ResponseWriter, r *http.Request) {
 	renderComponent(w, r, pages.FormulaIngredientEditorRow(rowKey, position, nil, snapshot.AromaChemicals, snapshot.Formulas, formula.ID))
 }
 
+// FormulaDelete removes a formula record and refreshes the list/detail panes.
+func FormulaDelete(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost && r.Method != http.MethodDelete {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		applog.Error(r.Context(), "failed to parse formula delete form", "error", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	id := pages.ParseUint(r.FormValue("id"))
+	if id == 0 {
+		id = pages.ParseUint(r.URL.Query().Get("id"))
+	}
+	if id == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	filters := pages.FormulaFiltersFromRequest(r)
+
+	if database == nil {
+		snapshot := buildWorkspaceSnapshot(r)
+		filtered := pages.FilterFormulas(snapshot.Formulas, filters)
+		message := "Deleting formulas is unavailable because no database connection is configured."
+		renderComponent(w, r, pages.FormulaDeletionResult(message, filtered, filters, len(snapshot.Formulas)))
+		return
+	}
+
+	ctx := r.Context()
+	var formula models.Formula
+	if err := database.WithContext(ctx).First(&formula, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		applog.Error(ctx, "failed to load formula for deletion", "error", err, "formulaID", id)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	var inUse int64
+	if err := database.WithContext(ctx).
+		Model(&models.FormulaIngredient{}).
+		Where("sub_formula_id = ?", id).
+		Count(&inUse).Error; err != nil {
+		applog.Error(ctx, "failed to count formula references", "error", err, "formulaID", id)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if inUse > 0 {
+		snapshot := buildWorkspaceSnapshot(r)
+		filtered := pages.FilterFormulas(snapshot.Formulas, filters)
+		message := "This formula is used as a sub-formula in other compositions. Remove those references before deleting."
+		renderComponent(w, r, pages.FormulaDeletionResult(message, filtered, filters, len(snapshot.Formulas)))
+		return
+	}
+
+	if err := database.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("formula_id = ?", id).Delete(&models.FormulaIngredient{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("id = ?", id).Delete(&models.Formula{}).Error; err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		applog.Error(ctx, "failed to delete formula", "error", err, "formulaID", id)
+		snapshot := buildWorkspaceSnapshot(r)
+		filtered := pages.FilterFormulas(snapshot.Formulas, filters)
+		renderComponent(w, r, pages.FormulaDeletionResult("We couldn't delete this formula. Please try again.", filtered, filters, len(snapshot.Formulas)))
+		return
+	}
+
+	refreshed := buildWorkspaceSnapshot(r)
+	filtered := pages.FilterFormulas(refreshed.Formulas, filters)
+	message := fmt.Sprintf("\"%s\" deleted successfully.", formula.Name)
+	renderComponent(w, r, pages.FormulaDeletionResult(message, filtered, filters, len(refreshed.Formulas)))
+}
+
+// IngredientDelete removes an aroma chemical owned by the current user when it is not referenced.
+func IngredientDelete(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost && r.Method != http.MethodDelete {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		applog.Error(r.Context(), "failed to parse ingredient delete form", "error", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	id := pages.ParseUint(r.FormValue("id"))
+	if id == 0 {
+		id = pages.ParseUint(r.URL.Query().Get("id"))
+	}
+	if id == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	filters := pages.IngredientFiltersFromRequest(r)
+
+	if database == nil {
+		snapshot := buildWorkspaceSnapshot(r)
+		filtered := pages.FilterAromaChemicals(snapshot.AromaChemicals, filters)
+		message := "Deleting ingredients is unavailable because no database connection is configured."
+		renderComponent(w, r, pages.IngredientDeletionResult(message, filtered, filters, len(snapshot.AromaChemicals)))
+		return
+	}
+
+	userID, ok := currentUserID(r)
+	if !ok {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	ctx := r.Context()
+	var chemical models.AromaChemical
+	if err := database.WithContext(ctx).First(&chemical, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		applog.Error(ctx, "failed to load ingredient for deletion", "error", err, "ingredientID", id)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if chemical.OwnerID != userID {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	var inUse int64
+	if err := database.WithContext(ctx).
+		Model(&models.FormulaIngredient{}).
+		Where("aroma_chemical_id = ?", id).
+		Count(&inUse).Error; err != nil {
+		applog.Error(ctx, "failed to count ingredient references", "error", err, "ingredientID", id)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if inUse > 0 {
+		snapshot := buildWorkspaceSnapshot(r)
+		filtered := pages.FilterAromaChemicals(snapshot.AromaChemicals, filters)
+		message := "This ingredient is used in one or more formulas. Remove those references before deleting."
+		renderComponent(w, r, pages.IngredientDeletionResult(message, filtered, filters, len(snapshot.AromaChemicals)))
+		return
+	}
+
+	if err := database.WithContext(ctx).Delete(&models.AromaChemical{}, id).Error; err != nil {
+		applog.Error(ctx, "failed to delete ingredient", "error", err, "ingredientID", id)
+		snapshot := buildWorkspaceSnapshot(r)
+		filtered := pages.FilterAromaChemicals(snapshot.AromaChemicals, filters)
+		renderComponent(w, r, pages.IngredientDeletionResult("We couldn't delete this ingredient. Please try again.", filtered, filters, len(snapshot.AromaChemicals)))
+		return
+	}
+
+	refreshed := buildWorkspaceSnapshot(r)
+	filtered := pages.FilterAromaChemicals(refreshed.AromaChemicals, filters)
+	message := fmt.Sprintf("\"%s\" deleted successfully.", chemical.IngredientName)
+	renderComponent(w, r, pages.IngredientDeletionResult(message, filtered, filters, len(refreshed.AromaChemicals)))
+}
+
 func renderComponent(w http.ResponseWriter, r *http.Request, component templpkg.Component) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := component.Render(r.Context(), w); err != nil {
