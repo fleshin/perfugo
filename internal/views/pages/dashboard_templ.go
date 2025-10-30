@@ -5,17 +5,15 @@ package pages
 
 //lint:file-ignore SA4006 This context is only used if a nested component is present.
 
-import "github.com/a-h/templ"
-import templruntime "github.com/a-h/templ/runtime"
-
 import (
 	"fmt"
-	"strings"
-
-	templpkg "github.com/a-h/templ"
-
 	"perfugo/internal/views/components"
 	"perfugo/internal/views/layout"
+	"strings"
+
+	"github.com/a-h/templ"
+	templpkg "github.com/a-h/templ"
+	templruntime "github.com/a-h/templ/runtime"
 )
 
 const defaultWorkspaceSection = "ingredients"
@@ -130,7 +128,7 @@ func workspaceShell(section string, snapshot WorkspaceSnapshot) templ.Component 
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"workspace-shell w-full\"><div class=\"mx-auto w-full max-w-6xl px-6 py-14 sm:px-8 lg:py-16\"><div id=\"workspace-content\" class=\"space-y-12\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"workspace-shell w-full\"><div class=\"mx-auto w-full px-6 py-6 sm:px-8 lg:py-6\"><div id=\"workspace-content\" class=\"space-y-12\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -179,7 +177,7 @@ func workspaceInterior(section string, meta workspaceSectionMeta, snapshot Works
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Badge)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 73, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 71, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -197,7 +195,7 @@ func workspaceInterior(section string, meta workspaceSectionMeta, snapshot Works
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 76, Col: 101}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 74, Col: 101}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -215,7 +213,7 @@ func workspaceInterior(section string, meta workspaceSectionMeta, snapshot Works
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Subtitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 78, Col: 91}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 76, Col: 91}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -238,7 +236,7 @@ func workspaceInterior(section string, meta workspaceSectionMeta, snapshot Works
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 82, Col: 76}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 80, Col: 76}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {

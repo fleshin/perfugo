@@ -1,13 +1,11 @@
 package pages
 
 import (
-        "fmt"
-        "strings"
+	"fmt"
+	"strings"
 
-        templpkg "github.com/a-h/templ"
-
-        "perfugo/internal/views/components"
-        "perfugo/internal/views/layout"
+	"perfugo/internal/views/components"
+	"perfugo/internal/views/layout"
 )
 
 const defaultWorkspaceSection = "ingredients"
@@ -25,7 +23,7 @@ templ Workspace(section string, snapshot WorkspaceSnapshot) {
 	@layout.Layout(
 		"Perfugo Atelier",
 		components.Sidebar(sidebarData(NormalizeWorkspaceSection(section))),
-                workspaceShell(NormalizeWorkspaceSection(section), snapshot),
+		workspaceShell(NormalizeWorkspaceSection(section), snapshot),
 		true,
 		layout.ThemeByID(snapshot.Theme),
 	)
@@ -52,16 +50,16 @@ func sidebarData(active string) components.SidebarData {
 }
 
 templ workspaceShell(section string, snapshot WorkspaceSnapshot) {
-        <div class="workspace-shell w-full">
-                <div class="mx-auto w-full max-w-6xl px-6 py-14 sm:px-8 lg:py-16">
-                        <div
-                                id="workspace-content"
-                                class="space-y-12"
-                        >
-                                @workspaceInterior(section, workspaceMeta(section, snapshot), snapshot)
-                        </div>
-                </div>
-        </div>
+	<div class="workspace-shell w-full">
+		<div class="mx-auto w-full px-6 py-6 sm:px-8 lg:py-6">
+			<div
+				id="workspace-content"
+				class="space-y-12"
+			>
+				@workspaceInterior(section, workspaceMeta(section, snapshot), snapshot)
+			</div>
+		</div>
+	</div>
 }
 
 templ workspaceInterior(section string, meta workspaceSectionMeta, snapshot WorkspaceSnapshot) {
