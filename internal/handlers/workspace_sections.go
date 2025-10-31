@@ -16,6 +16,26 @@ import (
 	"perfugo/models"
 )
 
+func parseOptionalFloat(value string) (float64, error) {
+	trimmed := strings.TrimSpace(value)
+	if trimmed == "" {
+		return 0, nil
+	}
+	return strconv.ParseFloat(trimmed, 64)
+}
+
+func parseOptionalInt(value string) (int, error) {
+	trimmed := strings.TrimSpace(value)
+	if trimmed == "" {
+		return 0, nil
+	}
+	parsed, err := strconv.Atoi(trimmed)
+	if err != nil {
+		return 0, err
+	}
+	return parsed, nil
+}
+
 // IngredientTable handles HTMX requests for the ingredient ledger.
 func IngredientTable(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
@@ -55,6 +75,17 @@ func IngredientEdit(w http.ResponseWriter, r *http.Request) {
 	id := pages.ParseUint(r.URL.Query().Get("id"))
 	chemical := pages.FindAromaChemical(snapshot.AromaChemicals, id)
 
+	renderComponent(w, r, pages.IngredientEditor(chemical, ""))
+}
+
+// IngredientNew renders a blank ingredient editor for creating a new aroma chemical.
+func IngredientNew(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	chemical := &models.AromaChemical{}
 	renderComponent(w, r, pages.IngredientEditor(chemical, ""))
 }
 
@@ -113,6 +144,39 @@ func IngredientUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 	chemical.PyramidPosition = pyramidValue
 
+	recommendedValue, err := parseOptionalFloat(r.FormValue("recommended_dilution"))
+	if err != nil {
+		renderComponent(w, r, pages.IngredientEditor(chemical, "Recommended dilution must be a number."))
+		return
+	}
+	dilutionValue, err := parseOptionalFloat(r.FormValue("dilution_percentage"))
+	if err != nil {
+		renderComponent(w, r, pages.IngredientEditor(chemical, "Dilution percentage must be a number."))
+		return
+	}
+	maxIFRAValue, err := parseOptionalFloat(r.FormValue("max_ifra_percentage"))
+	if err != nil {
+		renderComponent(w, r, pages.IngredientEditor(chemical, "Max IFRA percentage must be a number."))
+		return
+	}
+	priceValue, err := parseOptionalFloat(r.FormValue("price_per_mg"))
+	if err != nil {
+		renderComponent(w, r, pages.IngredientEditor(chemical, "Price per mg must be a number."))
+		return
+	}
+	popularityValue, err := parseOptionalInt(r.FormValue("popularity"))
+	if err != nil {
+		renderComponent(w, r, pages.IngredientEditor(chemical, "Popularity must be a whole number."))
+		return
+	}
+
+	chemical.RecommendedDilution = recommendedValue
+	chemical.DilutionPercentage = dilutionValue
+	chemical.MaxIFRAPercentage = maxIFRAValue
+	chemical.PricePerMg = priceValue
+	chemical.Popularity = popularityValue
+	chemical.HistoricRole = strings.TrimSpace(r.FormValue("historic_role"))
+
 	if database == nil {
 		message := "Editing is unavailable because no database connection is configured."
 		chemical.IngredientName = name
@@ -153,14 +217,20 @@ func IngredientUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updates := map[string]interface{}{
-		"ingredient_name":  name,
-		"cas_number":       strings.TrimSpace(r.FormValue("cas_number")),
-		"type":             strings.TrimSpace(r.FormValue("type")),
-		"pyramid_position": pyramidValue,
-		"wheel_position":   strings.TrimSpace(r.FormValue("wheel_position")),
-		"duration":         strings.TrimSpace(r.FormValue("duration")),
-		"notes":            strings.TrimSpace(r.FormValue("notes")),
-		"usage":            strings.TrimSpace(r.FormValue("usage")),
+		"ingredient_name":      name,
+		"cas_number":           strings.TrimSpace(r.FormValue("cas_number")),
+		"type":                 strings.TrimSpace(r.FormValue("type")),
+		"pyramid_position":     pyramidValue,
+		"wheel_position":       strings.TrimSpace(r.FormValue("wheel_position")),
+		"duration":             strings.TrimSpace(r.FormValue("duration")),
+		"notes":                strings.TrimSpace(r.FormValue("notes")),
+		"usage":                strings.TrimSpace(r.FormValue("usage")),
+		"recommended_dilution": recommendedValue,
+		"dilution_percentage":  dilutionValue,
+		"max_ifra_percentage":  maxIFRAValue,
+		"price_per_mg":         priceValue,
+		"historic_role":        strings.TrimSpace(r.FormValue("historic_role")),
+		"popularity":           popularityValue,
 	}
 
 	if strengthErr == nil {
@@ -185,6 +255,122 @@ func IngredientUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	renderComponent(w, r, pages.IngredientEditor(&stored, status))
+}
+
+// IngredientCreate persists a new aroma chemical owned by the current user.
+func IngredientCreate(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		applog.Error(r.Context(), "failed to parse ingredient form", "error", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	name := strings.TrimSpace(r.FormValue("ingredient_name"))
+	chemical := &models.AromaChemical{}
+	chemical.IngredientName = name
+	chemical.CASNumber = strings.TrimSpace(r.FormValue("cas_number"))
+	chemical.Type = strings.TrimSpace(r.FormValue("type"))
+	chemical.WheelPosition = strings.TrimSpace(r.FormValue("wheel_position"))
+	chemical.Duration = strings.TrimSpace(r.FormValue("duration"))
+	chemical.Notes = strings.TrimSpace(r.FormValue("notes"))
+	chemical.Usage = strings.TrimSpace(r.FormValue("usage"))
+	chemical.HistoricRole = strings.TrimSpace(r.FormValue("historic_role"))
+
+	if name == "" {
+		renderComponent(w, r, pages.IngredientEditor(chemical, "Ingredient name is required."))
+		return
+	}
+
+	strengthInput := strings.TrimSpace(r.FormValue("strength"))
+	strengthValue := 0
+	if strengthInput != "" {
+		parsed, err := strconv.Atoi(strengthInput)
+		if err != nil {
+			renderComponent(w, r, pages.IngredientEditor(chemical, "Strength must be a whole number."))
+			return
+		}
+		strengthValue = parsed
+	}
+	chemical.Strength = strengthValue
+
+	rawPyramid := r.FormValue("pyramid_position")
+	pyramidValue, pyramidOK := pages.NormalizePyramidPosition(rawPyramid)
+	if !pyramidOK {
+		chemical.PyramidPosition = strings.TrimSpace(rawPyramid)
+		renderComponent(w, r, pages.IngredientEditor(chemical, "Select a valid pyramid position."))
+		return
+	}
+	chemical.PyramidPosition = pyramidValue
+
+	recommendedValue, err := parseOptionalFloat(r.FormValue("recommended_dilution"))
+	if err != nil {
+		renderComponent(w, r, pages.IngredientEditor(chemical, "Recommended dilution must be a number."))
+		return
+	}
+	dilutionValue, err := parseOptionalFloat(r.FormValue("dilution_percentage"))
+	if err != nil {
+		renderComponent(w, r, pages.IngredientEditor(chemical, "Dilution percentage must be a number."))
+		return
+	}
+	maxIFRAValue, err := parseOptionalFloat(r.FormValue("max_ifra_percentage"))
+	if err != nil {
+		renderComponent(w, r, pages.IngredientEditor(chemical, "Max IFRA percentage must be a number."))
+		return
+	}
+	priceValue, err := parseOptionalFloat(r.FormValue("price_per_mg"))
+	if err != nil {
+		renderComponent(w, r, pages.IngredientEditor(chemical, "Price per mg must be a number."))
+		return
+	}
+	popularityValue, err := parseOptionalInt(r.FormValue("popularity"))
+	if err != nil {
+		renderComponent(w, r, pages.IngredientEditor(chemical, "Popularity must be a whole number."))
+		return
+	}
+
+	chemical.RecommendedDilution = recommendedValue
+	chemical.DilutionPercentage = dilutionValue
+	chemical.MaxIFRAPercentage = maxIFRAValue
+	chemical.PricePerMg = priceValue
+	chemical.Popularity = popularityValue
+
+	if database == nil {
+		message := "Creating ingredients is unavailable because no database connection is configured."
+		renderComponent(w, r, pages.IngredientEditor(chemical, message))
+		return
+	}
+
+	userID, ok := currentUserID(r)
+	if !ok {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	chemical.OwnerID = userID
+	chemical.Public = false
+
+	ctx := r.Context()
+	if err := database.WithContext(ctx).Create(chemical).Error; err != nil {
+		applog.Error(ctx, "failed to create ingredient", "error", err)
+		renderComponent(w, r, pages.IngredientEditor(chemical, "We couldn't create this ingredient. Please try again."))
+		return
+	}
+
+	filters := pages.IngredientFiltersFromRequest(r)
+	refreshed := buildWorkspaceSnapshot(r)
+	created := pages.FindAromaChemical(refreshed.AromaChemicals, chemical.ID)
+	if created == nil {
+		created = chemical
+	}
+	filtered := pages.FilterAromaChemicals(refreshed.AromaChemicals, filters)
+	status := fmt.Sprintf("\"%s\" created successfully.", created.IngredientName)
+
+	renderComponent(w, r, pages.IngredientCreationResult(created, filtered, filters, len(refreshed.AromaChemicals), status))
 }
 
 // FormulaList handles HTMX requests for the formula library listings.

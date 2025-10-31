@@ -1,7 +1,10 @@
 package pages
 
 import (
+	"fmt"
 	"strings"
+
+	"perfugo/models"
 )
 
 var allowedPyramidPositions = []string{"top", "top-heart", "heart", "heart-base", "base", "all"}
@@ -55,4 +58,48 @@ func PyramidPositionLabel(value string) string {
 		}
 	}
 	return strings.Join(parts, "-")
+}
+
+func FormatPercentage(value float64) string {
+	if value <= 0 {
+		return DefaultDash("")
+	}
+	return fmt.Sprintf("%.2f%%", value)
+}
+
+func FormatPricePerMg(value float64) string {
+	if value <= 0 {
+		return DefaultDash("")
+	}
+	return fmt.Sprintf("$%.4f", value)
+}
+
+func FormatPopularity(value int) string {
+	if value <= 0 {
+		return DefaultDash("")
+	}
+	return fmt.Sprintf("%d", value)
+}
+
+// IngredientFormAction derives the correct HTMX endpoint for creating or updating ingredients.
+func IngredientFormAction(chemical *models.AromaChemical) string {
+	if chemical == nil || chemical.ID == 0 {
+		return "/app/sections/ingredients/create"
+	}
+	return "/app/sections/ingredients/update"
+}
+
+func FormatFloatInput(value float64, precision int) string {
+	if value == 0 {
+		return ""
+	}
+	format := fmt.Sprintf("%%.%df", precision)
+	return fmt.Sprintf(format, value)
+}
+
+func FormatIntInput(value int) string {
+	if value == 0 {
+		return ""
+	}
+	return fmt.Sprintf("%d", value)
 }

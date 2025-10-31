@@ -30,28 +30,41 @@ type IngredientPerformance struct {
 templ IngredientManagement(snapshot WorkspaceSnapshot) {
 	<section class="space-y-8" data-module="ingredients">
 		<div class="app-card flex min-h-0 flex-col space-y-6 px-6 py-6 max-h-96 overflow-y-auto">
-			<form
-				class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
-				hx-get="/app/sections/ingredients/table"
-				hx-target="#ingredient-table"
-				hx-swap="outerHTML"
-			>
-				<div class="flex-1">
-					<label class="text-xs uppercase tracking-[0.35em] app-muted" for="ingredient-search">
-						Search ingredients
-					</label>
-					<input
-						id="ingredient-search"
-						type="search"
-						name="q"
-						value=""
-						placeholder="Filter by name, CAS number, or type"
-						class="app-input mt-2 w-full"
-						hx-trigger="keyup changed delay:300ms"
-					/>
-				</div>
-				<button type="submit" class="app-button w-full sm:w-auto">Filter</button>
-			</form>
+			<div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+				<form
+					class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:flex-1"
+					hx-get="/app/sections/ingredients/table"
+					hx-target="#ingredient-table"
+					hx-swap="outerHTML"
+				>
+					<div class="flex-1">
+						<label class="text-xs uppercase tracking-[0.35em] app-muted" for="ingredient-search">
+							Search ingredients
+						</label>
+						<input
+							id="ingredient-search"
+							type="search"
+							name="q"
+							value=""
+							placeholder="Filter by name, CAS number, or type"
+							class="app-input mt-2 w-full"
+							hx-trigger="keyup changed delay:300ms"
+						/>
+					</div>
+					<button type="submit" class="app-button w-full sm:w-auto">Filter</button>
+				</form>
+				<button
+					type="button"
+					class="app-button w-full sm:w-auto"
+					hx-get="/app/sections/ingredients/new"
+					hx-target="#ingredient-detail"
+					hx-swap="innerHTML"
+					hx-include="#ingredient-search"
+					hx-disabled-elt="this"
+				>
+					New ingredient
+				</button>
+			</div>
 			<div class="flex-1 min-h-0 overflow-auto">
 				@IngredientTable(
 					FilterAromaChemicals(snapshot.AromaChemicals, IngredientFilters{}),
@@ -97,7 +110,7 @@ templ ingredientTableContent(chemicals []models.AromaChemical, filters Ingredien
 					<thead class="bg-white/5 text-xs font-medium uppercase tracking-[0.35em] text-white/50">
 						<tr>
 							<th class="px-5 py-4">Ingredient</th>
-                                                        <th class="px-5 py-4">Pyramid</th>
+							<th class="px-5 py-4">Pyramid</th>
 							<th class="px-5 py-4">Wheel</th>
 							<th class="px-5 py-4">Potency</th>
 							<th class="px-5 py-4 text-right">Actions</th>
@@ -116,7 +129,7 @@ templ ingredientTableContent(chemicals []models.AromaChemical, filters Ingredien
 										}
 									</div>
 								</td>
-                                                                <td class="px-5 py-4">{ PyramidPositionLabel(chemical.PyramidPosition) }</td>
+								<td class="px-5 py-4">{ PyramidPositionLabel(chemical.PyramidPosition) }</td>
 								<td class="px-5 py-4">{ DefaultDash(chemical.WheelPosition) }</td>
 								<td class="px-5 py-4">
 									<div class="font-semibold text-white">{ AromaChemicalPotencyLabel(chemical.Strength) }</div>
@@ -127,7 +140,7 @@ templ ingredientTableContent(chemicals []models.AromaChemical, filters Ingredien
 										<button
 											type="button"
 											class="app-button"
-                                                                                hx-get={ templ.URL(fmt.Sprintf("/app/sections/ingredients/detail?id=%d", chemical.ID)) }
+											hx-get={ templ.URL(fmt.Sprintf("/app/sections/ingredients/detail?id=%d", chemical.ID)) }
 											hx-target="#ingredient-detail"
 											hx-swap="innerHTML"
 										>
@@ -136,7 +149,7 @@ templ ingredientTableContent(chemicals []models.AromaChemical, filters Ingredien
 										<button
 											type="button"
 											class="app-button app-button--ghost"
-                                                                                hx-get={ templ.URL(fmt.Sprintf("/app/sections/ingredients/edit?id=%d", chemical.ID)) }
+											hx-get={ templ.URL(fmt.Sprintf("/app/sections/ingredients/edit?id=%d", chemical.ID)) }
 											hx-target="#ingredient-detail"
 											hx-swap="innerHTML"
 										>
@@ -191,7 +204,7 @@ templ IngredientDetail(chemical *models.AromaChemical) {
 				</div>
 				<div>
 					<dt class="text-xs uppercase tracking-[0.35em] text-white/50">Pyramid</dt>
-                                        <dd class="mt-1 text-base text-white">{ PyramidPositionLabel(chemical.PyramidPosition) }</dd>
+					<dd class="mt-1 text-base text-white">{ PyramidPositionLabel(chemical.PyramidPosition) }</dd>
 				</div>
 				<div>
 					<dt class="text-xs uppercase tracking-[0.35em] text-white/50">Wheel</dt>
@@ -205,6 +218,26 @@ templ IngredientDetail(chemical *models.AromaChemical) {
 					<dt class="text-xs uppercase tracking-[0.35em] text-white/50">Duration</dt>
 					<dd class="mt-1 text-base text-white">{ DefaultDash(chemical.Duration) }</dd>
 				</div>
+				<div>
+					<dt class="text-xs uppercase tracking-[0.35em] text-white/50">Recommended dilution</dt>
+					<dd class="mt-1 text-base text-white">{ FormatPercentage(chemical.RecommendedDilution) }</dd>
+				</div>
+				<div>
+					<dt class="text-xs uppercase tracking-[0.35em] text-white/50">Dilution percentage</dt>
+					<dd class="mt-1 text-base text-white">{ FormatPercentage(chemical.DilutionPercentage) }</dd>
+				</div>
+				<div>
+					<dt class="text-xs uppercase tracking-[0.35em] text-white/50">Max IFRA percentage</dt>
+					<dd class="mt-1 text-base text-white">{ FormatPercentage(chemical.MaxIFRAPercentage) }</dd>
+				</div>
+				<div>
+					<dt class="text-xs uppercase tracking-[0.35em] text-white/50">Price per mg</dt>
+					<dd class="mt-1 text-base text-white">{ FormatPricePerMg(chemical.PricePerMg) }</dd>
+				</div>
+				<div>
+					<dt class="text-xs uppercase tracking-[0.35em] text-white/50">Popularity</dt>
+					<dd class="mt-1 text-base text-white">{ FormatPopularity(chemical.Popularity) }</dd>
+				</div>
 			</dl>
 			if strings.TrimSpace(chemical.Notes) != "" {
 				<div class="space-y-2">
@@ -216,6 +249,12 @@ templ IngredientDetail(chemical *models.AromaChemical) {
 				<div class="space-y-2">
 					<h4 class="text-sm font-semibold text-white">Usage Guidance</h4>
 					<p class="text-sm leading-relaxed text-white/80">{ chemical.Usage }</p>
+				</div>
+			}
+			if strings.TrimSpace(chemical.HistoricRole) != "" {
+				<div class="space-y-2">
+					<h4 class="text-sm font-semibold text-white">Historic role</h4>
+					<p class="text-sm leading-relaxed text-white/80">{ chemical.HistoricRole }</p>
 				</div>
 			}
 		</div>
@@ -235,6 +274,17 @@ templ IngredientDeletionResult(
 	@IngredientTableOOB(chemicals, filters, total)
 }
 
+templ IngredientCreationResult(
+	chemical *models.AromaChemical,
+	chemicals []models.AromaChemical,
+	filters IngredientFilters,
+	total int,
+	status string,
+) {
+	@IngredientEditor(chemical, status)
+	@IngredientTableOOB(chemicals, filters, total)
+}
+
 templ IngredientEditor(chemical *models.AromaChemical, status string) {
 	if chemical == nil {
 		<div class="space-y-3 text-center">
@@ -244,7 +294,7 @@ templ IngredientEditor(chemical *models.AromaChemical, status string) {
 	} else {
 		<form
 			class="space-y-6"
-			hx-post="/app/sections/ingredients/update"
+			hx-post={ templ.URL(IngredientFormAction(chemical)) }
 			hx-target="#ingredient-detail"
 			hx-swap="innerHTML"
 		>
@@ -302,25 +352,25 @@ templ IngredientEditor(chemical *models.AromaChemical, status string) {
 						value={ fmt.Sprintf("%d", chemical.Strength) }
 					/>
 				</div>
-                                <div class="space-y-2">
-                                        <label class="text-xs uppercase tracking-[0.35em] app-muted" for="pyramid-position">
-                                                Pyramid position
-                                        </label>
-                                        <select
-                                                id="pyramid-position"
-                                                name="pyramid_position"
-                                                class="app-input w-full"
-                                        >
-                                                <option value="" selected?={ CanonicalPyramidPosition(chemical.PyramidPosition) == "" }>
-                                                        Select pyramid position
-                                                </option>
-                                                for _, option := range AllowedPyramidPositions() {
-                                                        <option value={ option } selected?={ CanonicalPyramidPosition(chemical.PyramidPosition) == option }>
-                                                                { PyramidPositionLabel(option) }
-                                                        </option>
-                                                }
-                                        </select>
-                                </div>
+				<div class="space-y-2">
+					<label class="text-xs uppercase tracking-[0.35em] app-muted" for="pyramid-position">
+						Pyramid position
+					</label>
+					<select
+						id="pyramid-position"
+						name="pyramid_position"
+						class="app-input w-full"
+					>
+						<option value="" selected?={ CanonicalPyramidPosition(chemical.PyramidPosition) == "" }>
+							Select pyramid position
+						</option>
+						for _, option := range AllowedPyramidPositions() {
+							<option value={ option } selected?={ CanonicalPyramidPosition(chemical.PyramidPosition) == option }>
+								{ PyramidPositionLabel(option) }
+							</option>
+						}
+					</select>
+				</div>
 				<div class="space-y-2">
 					<label class="text-xs uppercase tracking-[0.35em] app-muted" for="wheel-position">
 						Wheel position
@@ -345,6 +395,70 @@ templ IngredientEditor(chemical *models.AromaChemical, status string) {
 						value={ chemical.Duration }
 					/>
 				</div>
+				<div class="space-y-2">
+					<label class="text-xs uppercase tracking-[0.35em] app-muted" for="recommended-dilution">
+						Recommended dilution (%)
+					</label>
+					<input
+						id="recommended-dilution"
+						name="recommended_dilution"
+						type="number"
+						step="0.01"
+						class="app-input w-full"
+						value={ FormatFloatInput(chemical.RecommendedDilution, 2) }
+					/>
+				</div>
+				<div class="space-y-2">
+					<label class="text-xs uppercase tracking-[0.35em] app-muted" for="dilution-percentage">
+						Dilution percentage (%)
+					</label>
+					<input
+						id="dilution-percentage"
+						name="dilution_percentage"
+						type="number"
+						step="0.01"
+						class="app-input w-full"
+						value={ FormatFloatInput(chemical.DilutionPercentage, 2) }
+					/>
+				</div>
+				<div class="space-y-2">
+					<label class="text-xs uppercase tracking-[0.35em] app-muted" for="ifra-percentage">
+						Max IFRA percentage (%)
+					</label>
+					<input
+						id="ifra-percentage"
+						name="max_ifra_percentage"
+						type="number"
+						step="0.01"
+						class="app-input w-full"
+						value={ FormatFloatInput(chemical.MaxIFRAPercentage, 2) }
+					/>
+				</div>
+				<div class="space-y-2">
+					<label class="text-xs uppercase tracking-[0.35em] app-muted" for="price-per-mg">
+						Price per mg ($)
+					</label>
+					<input
+						id="price-per-mg"
+						name="price_per_mg"
+						type="number"
+						step="0.0001"
+						class="app-input w-full"
+						value={ FormatFloatInput(chemical.PricePerMg, 4) }
+					/>
+				</div>
+				<div class="space-y-2">
+					<label class="text-xs uppercase tracking-[0.35em] app-muted" for="ingredient-popularity">
+						Popularity
+					</label>
+					<input
+						id="ingredient-popularity"
+						name="popularity"
+						type="number"
+						class="app-input w-full"
+						value={ FormatIntInput(chemical.Popularity) }
+					/>
+				</div>
 			</div>
 			<div class="grid gap-4 sm:grid-cols-2">
 				<div class="space-y-2">
@@ -367,12 +481,22 @@ templ IngredientEditor(chemical *models.AromaChemical, status string) {
 						class="app-input w-full min-h-[7rem]"
 					>{ chemical.Usage }</textarea>
 				</div>
+				<div class="space-y-2 sm:col-span-2">
+					<label class="text-xs uppercase tracking-[0.35em] app-muted" for="historic-role">
+						Historic role
+					</label>
+					<textarea
+						id="historic-role"
+						name="historic_role"
+						class="app-input w-full min-h-[7rem]"
+					>{ chemical.HistoricRole }</textarea>
+				</div>
 			</div>
 			<div class="flex items-center justify-end gap-2">
 				<button
 					type="button"
 					class="app-button app-button--ghost"
-                                        hx-get={ templ.URL(fmt.Sprintf("/app/sections/ingredients/detail?id=%d", chemical.ID)) }
+					hx-get={ templ.URL(fmt.Sprintf("/app/sections/ingredients/detail?id=%d", chemical.ID)) }
 					hx-target="#ingredient-detail"
 					hx-swap="innerHTML"
 				>
@@ -471,7 +595,7 @@ templ formulaListContent(formulas []models.Formula, filters FormulaFilters, tota
 											<button
 												type="button"
 												class="app-button"
-                                                hx-get={ templ.URL(fmt.Sprintf("/app/sections/formulas/detail?id=%d", formula.ID)) }
+												hx-get={ templ.URL(fmt.Sprintf("/app/sections/formulas/detail?id=%d", formula.ID)) }
 												hx-target="#formula-detail"
 												hx-swap="innerHTML"
 											>
@@ -480,7 +604,7 @@ templ formulaListContent(formulas []models.Formula, filters FormulaFilters, tota
 											<button
 												type="button"
 												class="app-button app-button--ghost"
-                                                hx-get={ templ.URL(fmt.Sprintf("/app/sections/formulas/edit?id=%d", formula.ID)) }
+												hx-get={ templ.URL(fmt.Sprintf("/app/sections/formulas/edit?id=%d", formula.ID)) }
 												hx-target="#formula-detail"
 												hx-swap="innerHTML"
 											>
@@ -538,7 +662,7 @@ templ FormulaDetail(formula *models.Formula, ingredients []models.FormulaIngredi
 					<button
 						type="button"
 						class="app-button app-button--ghost"
-                                        hx-get={ templ.URL(fmt.Sprintf("/app/sections/formulas/edit?id=%d", formula.ID)) }
+						hx-get={ templ.URL(fmt.Sprintf("/app/sections/formulas/edit?id=%d", formula.ID)) }
 						hx-target="#formula-detail"
 						hx-swap="innerHTML"
 					>
@@ -652,7 +776,7 @@ templ FormulaEditor(
 					<button
 						type="button"
 						class="app-button app-button--ghost"
-                                                hx-get={ templ.URL(fmt.Sprintf("/app/sections/formulas/ingredient-row?formula_id=%d", formula.ID)) }
+						hx-get={ templ.URL(fmt.Sprintf("/app/sections/formulas/ingredient-row?formula_id=%d", formula.ID)) }
 						hx-include="closest form"
 						hx-target="#formula-ingredient-rows"
 						hx-swap="beforeend"
@@ -688,7 +812,7 @@ templ FormulaEditor(
 				<button
 					type="button"
 					class="app-button app-button--ghost"
-                                        hx-get={ templ.URL(fmt.Sprintf("/app/sections/formulas/detail?id=%d", formula.ID)) }
+					hx-get={ templ.URL(fmt.Sprintf("/app/sections/formulas/detail?id=%d", formula.ID)) }
 					hx-target="#formula-detail"
 					hx-swap="innerHTML"
 				>

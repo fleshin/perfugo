@@ -161,6 +161,45 @@ func TestPyramidPositionLabel(t *testing.T) {
 	}
 }
 
+func TestFormatHelpers(t *testing.T) {
+	if got := FormatPercentage(0); got != "—" {
+		t.Fatalf("expected dash for zero percentage, got %s", got)
+	}
+	if got := FormatPercentage(12.345); got != "12.35%" {
+		t.Fatalf("expected formatted percentage, got %s", got)
+	}
+	if got := FormatPricePerMg(0); got != "—" {
+		t.Fatalf("expected dash for zero price, got %s", got)
+	}
+	if got := FormatPricePerMg(1.2345); got != "$1.2345" {
+		t.Fatalf("expected formatted price, got %s", got)
+	}
+	if got := FormatPopularity(0); got != "—" {
+		t.Fatalf("expected dash for zero popularity, got %s", got)
+	}
+	if got := FormatPopularity(7); got != "7" {
+		t.Fatalf("expected numeric popularity, got %s", got)
+	}
+	if got := FormatFloatInput(0, 2); got != "" {
+		t.Fatalf("expected empty input for zero float, got %q", got)
+	}
+	if got := FormatFloatInput(1.2345, 2); got != "1.23" {
+		t.Fatalf("expected formatted float input, got %s", got)
+	}
+	if got := FormatIntInput(0); got != "" {
+		t.Fatalf("expected empty input for zero int, got %q", got)
+	}
+	if got := FormatIntInput(3); got != "3" {
+		t.Fatalf("expected formatted int input, got %s", got)
+	}
+	if got := IngredientFormAction(nil); got != "/app/sections/ingredients/create" {
+		t.Fatalf("expected create action, got %s", got)
+	}
+	if got := IngredientFormAction(&models.AromaChemical{Model: gorm.Model{ID: 5}}); got != "/app/sections/ingredients/update" {
+		t.Fatalf("expected update action, got %s", got)
+	}
+}
+
 func TestFormulaEditorSelectsEachIngredientSource(t *testing.T) {
 	u := func(v uint) *uint { return &v }
 
