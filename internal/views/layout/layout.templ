@@ -1,23 +1,21 @@
 package layout
 
-import templpkg "github.com/a-h/templ"
-
-templ Layout(title string, sidebar templpkg.Component, content templpkg.Component, showSidebar bool, theme ThemeDefinition) {
-        <!DOCTYPE html>
-        <html lang="en" class="h-full">
-                <head>
-                        <meta charset="utf-8"/>
-                        <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                        <title>{ title }</title>
-                        <link
-                                rel="stylesheet"
-                                href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-                        />
-                        <link rel="preconnect" href="https://fonts.googleapis.com"/>
-                        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-                        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-                        <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
-                        <style>
+templ Layout(title string, sidebar templ.Component, content templ.Component, showSidebar bool, theme ThemeDefinition) {
+	<!DOCTYPE html>
+	<html lang="en" class="h-full">
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<title>{ title }</title>
+			<link
+				rel="stylesheet"
+				href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+			/>
+			<link rel="preconnect" href="https://fonts.googleapis.com"/>
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+			<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+			<script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+			<style>
                                 :root {
                                         --app-bg: #07090f;
                                         --app-shell-bg: linear-gradient(180deg, rgba(12, 19, 33, 0.9), rgba(7, 9, 15, 0.95));
@@ -357,30 +355,30 @@ templ Layout(title string, sidebar templpkg.Component, content templpkg.Componen
                                         color: var(--app-text-muted) !important;
                                 }
                         </style>
-                </head>
-                <body class="h-full antialiased app-root" data-theme={ theme.ID } hx-boost="true">
-                        <div class={ bodyWrapperClass(showSidebar) }>
-                                if showSidebar {
-                                        <aside class="app-sidebar hidden lg:flex lg:w-72 xl:w-80 lg:flex-col">
-                                                if sidebar != nil {
-                                                        @sidebar
-                                                }
-                                        </aside>
-                                }
-                                <div class="flex min-h-screen flex-1 flex-col">
-                                        <main id="primary-content" class={ mainClass(showSidebar) }>
-                                                @content
-                                        </main>
-                                        <footer class="app-footer">
-                                                <div class="mx-auto flex max-w-6xl flex-col gap-1 px-6 py-6 text-xs uppercase tracking-[0.25em] app-muted sm:flex-row sm:items-center sm:justify-between">
-                                                        <span>Perfugo Digital Atelier</span>
-                                                        <span class="hidden h-px w-16 app-divider sm:block"></span>
-                                                        <span>Where craft meets alchemy</span>
-                                                </div>
-                                        </footer>
-                                </div>
-                        </div>
-                        <script>
+		</head>
+		<body class="h-full antialiased app-root" data-theme={ theme.ID } hx-boost="true">
+			<div class={ bodyWrapperClass(showSidebar) }>
+				if showSidebar {
+					<aside class="app-sidebar hidden lg:flex lg:w-72 xl:w-80 lg:flex-col">
+						if sidebar != nil {
+							@sidebar
+						}
+					</aside>
+				}
+				<div class="flex min-h-screen flex-1 flex-col">
+					<main id="primary-content" class={ mainClass(showSidebar) }>
+						@content
+					</main>
+					<footer class="app-footer">
+						<div class="mx-auto flex max-w-6xl flex-col gap-1 px-6 py-6 text-xs uppercase tracking-[0.25em] app-muted sm:flex-row sm:items-center sm:justify-between">
+							<span>Perfugo Digital Atelier</span>
+							<span class="hidden h-px w-16 app-divider sm:block"></span>
+							<span>Where craft meets alchemy</span>
+						</div>
+					</footer>
+				</div>
+			</div>
+			<script>
                                 window.addEventListener('DOMContentLoaded', function () {
                                         const namespace = window.PerfugoWorkspace || (window.PerfugoWorkspace = {});
                                         namespace.modules = namespace.modules || {};
@@ -454,20 +452,20 @@ templ Layout(title string, sidebar templpkg.Component, content templpkg.Componen
                                         });
                                 });
                         </script>
-                </body>
-        </html>
+		</body>
+	</html>
 }
 
 func bodyWrapperClass(showSidebar bool) string {
-        if showSidebar {
-                return "min-h-screen lg:flex app-shell"
-        }
-        return "min-h-screen flex flex-col app-shell"
+	if showSidebar {
+		return "min-h-screen lg:flex app-shell"
+	}
+	return "min-h-screen flex flex-col app-shell"
 }
 
 func mainClass(showSidebar bool) string {
-        if showSidebar {
-                return "relative flex-1"
-        }
-        return "flex-1"
+	if showSidebar {
+		return "relative flex-1"
+	}
+	return "flex-1"
 }

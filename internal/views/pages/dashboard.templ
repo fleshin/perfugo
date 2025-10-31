@@ -137,7 +137,7 @@ func workspaceMeta(section string, snapshot WorkspaceSnapshot) workspaceSectionM
 	}
 }
 
-func workspaceComponent(section string, snapshot WorkspaceSnapshot) templpkg.Component {
+func workspaceComponent(section string, snapshot WorkspaceSnapshot) templ.Component {
 	switch section {
 	case "formulas":
 		return FormulaManagement(snapshot)

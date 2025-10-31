@@ -5,15 +5,15 @@ package pages
 
 //lint:file-ignore SA4006 This context is only used if a nested component is present.
 
+import "github.com/a-h/templ"
+import templruntime "github.com/a-h/templ/runtime"
+
 import (
 	"fmt"
-	"perfugo/internal/views/components"
-	"perfugo/internal/views/layout"
 	"strings"
 
-	"github.com/a-h/templ"
-	templpkg "github.com/a-h/templ"
-	templruntime "github.com/a-h/templ/runtime"
+	"perfugo/internal/views/components"
+	"perfugo/internal/views/layout"
 )
 
 const defaultWorkspaceSection = "ingredients"
@@ -304,7 +304,7 @@ func workspaceMeta(section string, snapshot WorkspaceSnapshot) workspaceSectionM
 	}
 }
 
-func workspaceComponent(section string, snapshot WorkspaceSnapshot) templpkg.Component {
+func workspaceComponent(section string, snapshot WorkspaceSnapshot) templ.Component {
 	switch section {
 	case "formulas":
 		return FormulaManagement(snapshot)

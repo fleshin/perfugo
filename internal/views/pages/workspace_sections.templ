@@ -127,7 +127,7 @@ templ ingredientTableContent(chemicals []models.AromaChemical, filters Ingredien
 										<button
 											type="button"
 											class="app-button"
-											hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/ingredients/detail?id=%d", chemical.ID)) }
+                                                                                hx-get={ templ.URL(fmt.Sprintf("/app/sections/ingredients/detail?id=%d", chemical.ID)) }
 											hx-target="#ingredient-detail"
 											hx-swap="innerHTML"
 										>
@@ -136,7 +136,7 @@ templ ingredientTableContent(chemicals []models.AromaChemical, filters Ingredien
 										<button
 											type="button"
 											class="app-button app-button--ghost"
-											hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/ingredients/edit?id=%d", chemical.ID)) }
+                                                                                hx-get={ templ.URL(fmt.Sprintf("/app/sections/ingredients/edit?id=%d", chemical.ID)) }
 											hx-target="#ingredient-detail"
 											hx-swap="innerHTML"
 										>
@@ -365,7 +365,7 @@ templ IngredientEditor(chemical *models.AromaChemical, status string) {
 				<button
 					type="button"
 					class="app-button app-button--ghost"
-					hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/ingredients/detail?id=%d", chemical.ID)) }
+                                        hx-get={ templ.URL(fmt.Sprintf("/app/sections/ingredients/detail?id=%d", chemical.ID)) }
 					hx-target="#ingredient-detail"
 					hx-swap="innerHTML"
 				>
@@ -464,7 +464,7 @@ templ formulaListContent(formulas []models.Formula, filters FormulaFilters, tota
 											<button
 												type="button"
 												class="app-button"
-												hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/formulas/detail?id=%d", formula.ID)) }
+                                                hx-get={ templ.URL(fmt.Sprintf("/app/sections/formulas/detail?id=%d", formula.ID)) }
 												hx-target="#formula-detail"
 												hx-swap="innerHTML"
 											>
@@ -473,7 +473,7 @@ templ formulaListContent(formulas []models.Formula, filters FormulaFilters, tota
 											<button
 												type="button"
 												class="app-button app-button--ghost"
-												hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/formulas/edit?id=%d", formula.ID)) }
+                                                hx-get={ templ.URL(fmt.Sprintf("/app/sections/formulas/edit?id=%d", formula.ID)) }
 												hx-target="#formula-detail"
 												hx-swap="innerHTML"
 											>
@@ -531,7 +531,7 @@ templ FormulaDetail(formula *models.Formula, ingredients []models.FormulaIngredi
 					<button
 						type="button"
 						class="app-button app-button--ghost"
-						hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/formulas/edit?id=%d", formula.ID)) }
+                                        hx-get={ templ.URL(fmt.Sprintf("/app/sections/formulas/edit?id=%d", formula.ID)) }
 						hx-target="#formula-detail"
 						hx-swap="innerHTML"
 					>
@@ -645,7 +645,7 @@ templ FormulaEditor(
 					<button
 						type="button"
 						class="app-button app-button--ghost"
-						hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/formulas/ingredient-row?formula_id=%d", formula.ID)) }
+                                                hx-get={ templ.URL(fmt.Sprintf("/app/sections/formulas/ingredient-row?formula_id=%d", formula.ID)) }
 						hx-include="closest form"
 						hx-target="#formula-ingredient-rows"
 						hx-swap="beforeend"
@@ -681,7 +681,7 @@ templ FormulaEditor(
 				<button
 					type="button"
 					class="app-button app-button--ghost"
-					hx-get={ templpkg.URL(fmt.Sprintf("/app/sections/formulas/detail?id=%d", formula.ID)) }
+                                        hx-get={ templ.URL(fmt.Sprintf("/app/sections/formulas/detail?id=%d", formula.ID)) }
 					hx-target="#formula-detail"
 					hx-swap="innerHTML"
 				>
