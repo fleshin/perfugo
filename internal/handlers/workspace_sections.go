@@ -104,12 +104,20 @@ func IngredientUpdate(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	rawPyramid := r.FormValue("pyramid_position")
+	pyramidValue, pyramidOK := pages.NormalizePyramidPosition(rawPyramid)
+	if !pyramidOK {
+		chemical.PyramidPosition = strings.TrimSpace(rawPyramid)
+		renderComponent(w, r, pages.IngredientEditor(chemical, "Select a valid pyramid position."))
+		return
+	}
+	chemical.PyramidPosition = pyramidValue
+
 	if database == nil {
 		message := "Editing is unavailable because no database connection is configured."
 		chemical.IngredientName = name
 		chemical.CASNumber = strings.TrimSpace(r.FormValue("cas_number"))
 		chemical.Type = strings.TrimSpace(r.FormValue("type"))
-		chemical.PyramidPosition = strings.TrimSpace(r.FormValue("pyramid_position"))
 		chemical.WheelPosition = strings.TrimSpace(r.FormValue("wheel_position"))
 		chemical.Duration = strings.TrimSpace(r.FormValue("duration"))
 		chemical.Notes = strings.TrimSpace(r.FormValue("notes"))
@@ -148,7 +156,7 @@ func IngredientUpdate(w http.ResponseWriter, r *http.Request) {
 		"ingredient_name":  name,
 		"cas_number":       strings.TrimSpace(r.FormValue("cas_number")),
 		"type":             strings.TrimSpace(r.FormValue("type")),
-		"pyramid_position": strings.TrimSpace(r.FormValue("pyramid_position")),
+		"pyramid_position": pyramidValue,
 		"wheel_position":   strings.TrimSpace(r.FormValue("wheel_position")),
 		"duration":         strings.TrimSpace(r.FormValue("duration")),
 		"notes":            strings.TrimSpace(r.FormValue("notes")),

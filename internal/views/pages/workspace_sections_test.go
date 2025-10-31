@@ -127,6 +127,40 @@ func TestNextCopiedFormulaName(t *testing.T) {
 	}
 }
 
+func TestNormalizePyramidPosition(t *testing.T) {
+	cases := map[string]struct {
+		input string
+		want  string
+		valid bool
+	}{
+		"blank":      {input: "", want: "", valid: true},
+		"canonical":  {input: "heart", want: "heart", valid: true},
+		"uppercase":  {input: "TOP", want: "top", valid: true},
+		"spaced":     {input: "Heart Base", want: "heart-base", valid: true},
+		"underscore": {input: "top_heart", want: "top-heart", valid: true},
+		"invalid":    {input: "mid", want: "", valid: false},
+	}
+
+	for name, tc := range cases {
+		got, ok := NormalizePyramidPosition(tc.input)
+		if got != tc.want || ok != tc.valid {
+			t.Fatalf("%s: expected (%q,%t), got (%q,%t)", name, tc.want, tc.valid, got, ok)
+		}
+	}
+}
+
+func TestPyramidPositionLabel(t *testing.T) {
+	if got := PyramidPositionLabel("heart-base"); got != "Heart-Base" {
+		t.Fatalf("expected Heart-Base, got %s", got)
+	}
+	if got := PyramidPositionLabel(""); got != "—" {
+		t.Fatalf("expected em dash for blank, got %s", got)
+	}
+	if got := PyramidPositionLabel("unknown"); got != "—" {
+		t.Fatalf("expected em dash for invalid, got %s", got)
+	}
+}
+
 func TestFormulaEditorSelectsEachIngredientSource(t *testing.T) {
 	u := func(v uint) *uint { return &v }
 

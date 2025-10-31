@@ -97,7 +97,7 @@ templ ingredientTableContent(chemicals []models.AromaChemical, filters Ingredien
 					<thead class="bg-white/5 text-xs font-medium uppercase tracking-[0.35em] text-white/50">
 						<tr>
 							<th class="px-5 py-4">Ingredient</th>
-							<th class="px-5 py-4">Pyramid</th>
+                                                        <th class="px-5 py-4">Pyramid</th>
 							<th class="px-5 py-4">Wheel</th>
 							<th class="px-5 py-4">Potency</th>
 							<th class="px-5 py-4 text-right">Actions</th>
@@ -116,7 +116,7 @@ templ ingredientTableContent(chemicals []models.AromaChemical, filters Ingredien
 										}
 									</div>
 								</td>
-								<td class="px-5 py-4">{ DefaultDash(chemical.PyramidPosition) }</td>
+                                                                <td class="px-5 py-4">{ PyramidPositionLabel(chemical.PyramidPosition) }</td>
 								<td class="px-5 py-4">{ DefaultDash(chemical.WheelPosition) }</td>
 								<td class="px-5 py-4">
 									<div class="font-semibold text-white">{ AromaChemicalPotencyLabel(chemical.Strength) }</div>
@@ -191,7 +191,7 @@ templ IngredientDetail(chemical *models.AromaChemical) {
 				</div>
 				<div>
 					<dt class="text-xs uppercase tracking-[0.35em] text-white/50">Pyramid</dt>
-					<dd class="mt-1 text-base text-white">{ DefaultDash(chemical.PyramidPosition) }</dd>
+                                        <dd class="mt-1 text-base text-white">{ PyramidPositionLabel(chemical.PyramidPosition) }</dd>
 				</div>
 				<div>
 					<dt class="text-xs uppercase tracking-[0.35em] text-white/50">Wheel</dt>
@@ -302,18 +302,25 @@ templ IngredientEditor(chemical *models.AromaChemical, status string) {
 						value={ fmt.Sprintf("%d", chemical.Strength) }
 					/>
 				</div>
-				<div class="space-y-2">
-					<label class="text-xs uppercase tracking-[0.35em] app-muted" for="pyramid-position">
-						Pyramid position
-					</label>
-					<input
-						id="pyramid-position"
-						name="pyramid_position"
-						type="text"
-						class="app-input w-full"
-						value={ chemical.PyramidPosition }
-					/>
-				</div>
+                                <div class="space-y-2">
+                                        <label class="text-xs uppercase tracking-[0.35em] app-muted" for="pyramid-position">
+                                                Pyramid position
+                                        </label>
+                                        <select
+                                                id="pyramid-position"
+                                                name="pyramid_position"
+                                                class="app-input w-full"
+                                        >
+                                                <option value="" selected?={ CanonicalPyramidPosition(chemical.PyramidPosition) == "" }>
+                                                        Select pyramid position
+                                                </option>
+                                                for _, option := range AllowedPyramidPositions() {
+                                                        <option value={ option } selected?={ CanonicalPyramidPosition(chemical.PyramidPosition) == option }>
+                                                                { PyramidPositionLabel(option) }
+                                                        </option>
+                                                }
+                                        </select>
+                                </div>
 				<div class="space-y-2">
 					<label class="text-xs uppercase tracking-[0.35em] app-muted" for="wheel-position">
 						Wheel position
