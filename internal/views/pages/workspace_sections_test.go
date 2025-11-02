@@ -36,11 +36,32 @@ func TestAromaChemicalPotencyLabel(t *testing.T) {
 }
 
 func TestFilterAromaChemicals(t *testing.T) {
-	chemicals := []models.AromaChemical{{IngredientName: "Alpha", CASNumber: "111"}, {IngredientName: "Beta", Type: "Base"}}
-	filters := IngredientFilters{Query: "beta"}
-	filtered := FilterAromaChemicals(chemicals, filters)
+	chemicals := []models.AromaChemical{
+		{IngredientName: "Alpha", CASNumber: "111", PyramidPosition: "Top", WheelPosition: "Citrus"},
+		{IngredientName: "Beta", Type: "Base", PyramidPosition: "Base", WheelPosition: "Woody"},
+	}
+	f := IngredientFilters{Query: "beta"}
+	filtered := FilterAromaChemicals(chemicals, f)
 	if len(filtered) != 1 || filtered[0].IngredientName != "Beta" {
 		t.Fatalf("expected Beta chemical, got %+v", filtered)
+	}
+
+	f = IngredientFilters{Pyramid: "base"}
+	filtered = FilterAromaChemicals(chemicals, f)
+	if len(filtered) != 1 || filtered[0].PyramidPosition != "Base" {
+		t.Fatalf("expected pyramid filter to match Base, got %+v", filtered)
+	}
+
+	f = IngredientFilters{Wheel: "woody"}
+	filtered = FilterAromaChemicals(chemicals, f)
+	if len(filtered) != 1 || strings.ToLower(filtered[0].WheelPosition) != "woody" {
+		t.Fatalf("expected wheel filter to match Woody, got %+v", filtered)
+	}
+
+	f = IngredientFilters{Pyramid: "heart", Wheel: "citrus"}
+	filtered = FilterAromaChemicals(chemicals, f)
+	if len(filtered) != 0 {
+		t.Fatalf("expected no results for unmatched combo, got %+v", filtered)
 	}
 }
 

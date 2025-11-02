@@ -10,7 +10,9 @@ import (
 
 // IngredientFilters capture the client-driven state for aroma chemical lookups.
 type IngredientFilters struct {
-	Query string
+	Query   string
+	Pyramid string
+	Wheel   string
 }
 
 // IngredientFiltersFromRequest extracts filter inputs from an HTTP request.
@@ -20,22 +22,40 @@ func IngredientFiltersFromRequest(r *http.Request) IngredientFilters {
 		return filters
 	}
 	filters.Query = strings.TrimSpace(r.FormValue("q"))
+	filters.Pyramid = strings.TrimSpace(r.FormValue("pyramid"))
+	filters.Wheel = strings.TrimSpace(r.FormValue("wheel"))
 	return filters
 }
 
 // FilterAromaChemicals applies the provided filters to a list of aroma chemicals.
 func FilterAromaChemicals(all []models.AromaChemical, filters IngredientFilters) []models.AromaChemical {
-	if filters.Query == "" {
-		return all
-	}
 	query := strings.ToLower(filters.Query)
+	pyramidCanonical := CanonicalPyramidPosition(filters.Pyramid)
+	wheelFilter := strings.ToLower(strings.TrimSpace(filters.Wheel))
+
 	filtered := make([]models.AromaChemical, 0, len(all))
 	for _, chemical := range all {
-		if containsFold(chemical.IngredientName, query) ||
-			containsFold(chemical.CASNumber, query) ||
-			containsFold(chemical.Type, query) {
-			filtered = append(filtered, chemical)
+		if query != "" &&
+			!(containsFold(chemical.IngredientName, query) ||
+				containsFold(chemical.CASNumber, query) ||
+				containsFold(chemical.Type, query)) {
+			continue
 		}
+
+		if pyramidCanonical != "" {
+			chemicalPyramid, ok := NormalizePyramidPosition(chemical.PyramidPosition)
+			if !ok || chemicalPyramid != pyramidCanonical {
+				continue
+			}
+		}
+
+		if wheelFilter != "" {
+			if strings.ToLower(strings.TrimSpace(chemical.WheelPosition)) != wheelFilter {
+				continue
+			}
+		}
+
+		filtered = append(filtered, chemical)
 	}
 	return filtered
 }

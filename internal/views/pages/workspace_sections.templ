@@ -32,12 +32,13 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
 		<div class="app-card flex min-h-0 flex-col space-y-6 px-6 py-6 max-h-96 overflow-y-auto">
 			<div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 				<form
-					class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:flex-1"
+					id="ingredient-filter-form"
+					class="grid flex-1 gap-4 sm:grid-cols-4 sm:items-end"
 					hx-get="/app/sections/ingredients/table"
 					hx-target="#ingredient-table"
 					hx-swap="outerHTML"
 				>
-					<div class="flex-1">
+					<div class="space-y-1">
 						<label class="text-xs uppercase tracking-[0.35em] app-muted" for="ingredient-search">
 							Search ingredients
 						</label>
@@ -51,7 +52,42 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
 							hx-trigger="keyup changed delay:300ms"
 						/>
 					</div>
-					<button type="submit" class="app-button w-full sm:w-auto">Filter</button>
+					<div class="space-y-1">
+						<label class="text-xs uppercase tracking-[0.35em] app-muted" for="ingredient-pyramid-filter">
+							Pyramid position
+						</label>
+						<select
+							id="ingredient-pyramid-filter"
+							name="pyramid"
+							class="app-input mt-2 w-full"
+						>
+							<option value="">All pyramid levels</option>
+							for _, option := range AllowedPyramidPositions() {
+								<option value={ option }>{ PyramidPositionLabel(option) }</option>
+							}
+						</select>
+					</div>
+					<div class="space-y-1">
+						<label class="text-xs uppercase tracking-[0.35em] app-muted" for="ingredient-wheel-filter">
+							Wheel position
+						</label>
+						<select
+							id="ingredient-wheel-filter"
+							name="wheel"
+							class="app-input mt-2 w-full"
+						>
+							<option value="">All wheel families</option>
+							for _, option := range WheelPositionOptions(snapshot.AromaChemicals) {
+								<option value={ option }>{ option }</option>
+							}
+						</select>
+					</div>
+					<div class="space-y-1">
+						<label class="text-xs uppercase tracking-[0.35em] app-muted" for="ingredient-filter-submit">
+							&nbsp;
+						</label>
+						<button id="ingredient-filter-submit" type="submit" class="app-button w-full">Apply filters</button>
+					</div>
 				</form>
 				<button
 					type="button"
@@ -59,7 +95,7 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
 					hx-get="/app/sections/ingredients/new"
 					hx-target="#ingredient-detail"
 					hx-swap="innerHTML"
-					hx-include="#ingredient-search"
+					hx-include="#ingredient-filter-form"
 					hx-disabled-elt="this"
 				>
 					New ingredient
@@ -98,6 +134,12 @@ templ IngredientTableOOB(chemicals []models.AromaChemical, filters IngredientFil
 templ ingredientTableContent(chemicals []models.AromaChemical, filters IngredientFilters, total int) {
 	if strings.TrimSpace(filters.Query) != "" {
 		<p class="text-xs app-muted">Filtered by “{ filters.Query }”.</p>
+	}
+	if CanonicalPyramidPosition(filters.Pyramid) != "" {
+		<p class="text-xs app-muted">Pyramid: { PyramidPositionLabel(filters.Pyramid) }</p>
+	}
+	if strings.TrimSpace(filters.Wheel) != "" {
+		<p class="text-xs app-muted">Wheel: { strings.TrimSpace(filters.Wheel) }</p>
 	}
 	if len(chemicals) == 0 {
 		<div class="flex-1 rounded-3xl border border-white/15 bg-white/5 px-6 py-10 text-center text-sm app-muted">

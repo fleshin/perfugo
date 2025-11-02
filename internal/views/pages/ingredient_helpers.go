@@ -2,6 +2,7 @@ package pages
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"perfugo/models"
@@ -14,6 +15,30 @@ func AllowedPyramidPositions() []string {
 	result := make([]string, len(allowedPyramidPositions))
 	copy(result, allowedPyramidPositions)
 	return result
+}
+
+// WheelPositionOptions returns a sorted list of unique, non-empty wheel positions.
+func WheelPositionOptions(chemicals []models.AromaChemical) []string {
+	unique := make(map[string]string)
+	for _, chemical := range chemicals {
+		trimmed := strings.TrimSpace(chemical.WheelPosition)
+		if trimmed == "" {
+			continue
+		}
+		key := strings.ToLower(trimmed)
+		if _, exists := unique[key]; !exists {
+			unique[key] = trimmed
+		}
+	}
+
+	options := make([]string, 0, len(unique))
+	for _, value := range unique {
+		options = append(options, value)
+	}
+	sort.Slice(options, func(i, j int) bool {
+		return strings.ToLower(options[i]) < strings.ToLower(options[j])
+	})
+	return options
 }
 
 // NormalizePyramidPosition converts the supplied value to its canonical representation.

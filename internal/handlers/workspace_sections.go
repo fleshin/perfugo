@@ -991,16 +991,17 @@ func IngredientDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var inUse int64
-	if err := database.WithContext(ctx).
-		Model(&models.FormulaIngredient{}).
+	var reference models.FormulaIngredient
+	refErr := database.WithContext(ctx).
 		Where("aroma_chemical_id = ?", id).
-		Count(&inUse).Error; err != nil {
-		applog.Error(ctx, "failed to count ingredient references", "error", err, "ingredientID", id)
+		Select("id").
+		First(&reference).Error
+	if refErr != nil && !errors.Is(refErr, gorm.ErrRecordNotFound) {
+		applog.Error(ctx, "failed to verify ingredient references", "error", refErr, "ingredientID", id)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	if inUse > 0 {
+	if refErr == nil {
 		snapshot := buildWorkspaceSnapshot(r)
 		filtered := pages.FilterAromaChemicals(snapshot.AromaChemicals, filters)
 		message := "This ingredient is used in one or more formulas. Remove those references before deleting."
