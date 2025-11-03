@@ -97,6 +97,7 @@ func sidebarData(active string) components.SidebarData {
 		Active: normalized,
 		Features: []components.SidebarLink{
 			{Label: "Ingredients", Path: "/app/ingredients", Section: "ingredients", Icon: "🧴", UseHTMX: true},
+			{Label: "Tools", Path: "/app/tools", Section: "tools", Icon: "🛠", UseHTMX: true},
 			{Label: "Formulas", Path: "/app/formulas", Section: "formulas", Icon: "🧪", UseHTMX: true},
 			{Label: "Reports", Path: "/app/reports", Section: "reports", Icon: "📊", UseHTMX: true},
 		},
@@ -177,7 +178,7 @@ func workspaceInterior(section string, meta workspaceSectionMeta, snapshot Works
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Badge)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 71, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 72, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -195,7 +196,7 @@ func workspaceInterior(section string, meta workspaceSectionMeta, snapshot Works
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 74, Col: 101}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 75, Col: 101}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -213,7 +214,7 @@ func workspaceInterior(section string, meta workspaceSectionMeta, snapshot Works
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Subtitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 76, Col: 91}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 77, Col: 91}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -236,7 +237,7 @@ func workspaceInterior(section string, meta workspaceSectionMeta, snapshot Works
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(meta.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 80, Col: 76}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/pages/dashboard.templ`, Line: 81, Col: 76}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -283,6 +284,15 @@ func workspaceMeta(section string, snapshot WorkspaceSnapshot) workspaceSectionM
 			MetricLabel: "Last refresh",
 			MetricValue: "12 Oct 2024",
 		}
+	case "tools":
+		return workspaceSectionMeta{
+			Badge:       "AI Atelier",
+			Title:       "Tools",
+			Subtitle:    "Accelerate ingredient research",
+			Description: "Leverage Perfugo’s AI assistant to scaffold new aroma entries and extend your private library in seconds.",
+			MetricLabel: "Private Imports",
+			MetricValue: fmt.Sprintf("%d entries", len(snapshot.AromaChemicals)),
+		}
 	case "preferences":
 		return workspaceSectionMeta{
 			Badge:       "Profile Rituals",
@@ -310,6 +320,8 @@ func workspaceComponent(section string, snapshot WorkspaceSnapshot) templ.Compon
 		return FormulaManagement(snapshot)
 	case "reports":
 		return ReportsOverview(defaultReportCards(), defaultReportTimeline(), defaultReportLeaders())
+	case "tools":
+		return ToolsManagement(snapshot)
 	case "preferences":
 		return PreferencesPanel(snapshot.Theme, layout.ThemeOptions())
 	default:
@@ -354,7 +366,7 @@ func NormalizeWorkspaceSection(section string) string {
 
 func ValidWorkspaceSection(section string) bool {
 	switch section {
-	case "ingredients", "formulas", "reports", "preferences":
+	case "ingredients", "formulas", "reports", "tools", "preferences":
 		return true
 	default:
 		return false

@@ -39,6 +39,7 @@ func sidebarData(active string) components.SidebarData {
 		Active: normalized,
 		Features: []components.SidebarLink{
 			{Label: "Ingredients", Path: "/app/ingredients", Section: "ingredients", Icon: "🧴", UseHTMX: true},
+			{Label: "Tools", Path: "/app/tools", Section: "tools", Icon: "🛠", UseHTMX: true},
 			{Label: "Formulas", Path: "/app/formulas", Section: "formulas", Icon: "🧪", UseHTMX: true},
 			{Label: "Reports", Path: "/app/reports", Section: "reports", Icon: "📊", UseHTMX: true},
 		},
@@ -116,6 +117,15 @@ func workspaceMeta(section string, snapshot WorkspaceSnapshot) workspaceSectionM
 			MetricLabel: "Last refresh",
 			MetricValue: "12 Oct 2024",
 		}
+	case "tools":
+		return workspaceSectionMeta{
+			Badge:       "AI Atelier",
+			Title:       "Tools",
+			Subtitle:    "Accelerate ingredient research",
+			Description: "Leverage Perfugo’s AI assistant to scaffold new aroma entries and extend your private library in seconds.",
+			MetricLabel: "Private Imports",
+			MetricValue: fmt.Sprintf("%d entries", len(snapshot.AromaChemicals)),
+		}
 	case "preferences":
 		return workspaceSectionMeta{
 			Badge:       "Profile Rituals",
@@ -143,6 +153,8 @@ func workspaceComponent(section string, snapshot WorkspaceSnapshot) templ.Compon
 		return FormulaManagement(snapshot)
 	case "reports":
 		return ReportsOverview(defaultReportCards(), defaultReportTimeline(), defaultReportLeaders())
+	case "tools":
+		return ToolsManagement(snapshot)
 	case "preferences":
 		return PreferencesPanel(snapshot.Theme, layout.ThemeOptions())
 	default:
@@ -187,7 +199,7 @@ func NormalizeWorkspaceSection(section string) string {
 
 func ValidWorkspaceSection(section string) bool {
 	switch section {
-	case "ingredients", "formulas", "reports", "preferences":
+	case "ingredients", "formulas", "reports", "tools", "preferences":
 		return true
 	default:
 		return false

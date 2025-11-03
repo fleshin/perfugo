@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	templpkg "github.com/a-h/templ"
+	"github.com/a-h/templ"
 	applog "perfugo/internal/log"
 	"perfugo/internal/views/pages"
 	"perfugo/models"
@@ -25,7 +25,7 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 
 	snapshot := buildWorkspaceSnapshot(r)
 
-	var component templpkg.Component
+	var component templ.Component
 	if isHTMX(r) {
 		applog.Debug(r.Context(), "rendering HTMX workspace partial")
 		component = pages.WorkspaceSection(section, snapshot)

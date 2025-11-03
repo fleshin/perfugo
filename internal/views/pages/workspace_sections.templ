@@ -115,6 +115,71 @@ templ IngredientManagement(snapshot WorkspaceSnapshot) {
 	</section>
 }
 
+templ ToolsManagement(snapshot WorkspaceSnapshot) {
+	@ToolsPanel(snapshot, "", "")
+}
+
+templ ToolsPanel(snapshot WorkspaceSnapshot, status string, errorMessage string) {
+	<section class="space-y-8" data-module="tools" id="tools-panel">
+		<div class="app-card space-y-6 px-6 py-6">
+			<div class="space-y-3">
+				<h2 class="text-lg font-semibold text-white">AI Ingredient Enricher</h2>
+				<p class="text-sm app-muted">Provide an ingredient name and Perfugo will draft a private profile using the OpenAI model configured for this workspace.</p>
+			</div>
+			if strings.TrimSpace(status) != "" {
+				<div class="app-alert app-card--flat text-left text-sm text-emerald-200">{ status }</div>
+			}
+			if strings.TrimSpace(errorMessage) != "" {
+				<div class="app-alert app-card--flat text-left text-sm text-rose-200">{ errorMessage }</div>
+			}
+			<form
+				class="space-y-5"
+				hx-post="/app/sections/tools/import"
+				hx-target="#tools-panel"
+				hx-swap="outerHTML"
+			>
+				<div class="grid gap-4 sm:grid-cols-3">
+					<div class="sm:col-span-2 space-y-2">
+						<label class="text-xs uppercase tracking-[0.35em] app-muted" for="tool-ingredient-name">
+							Ingredient name
+						</label>
+						<input
+							id="tool-ingredient-name"
+							name="ingredient_name"
+							type="text"
+							class="app-input w-full"
+							required
+							placeholder="eg. Ambroxan"
+						/>
+					</div>
+					<div class="space-y-2">
+						<label class="text-xs uppercase tracking-[0.35em] app-muted" for="tool-model-override">
+							Model (optional)
+						</label>
+						<input
+							id="tool-model-override"
+							name="model"
+							type="text"
+							class="app-input w-full"
+							placeholder="Override OPENAI_MODEL"
+						/>
+					</div>
+				</div>
+				<div class="flex items-center gap-3 text-xs app-muted">
+					<span>Approximate turnaround: 2-4 s · Current library size { fmt.Sprintf("%d", len(snapshot.AromaChemicals)) }</span>
+				</div>
+				<div class="flex items-center justify-end gap-3">
+					<button type="submit" class="app-button">Generate ingredient profile</button>
+				</div>
+			</form>
+			<div class="space-y-2 text-xs leading-relaxed app-muted">
+				<p>Perfugo stores AI-enriched ingredients as private records. They do not overwrite public catalog entries and remain visible only to you.</p>
+				<p>Review the generated data before promoting it to the shared library.</p>
+			</div>
+		</div>
+	</section>
+}
+
 templ IngredientTable(chemicals []models.AromaChemical, filters IngredientFilters, total int) {
 	<div id="ingredient-table" class="h-full min-h-0">
 		<div class="flex h-full min-h-0 flex-col space-y-4">
@@ -204,7 +269,7 @@ templ ingredientTableContent(chemicals []models.AromaChemical, filters Ingredien
 											hx-vals={ fmt.Sprintf("{\"id\":%d}", chemical.ID) }
 											hx-target="#ingredient-detail"
 											hx-swap="innerHTML"
-											hx-include="#ingredient-search"
+											hx-include="#ingredient-filter-form"
 											hx-disabled-elt="this"
 											hx-confirm="Delete this ingredient? This cannot be undone."
 										>

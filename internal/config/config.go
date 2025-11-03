@@ -17,6 +17,7 @@ type Config struct {
 	Database DatabaseConfig
 	Logging  LoggingConfig
 	Auth     AuthConfig
+	AI       AIConfig
 }
 
 // ServerConfig configures the HTTP server runtime behavior.
@@ -42,6 +43,14 @@ type LoggingConfig struct {
 // AuthConfig controls authentication and session behavior for the application.
 type AuthConfig struct {
 	Session SessionConfig
+}
+
+// AIConfig controls OpenAI integration behaviour.
+type AIConfig struct {
+	APIKey         string
+	Model          string
+	BaseURL        string
+	RequestTimeout time.Duration
 }
 
 // SessionConfig configures HTTP session cookie behavior.
@@ -112,6 +121,20 @@ func Load() (Config, error) {
 		"cookieSecure", cfg.Auth.Session.CookieSecure,
 	)
 
+	cfg.AI = AIConfig{
+		APIKey:         strings.TrimSpace(os.Getenv("OPENAI_API_KEY")),
+		Model:          firstNonEmpty(os.Getenv("OPENAI_MODEL"), defaultAIModel()),
+		BaseURL:        strings.TrimSpace(os.Getenv("OPENAI_BASE_URL")),
+		RequestTimeout: parseDurationWithDefault(os.Getenv("OPENAI_TIMEOUT"), 90*time.Second),
+	}
+
+	applog.Debug(context.Background(), "ai configuration resolved",
+		"apiKeySet", cfg.AI.APIKey != "",
+		"model", cfg.AI.Model,
+		"baseURL", cfg.AI.BaseURL,
+		"timeout", cfg.AI.RequestTimeout.String(),
+	)
+
 	if strings.TrimSpace(cfg.Server.Addr) == "" {
 		return Config{}, fmt.Errorf("server address must not be empty")
 	}
@@ -119,6 +142,10 @@ func Load() (Config, error) {
 	applog.Debug(context.Background(), "configuration load complete")
 
 	return cfg, nil
+}
+
+func defaultAIModel() string {
+	return "gpt-4.1-mini"
 }
 
 func firstNonEmpty(values ...string) string {

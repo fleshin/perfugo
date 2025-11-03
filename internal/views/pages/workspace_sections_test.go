@@ -221,6 +221,22 @@ func TestFormatHelpers(t *testing.T) {
 	}
 }
 
+func TestWheelPositionOptions(t *testing.T) {
+	chemicals := []models.AromaChemical{
+		{WheelPosition: "Citrus"},
+		{WheelPosition: "Floral"},
+		{WheelPosition: "citrus"},
+		{WheelPosition: ""},
+	}
+	opts := WheelPositionOptions(chemicals)
+	if len(opts) != 2 {
+		t.Fatalf("expected two unique options, got %v", opts)
+	}
+	if opts[0] != "Citrus" || opts[1] != "Floral" {
+		t.Fatalf("unexpected ordering: %v", opts)
+	}
+}
+
 func TestFormulaEditorSelectsEachIngredientSource(t *testing.T) {
 	u := func(v uint) *uint { return &v }
 

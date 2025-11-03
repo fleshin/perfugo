@@ -9,6 +9,7 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"gorm.io/gorm"
 
+	"perfugo/internal/ai"
 	"perfugo/internal/handlers"
 	applog "perfugo/internal/log"
 )
@@ -18,6 +19,7 @@ type Config struct {
 	Addr     string
 	Session  SessionConfig
 	Database *gorm.DB
+	AIClient *ai.Client
 }
 
 // SessionConfig controls session behavior for the HTTP server.
@@ -69,6 +71,7 @@ func New(cfg Config) (*Server, error) {
 	)
 
 	handlers.Configure(sessionManager, cfg.Database)
+	handlers.ConfigureAI(cfg.AIClient)
 
 	applog.Debug(context.Background(), "handler dependencies configured")
 

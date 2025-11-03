@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	templpkg "github.com/a-h/templ"
+	"github.com/a-h/templ"
 	"gorm.io/gorm"
 
 	applog "perfugo/internal/log"
@@ -1023,7 +1023,7 @@ func IngredientDelete(w http.ResponseWriter, r *http.Request) {
 	renderComponent(w, r, pages.IngredientDeletionResult(message, filtered, filters, len(refreshed.AromaChemicals)))
 }
 
-func renderComponent(w http.ResponseWriter, r *http.Request, component templpkg.Component) {
+func renderComponent(w http.ResponseWriter, r *http.Request, component templ.Component) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	if err := component.Render(r.Context(), w); err != nil {
 		applog.Error(r.Context(), "failed to render workspace fragment", "error", err)

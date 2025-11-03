@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	templpkg "github.com/a-h/templ"
+	"github.com/a-h/templ"
 	"gorm.io/gorm"
 
 	applog "perfugo/internal/log"
@@ -96,7 +96,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderSignup(w http.ResponseWriter, r *http.Request, message, name, email string) {
-	var component templpkg.Component
+	var component templ.Component
 	if isHTMX(r) {
 		applog.Debug(r.Context(), "rendering HTMX signup partial", "messagePresent", message != "")
 		component = pages.SignupPartial(message, name, email)

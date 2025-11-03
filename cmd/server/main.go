@@ -11,6 +11,7 @@ import (
 
 	"gorm.io/gorm"
 
+	"perfugo/internal/ai"
 	"perfugo/internal/config"
 	"perfugo/internal/db"
 	"perfugo/internal/db/mock"
@@ -71,6 +72,25 @@ func run(ctx context.Context) int {
 
 	applog.Debug(ctx, "database configured", "hasDB", database != nil)
 
+	var aiClient *ai.Client
+	if strings.TrimSpace(cfg.AI.APIKey) == "" {
+		applog.Info(ctx, "ai integration disabled", "reason", "missing api key")
+	} else {
+		aiClient, err = ai.NewClient(ai.Config{
+			APIKey:      cfg.AI.APIKey,
+			Model:       cfg.AI.Model,
+			BaseURL:     cfg.AI.BaseURL,
+			Timeout:     cfg.AI.RequestTimeout,
+			HTTPClient:  nil,
+			Temperature: 0,
+		})
+		if err != nil {
+			applog.Error(ctx, "failed to initialise ai client", "error", err)
+		} else {
+			applog.Debug(ctx, "ai client configured", "model", cfg.AI.Model)
+		}
+	}
+
 	srv, err := newServerFunc(server.Config{
 		Addr: cfg.Server.Addr,
 		Session: server.SessionConfig{
@@ -80,6 +100,7 @@ func run(ctx context.Context) int {
 			CookieSecure: cfg.Auth.Session.CookieSecure,
 		},
 		Database: database,
+		AIClient: aiClient,
 	})
 	if err != nil {
 		applog.Error(ctx, "failed to initialize http server", "error", err)

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	templpkg "github.com/a-h/templ"
+	"github.com/a-h/templ"
 
 	applog "perfugo/internal/log"
 	"perfugo/internal/views/pages"
@@ -74,7 +74,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderLogin(w http.ResponseWriter, r *http.Request, message, email string) {
-	var component templpkg.Component
+	var component templ.Component
 	if isHTMX(r) {
 		applog.Debug(r.Context(), "rendering HTMX login partial", "messagePresent", message != "")
 		component = pages.LoginPartial(message, email)
