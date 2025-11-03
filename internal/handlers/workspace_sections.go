@@ -36,6 +36,57 @@ func parseOptionalInt(value string) (int, error) {
 	return parsed, nil
 }
 
+func buildFormulaDependencyGraph(formulas []models.Formula) map[uint][]uint {
+	graph := make(map[uint][]uint, len(formulas))
+	for _, formula := range formulas {
+		if len(formula.Ingredients) == 0 {
+			continue
+		}
+		for _, ingredient := range formula.Ingredients {
+			if ingredient.SubFormulaID == nil || *ingredient.SubFormulaID == 0 {
+				continue
+			}
+			graph[uint(formula.ID)] = append(graph[uint(formula.ID)], *ingredient.SubFormulaID)
+		}
+	}
+	return graph
+}
+
+func wouldCreateFormulaCycle(graph map[uint][]uint, parentID uint, candidateID uint) bool {
+	if parentID == 0 || candidateID == 0 {
+		return false
+	}
+	if parentID == candidateID {
+		return true
+	}
+	return formulaContains(graph, candidateID, parentID)
+}
+
+func formulaContains(graph map[uint][]uint, startID, targetID uint) bool {
+	if startID == targetID {
+		return true
+	}
+	visited := make(map[uint]struct{})
+	stack := []uint{startID}
+	for len(stack) > 0 {
+		n := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+		if n == targetID {
+			return true
+		}
+		if _, ok := visited[n]; ok {
+			continue
+		}
+		visited[n] = struct{}{}
+		children := graph[n]
+		if len(children) == 0 {
+			continue
+		}
+		stack = append(stack, children...)
+	}
+	return false
+}
+
 // IngredientTable handles HTMX requests for the ingredient ledger.
 func IngredientTable(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
@@ -572,6 +623,7 @@ func FormulaUpdate(w http.ResponseWriter, r *http.Request) {
 	sources := r.Form["ingredient_source"]
 	amounts := r.Form["ingredient_amount"]
 	units := r.Form["ingredient_unit"]
+	dependencyGraph := buildFormulaDependencyGraph(snapshot.Formulas)
 
 	if len(rowKeys) != len(entryIDs) || len(rowKeys) != len(sources) || len(rowKeys) != len(amounts) || len(rowKeys) != len(units) {
 		applog.Error(r.Context(), "formula ingredient arrays misaligned",
@@ -617,6 +669,10 @@ func FormulaUpdate(w http.ResponseWriter, r *http.Request) {
 			renderComponent(w, r, pages.FormulaEditor(formula, currentIngredients, snapshot.AromaChemicals, snapshot.Formulas, "A formula cannot include itself as a sub-formula."))
 			return
 		}
+		if subID != nil && wouldCreateFormulaCycle(dependencyGraph, formula.ID, *subID) {
+			renderComponent(w, r, pages.FormulaEditor(formula, currentIngredients, snapshot.AromaChemicals, snapshot.Formulas, "This selection would create a circular dependency between formulas."))
+			return
+		}
 
 		amountValue := 0.0
 		if amountInput != "" {
@@ -637,6 +693,10 @@ func FormulaUpdate(w http.ResponseWriter, r *http.Request) {
 			RowKey:          rowKey,
 		}
 		updates = append(updates, update)
+
+		if subID != nil {
+			dependencyGraph[formula.ID] = append(dependencyGraph[formula.ID], *subID)
+		}
 
 		ingredientRecord := models.FormulaIngredient{
 			FormulaID:       formula.ID,

@@ -49,7 +49,7 @@ func ToolsImportIngredient(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := r.Context()
-	profile, err := openAIClient.FetchAromaProfile(ctx, ingredientName, ai.FetchOptions{ModelOverride: strings.TrimSpace(r.FormValue("model"))})
+	profile, err := openAIClient.FetchAromaProfile(ctx, ingredientName, ai.FetchOptions{})
 	if err != nil {
 		applog.Error(ctx, "ai fetch failed", "error", err)
 		renderComponent(w, r, pages.ToolsPanel(snapshot, "", fmt.Sprintf("We couldn't fetch data for %q. Please try again shortly.", ingredientName)))

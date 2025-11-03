@@ -138,32 +138,18 @@ templ ToolsPanel(snapshot WorkspaceSnapshot, status string, errorMessage string)
 				hx-target="#tools-panel"
 				hx-swap="outerHTML"
 			>
-				<div class="grid gap-4 sm:grid-cols-3">
-					<div class="sm:col-span-2 space-y-2">
-						<label class="text-xs uppercase tracking-[0.35em] app-muted" for="tool-ingredient-name">
-							Ingredient name
-						</label>
-						<input
-							id="tool-ingredient-name"
-							name="ingredient_name"
-							type="text"
-							class="app-input w-full"
-							required
-							placeholder="eg. Ambroxan"
-						/>
-					</div>
-					<div class="space-y-2">
-						<label class="text-xs uppercase tracking-[0.35em] app-muted" for="tool-model-override">
-							Model (optional)
-						</label>
-						<input
-							id="tool-model-override"
-							name="model"
-							type="text"
-							class="app-input w-full"
-							placeholder="Override OPENAI_MODEL"
-						/>
-					</div>
+				<div class="space-y-2">
+					<label class="text-xs uppercase tracking-[0.35em] app-muted" for="tool-ingredient-name">
+						Ingredient name
+					</label>
+					<input
+						id="tool-ingredient-name"
+						name="ingredient_name"
+						type="text"
+						class="app-input w-full"
+						required
+						placeholder="eg. Ambroxan"
+					/>
 				</div>
 				<div class="flex items-center gap-3 text-xs app-muted">
 					<span>Approximate turnaround: 2-4 s · Current library size { fmt.Sprintf("%d", len(snapshot.AromaChemicals)) }</span>
