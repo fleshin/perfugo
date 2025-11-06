@@ -54,6 +54,8 @@ func newRouter() http.Handler {
 	applog.Debug(context.Background(), "route registered", "path", "/app/sections/formulas/update", "protected", true)
 	applog.Debug(context.Background(), "route registered", "path", "/app/sections/formulas/ingredient-row", "protected", true)
 	applog.Debug(context.Background(), "route registered", "path", "/app/sections/formulas/delete", "protected", true)
+	mux.Handle("/app/reports/batch-production", handlers.RequireAuthentication(http.HandlerFunc(handlers.GenerateBatchProductionReport)))
+	applog.Debug(context.Background(), "route registered", "path", "/app/reports/batch-production", "protected", true)
 	mux.HandleFunc("/", handlers.Home)
 	applog.Debug(context.Background(), "route registered", "path", "/")
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("web/static"))))

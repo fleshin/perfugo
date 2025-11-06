@@ -152,7 +152,7 @@ func workspaceComponent(section string, snapshot WorkspaceSnapshot) templ.Compon
 	case "formulas":
 		return FormulaManagement(snapshot)
 	case "reports":
-		return ReportsOverview(defaultReportCards(), defaultReportTimeline(), defaultReportLeaders())
+		return ReportsOverview(snapshot, defaultReportCards(), defaultReportTimeline(), defaultReportLeaders())
 	case "tools":
 		return ToolsManagement(snapshot)
 	case "preferences":
