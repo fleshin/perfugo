@@ -86,19 +86,19 @@ func TestBuildBatchProductionReportDataScalesAndConsolidates(t *testing.T) {
 		t.Fatalf("create parent subformula ingredient: %v", err)
 	}
 
-	report, err := buildBatchProductionReportData(ctx, parentFormula.ID, 30)
+	report, err := buildBatchProductionReportData(ctx, parentFormula.ID, 30000)
 	if err != nil {
 		t.Fatalf("buildBatchProductionReportData returned error: %v", err)
 	}
 
-	if report.TargetQuantity != 30 {
-		t.Fatalf("expected target quantity 30, got %.2f", report.TargetQuantity)
+	if report.TargetQuantity != 30000 {
+		t.Fatalf("expected target quantity 30000 mg, got %.0f", report.TargetQuantity)
 	}
 	if !report.RunDate.Equal(fixedNow) {
 		t.Fatalf("expected run date %v, got %v", fixedNow, report.RunDate)
 	}
-	if report.BaseBatchQuantity != 15 {
-		t.Fatalf("expected base batch quantity 15, got %.2f", report.BaseBatchQuantity)
+	if report.BaseBatchQuantity != 15000 {
+		t.Fatalf("expected base batch quantity 15000 mg, got %.0f", report.BaseBatchQuantity)
 	}
 	if math.Abs(report.ScaleFactor-2.0) > 1e-6 {
 		t.Fatalf("expected scale factor 2, got %.4f", report.ScaleFactor)
@@ -109,14 +109,14 @@ func TestBuildBatchProductionReportDataScalesAndConsolidates(t *testing.T) {
 	if report.Ingredients[0].IngredientName != "Amber Core" {
 		t.Fatalf("expected Amber Core first, got %s", report.Ingredients[0].IngredientName)
 	}
-	if math.Abs(report.Ingredients[0].FinalQuantity-26.0) > 1e-6 {
-		t.Fatalf("expected Amber quantity 26, got %.4f", report.Ingredients[0].FinalQuantity)
+	if report.Ingredients[0].FinalQuantity != 26000 {
+		t.Fatalf("expected Amber quantity 26000 mg, got %.0f", report.Ingredients[0].FinalQuantity)
 	}
 	if report.Ingredients[1].IngredientName != "Citrus Lift" {
 		t.Fatalf("expected Citrus Lift second, got %s", report.Ingredients[1].IngredientName)
 	}
-	if math.Abs(report.Ingredients[1].FinalQuantity-4.0) > 1e-6 {
-		t.Fatalf("expected Citrus quantity 4, got %.4f", report.Ingredients[1].FinalQuantity)
+	if report.Ingredients[1].FinalQuantity != 4000 {
+		t.Fatalf("expected Citrus quantity 4000 mg, got %.0f", report.Ingredients[1].FinalQuantity)
 	}
 	if !strings.HasPrefix(report.LotNumber, "PERF-") {
 		t.Fatalf("expected lot number with PERF- prefix, got %s", report.LotNumber)

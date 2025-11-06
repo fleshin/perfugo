@@ -113,6 +113,12 @@ func buildBatchProductionReportData(ctx context.Context, formulaID uint, targetQ
 		return computeFormulaTotal(id, byFormula, totalsMemo, totalStack)
 	}
 
+	targetQuantityMg := targetQuantity
+	targetQuantityGrams := targetQuantityMg / 1000.0
+	if targetQuantityGrams <= 0 {
+		return pages.BatchProductionReportData{}, errBatchInvalidQuantity
+	}
+
 	baseTotal, err := computeTotals(formulaID)
 	if err != nil {
 		return pages.BatchProductionReportData{}, err
@@ -131,7 +137,7 @@ func buildBatchProductionReportData(ctx context.Context, formulaID uint, targetQ
 		return pages.BatchProductionReportData{}, err
 	}
 
-	scale := targetQuantity / baseTotal
+	scale := targetQuantityGrams / baseTotal
 	if math.IsNaN(scale) || math.IsInf(scale, 0) {
 		return pages.BatchProductionReportData{}, errBatchInvalidQuantity
 	}
@@ -141,7 +147,7 @@ func buildBatchProductionReportData(ctx context.Context, formulaID uint, targetQ
 		if total.Chemical == nil {
 			continue
 		}
-		finalQuantity := total.BaseAmount * scale
+		finalQuantity := total.BaseAmount * scale * 1000.0
 		if finalQuantity <= 0 {
 			continue
 		}
@@ -150,9 +156,9 @@ func buildBatchProductionReportData(ctx context.Context, formulaID uint, targetQ
 			CASNumber:      strings.TrimSpace(total.Chemical.CASNumber),
 			Pyramid:        pages.CanonicalPyramidPosition(total.Chemical.PyramidPosition),
 			PyramidLabel:   pages.PyramidPositionLabel(total.Chemical.PyramidPosition),
-			FinalQuantity:  finalQuantity,
-			BaseQuantity:   total.BaseAmount,
-			Unit:           "g",
+			FinalQuantity:  math.Round(finalQuantity),
+			BaseQuantity:   math.Round(total.BaseAmount * 1000.0),
+			Unit:           "mg",
 		})
 	}
 
@@ -166,10 +172,10 @@ func buildBatchProductionReportData(ctx context.Context, formulaID uint, targetQ
 	data := pages.BatchProductionReportData{
 		FormulaName:       formula.Name,
 		FormulaVersion:    int(formula.Version),
-		TargetQuantity:    targetQuantity,
-		TargetUnit:        "g",
-		BaseBatchQuantity: baseTotal,
-		BaseBatchUnit:     "g",
+		TargetQuantity:    math.Round(targetQuantity),
+		TargetUnit:        "mg",
+		BaseBatchQuantity: math.Round(baseTotal * 1000.0),
+		BaseBatchUnit:     "mg",
 		ScaleFactor:       scale,
 		LotNumber:         fmt.Sprintf("PERF-%s-%03d", runTime.Format("20060102"), formula.Version),
 		RunDate:           runTime,

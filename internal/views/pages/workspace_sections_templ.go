@@ -2473,7 +2473,7 @@ func ReportsOverview(snapshot WorkspaceSnapshot, cards []ReportCard, events []Re
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 197, "</select></div><div class=\"space-y-2\"><label class=\"text-xs uppercase tracking-[0.35em] app-muted\" for=\"batch-report-quantity\">Target quantity (g)</label> <input id=\"batch-report-quantity\" name=\"target_quantity\" type=\"number\" step=\"0.01\" min=\"0.01\" required class=\"app-input w-full\" placeholder=\"eg. 500\"></div></div><input type=\"hidden\" name=\"target_unit\" value=\"g\"><div class=\"flex items-center justify-between text-xs app-muted\"><span>Report opens in a new page with production-ready formatting.</span> <button type=\"submit\" class=\"app-button\">Run report</button></div></form></div><div class=\"grid gap-6 sm:grid-cols-2 lg:grid-cols-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 197, "</select></div><div class=\"space-y-2\"><label class=\"text-xs uppercase tracking-[0.35em] app-muted\" for=\"batch-report-quantity\">Target quantity (mg)</label> <input id=\"batch-report-quantity\" name=\"target_quantity\" type=\"number\" step=\"0.1\" min=\"1\" required class=\"app-input w-full\" placeholder=\"eg. 5000\"></div></div><input type=\"hidden\" name=\"target_unit\" value=\"mg\"><div class=\"flex items-center justify-between text-xs app-muted\"><span>Report opens in a new page with production-ready formatting.</span> <button type=\"submit\" class=\"app-button\">Run report</button></div></form></div><div class=\"grid gap-6 sm:grid-cols-2 lg:grid-cols-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

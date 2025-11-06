@@ -2,6 +2,7 @@ package pages
 
 import (
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -33,6 +34,9 @@ type BatchProductionReportData struct {
 
 // FormatReportQuantity renders a quantity using two decimal places and a trailing unit.
 func FormatReportQuantity(value float64, unit string) string {
+	if strings.EqualFold(unit, "mg") {
+		return fmt.Sprintf("%.0f %s", value, unit)
+	}
 	return fmt.Sprintf("%.2f %s", value, unit)
 }
 
