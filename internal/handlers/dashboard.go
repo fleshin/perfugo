@@ -3,12 +3,13 @@ package handlers
 import (
 	"context"
 	"net/http"
-	"strings"
-
-	"github.com/a-h/templ"
-	applog "perfugo/internal/log"
 	"perfugo/internal/views/pages"
 	"perfugo/models"
+	"strings"
+
+	applog "perfugo/internal/log"
+
+	"github.com/a-h/templ"
 )
 
 // Dashboard renders the main application workspace once a user is authenticated.
@@ -33,6 +34,8 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 		applog.Debug(r.Context(), "rendering full workspace page")
 		component = pages.Workspace(section, snapshot)
 	}
+
+	//	component := pages.Workspace(section, snapshot)
 
 	if err := component.Render(r.Context(), w); err != nil {
 		applog.Error(r.Context(), "failed to render dashboard", "error", err)

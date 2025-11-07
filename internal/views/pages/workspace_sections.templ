@@ -28,7 +28,7 @@ type IngredientPerformance struct {
 }
 
 templ IngredientManagement(snapshot WorkspaceSnapshot) {
-	<section class="space-y-8" data-module="ingredients">
+	<section class="space-y-8 w-full" data-module="ingredients">
 		<div class="app-card flex min-h-0 flex-col space-y-6 px-6 py-6 max-h-96 overflow-y-auto">
 			<div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 				<form
@@ -120,8 +120,8 @@ templ ToolsManagement(snapshot WorkspaceSnapshot) {
 }
 
 templ ToolsPanel(snapshot WorkspaceSnapshot, status string, errorMessage string) {
-	<section class="space-y-8" data-module="tools" id="tools-panel">
-		<div class="app-card space-y-6 px-6 py-6">
+	<section class="space-y-8 w-full flex flex-col" data-module="tools" id="tools-panel">
+		<div class="app-card flex w-full space-y-6 px-6 py-6">
 			<div class="space-y-3">
 				<h2 class="text-lg font-semibold text-white">AI Ingredient Enricher</h2>
 				<p class="text-sm app-muted">Provide an ingredient name and Perfugo will draft a private profile using the OpenAI model configured for this workspace.</p>
@@ -602,8 +602,8 @@ templ IngredientEditor(chemical *models.AromaChemical, status string) {
 }
 
 templ FormulaManagement(snapshot WorkspaceSnapshot) {
-	<section class="space-y-8" data-module="formulas">
-		<div class="app-card flex min-h-0 max-h-96 overflow-y-auto flex-col space-y-6 px-6 py-6">
+	<section class="space-y-8 w-full flex flex-col" data-module="formulas">
+		<div class="app-card flex w-full flex min-h-0 max-h-96 overflow-y-auto flex-col space-y-6 px-6 py-6">
 			<div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 				<form
 					class="flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-4 sm:flex-1"
@@ -1043,8 +1043,8 @@ templ FormulaIngredientEditorRow(
 }
 
 templ ReportsOverview(snapshot WorkspaceSnapshot, cards []ReportCard, events []ReportEvent, leaders []IngredientPerformance) {
-	<section class="space-y-8" data-module="reports">
-		<div class="app-card space-y-6 px-6 py-6">
+	<section class="space-y-8 w-full flex flex-col" data-module="reports">
+		<div class="app-card flex w-full space-y-6 px-6 py-6">
 			<div class="space-y-2">
 				<span class="app-badge">Production Toolkit</span>
 				<h2 class="text-lg font-semibold text-white">Generate Batch Production Form</h2>
@@ -1137,7 +1137,7 @@ templ ReportsOverview(snapshot WorkspaceSnapshot, cards []ReportCard, events []R
 }
 
 templ PreferencesPanel(currentTheme string, themes []layout.ThemeDefinition) {
-	<section class="space-y-8" data-module="preferences">
+	<section class="space-y-8 w-full flex flex-col" data-module="preferences">
 		<div class="app-card space-y-6 px-6 py-6">
 			<form
 				class="space-y-6"

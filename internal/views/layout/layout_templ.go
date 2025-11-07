@@ -137,9 +137,11 @@ func Layout(title string, sidebar templ.Component, content templ.Component, show
 
 func bodyWrapperClass(showSidebar bool) string {
 	if showSidebar {
-		return "min-h-screen lg:flex app-shell"
+		//return "min-h-screen lg:flex app-shell"
+		return "flex flex-grow"
 	}
-	return "min-h-screen flex flex-col app-shell"
+	//return "min-h-screen flex flex-col app-shell"
+	return "flex flex-grow"
 }
 
 func mainClass(showSidebar bool) string {

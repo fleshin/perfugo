@@ -129,7 +129,7 @@ func workspaceShell(section string, snapshot WorkspaceSnapshot) templ.Component 
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"workspace-shell w-full\"><div class=\"mx-auto w-full px-6 py-6 sm:px-8 lg:py-6\"><div id=\"workspace-content\" class=\"space-y-12\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"workspace-shell w-full\"><div class=\"mx-auto w-full max-w-none px-6 py-6 sm:px-8 lg:py-6\"><div id=\"workspace-content\" class=\"space-y-12 w-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -166,7 +166,7 @@ func workspaceInterior(section string, meta workspaceSectionMeta, snapshot Works
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"space-y-6\"><section class=\"app-card px-4 py-5\"><div class=\"flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between\"><div class=\"space-y-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"space-y-6\"><section class=\"app-card w-full px-4 py-5\"><div class=\"flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between\"><div class=\"space-y-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

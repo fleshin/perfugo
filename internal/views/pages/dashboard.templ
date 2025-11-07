@@ -52,10 +52,10 @@ func sidebarData(active string) components.SidebarData {
 
 templ workspaceShell(section string, snapshot WorkspaceSnapshot) {
 	<div class="workspace-shell w-full">
-		<div class="mx-auto w-full px-6 py-6 sm:px-8 lg:py-6">
+		<div class="mx-auto w-full max-w-none px-6 py-6 sm:px-8 lg:py-6">
 			<div
 				id="workspace-content"
-				class="space-y-12"
+				class="space-y-12 w-full"
 			>
 				@workspaceInterior(section, workspaceMeta(section, snapshot), snapshot)
 			</div>
@@ -65,7 +65,7 @@ templ workspaceShell(section string, snapshot WorkspaceSnapshot) {
 
 templ workspaceInterior(section string, meta workspaceSectionMeta, snapshot WorkspaceSnapshot) {
 	<div class="space-y-6">
-		<section class="app-card px-4 py-5">
+	<section class="app-card w-full px-4 py-5">
 			<div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
 				<div class="space-y-2">
 					if meta.Badge != "" {
