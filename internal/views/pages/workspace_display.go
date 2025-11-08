@@ -49,3 +49,11 @@ func PreferenceStatusMessage(message string) string {
 	}
 	return trimmed
 }
+
+// SolventLabel describes whether an ingredient is a solvent or aromatic contributor.
+func SolventLabel(value bool) string {
+	if value {
+		return "Solvent / Diluent"
+	}
+	return "Aromatic Ingredient"
+}

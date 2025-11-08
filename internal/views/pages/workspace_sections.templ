@@ -121,7 +121,7 @@ templ ToolsManagement(snapshot WorkspaceSnapshot) {
 
 templ ToolsPanel(snapshot WorkspaceSnapshot, status string, errorMessage string) {
 	<section class="space-y-8 w-full flex flex-col" data-module="tools" id="tools-panel">
-		<div class="app-card flex w-full space-y-6 px-6 py-6">
+		<div class="app-card  w-full space-y-6 px-6 py-6">
 			<div class="space-y-3">
 				<h2 class="text-lg font-semibold text-white">AI Ingredient Enricher</h2>
 				<p class="text-sm app-muted">Provide an ingredient name and Perfugo will draft a private profile using the OpenAI model configured for this workspace.</p>
@@ -294,6 +294,10 @@ templ IngredientDetail(chemical *models.AromaChemical) {
 				<div>
 					<dt class="text-xs uppercase tracking-[0.35em] text-white/50">Type</dt>
 					<dd class="mt-1 text-base text-white">{ DefaultDash(chemical.Type) }</dd>
+				</div>
+				<div>
+					<dt class="text-xs uppercase tracking-[0.35em] text-white/50">Purpose</dt>
+					<dd class="mt-1 text-base text-white">{ SolventLabel(chemical.Solvent) }</dd>
 				</div>
 				<div>
 					<dt class="text-xs uppercase tracking-[0.35em] text-white/50">Pyramid</dt>
@@ -539,6 +543,20 @@ templ IngredientEditor(chemical *models.AromaChemical, status string) {
 						class="app-input w-full"
 						value={ FormatFloatInput(chemical.PricePerMg, 4) }
 					/>
+				</div>
+				<div class="space-y-2">
+					<label class="text-xs uppercase tracking-[0.35em] app-muted">
+						Solvent
+					</label>
+					<label class="flex items-center gap-2 text-sm app-muted">
+						<input
+							type="checkbox"
+							name="solvent"
+							class="app-checkbox"
+							checked?={ chemical.Solvent }
+						/>
+						<span>Marks this material as a non-aromatic solvent/diluent.</span>
+					</label>
 				</div>
 				<div class="space-y-2">
 					<label class="text-xs uppercase tracking-[0.35em] app-muted" for="ingredient-popularity">

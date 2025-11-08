@@ -36,6 +36,15 @@ func parseOptionalInt(value string) (int, error) {
 	return parsed, nil
 }
 
+func checkboxChecked(value string) bool {
+	switch strings.ToLower(strings.TrimSpace(value)) {
+	case "on", "true", "1", "yes":
+		return true
+	default:
+		return false
+	}
+}
+
 func buildFormulaDependencyGraph(formulas []models.Formula) map[uint][]uint {
 	graph := make(map[uint][]uint, len(formulas))
 	for _, formula := range formulas {
@@ -226,7 +235,9 @@ func IngredientUpdate(w http.ResponseWriter, r *http.Request) {
 	chemical.MaxIFRAPercentage = maxIFRAValue
 	chemical.PricePerMg = priceValue
 	chemical.Popularity = popularityValue
+	chemical.Solvent = checkboxChecked(r.FormValue("solvent"))
 	chemical.HistoricRole = strings.TrimSpace(r.FormValue("historic_role"))
+	chemical.Solvent = checkboxChecked(r.FormValue("solvent"))
 
 	if database == nil {
 		message := "Editing is unavailable because no database connection is configured."
@@ -276,6 +287,7 @@ func IngredientUpdate(w http.ResponseWriter, r *http.Request) {
 		"duration":             strings.TrimSpace(r.FormValue("duration")),
 		"notes":                strings.TrimSpace(r.FormValue("notes")),
 		"usage":                strings.TrimSpace(r.FormValue("usage")),
+		"solvent":              chemical.Solvent,
 		"recommended_dilution": recommendedValue,
 		"dilution_percentage":  dilutionValue,
 		"max_ifra_percentage":  maxIFRAValue,
