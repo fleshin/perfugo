@@ -56,7 +56,7 @@ func ToolsImportIngredient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	record, created, err := persistAromaProfile(ctx, profile, userID)
+	record, created, warning, err := persistAromaProfile(ctx, profile, userID)
 	if err != nil {
 		applog.Error(ctx, "persist ai aroma", "error", err)
 		renderComponent(w, r, pages.ToolsPanel(snapshot, "", "We couldn't store the generated ingredient. Please try again."))
@@ -68,13 +68,16 @@ func ToolsImportIngredient(w http.ResponseWriter, r *http.Request) {
 	if !created {
 		message = fmt.Sprintf("Updated %s with the latest AI profile.", record.IngredientName)
 	}
+	if strings.TrimSpace(warning) != "" {
+		message = fmt.Sprintf("%s %s", message, warning)
+	}
 
 	renderComponent(w, r, pages.ToolsPanel(snapshot, message, ""))
 }
 
-func persistAromaProfile(ctx context.Context, profile ai.Profile, ownerID uint) (*models.AromaChemical, bool, error) {
+func persistAromaProfile(ctx context.Context, profile ai.Profile, ownerID uint) (*models.AromaChemical, bool, string, error) {
 	if database == nil {
-		return nil, false, gorm.ErrInvalidDB
+		return nil, false, "", gorm.ErrInvalidDB
 	}
 
 	profile.IngredientName = fallbackIngredientName(profile.IngredientName)
@@ -82,6 +85,7 @@ func persistAromaProfile(ctx context.Context, profile ai.Profile, ownerID uint) 
 	profile.WheelPosition = strings.TrimSpace(profile.WheelPosition)
 
 	var result models.AromaChemical
+	warnings := []string{}
 	created := false
 
 	err := database.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
@@ -97,9 +101,18 @@ func persistAromaProfile(ctx context.Context, profile ai.Profile, ownerID uint) 
 			if err != nil {
 				return err
 			}
-			if existing != nil && existing.OwnerID != ownerID {
-				// Preserve uniqueness by clearing the CAS number for the new record.
-				profile.CASNumber = ""
+			if strings.TrimSpace(profile.CASNumber) != "" {
+				casMatch, err := findChemicalByCAS(ctx, tx, profile.CASNumber)
+				if err != nil {
+					return err
+				}
+				if casMatch != nil {
+					if existing == nil && casMatch.OwnerID == ownerID {
+						existing = casMatch
+					} else if casMatch.OwnerID != ownerID {
+						warnings = append(warnings, fmt.Sprintf("CAS %s already exists as %s. Review for duplicates.", strings.TrimSpace(profile.CASNumber), casMatch.IngredientName))
+					}
+				}
 			}
 		}
 
@@ -129,9 +142,9 @@ func persistAromaProfile(ctx context.Context, profile ai.Profile, ownerID uint) 
 		return nil
 	})
 	if err != nil {
-		return nil, false, err
+		return nil, false, strings.Join(warnings, " "), err
 	}
-	return &result, created, nil
+	return &result, created, strings.Join(warnings, " "), nil
 }
 
 func findChemicalByName(ctx context.Context, tx *gorm.DB, name string) (*models.AromaChemical, error) {

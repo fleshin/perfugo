@@ -3,6 +3,8 @@ package handlers
 import (
 	"context"
 	"fmt"
+	"math"
+	"strings"
 	"testing"
 	"time"
 
@@ -105,7 +107,7 @@ func TestPersistAromaProfileCanonicalisesData(t *testing.T) {
 		RecommendedDilution: 12.5,
 	}
 
-	record, created, err := persistAromaProfile(ctx, profile, ownerID)
+	record, created, _, err := persistAromaProfile(ctx, profile, ownerID)
 	if err != nil {
 		t.Fatalf("persist profile: %v", err)
 	}
@@ -129,5 +131,37 @@ func TestPersistAromaProfileCanonicalisesData(t *testing.T) {
 	}
 	if record.RecommendedDilution != 12.5 {
 		t.Fatalf("expected recommended dilution 12.5, got %.2f", record.RecommendedDilution)
+	}
+}
+
+func TestScaleFormulaComponentsNormalisesTotals(t *testing.T) {
+	ingredients := []ai.FormulaImportIngredient{
+		{IngredientName: "Ambroxan", QuantityMG: 200},
+		{IngredientName: "Iso E Super", QuantityMG: 300},
+	}
+	scaled, err := scaleFormulaComponents(ingredients, 1000)
+	if err != nil {
+		t.Fatalf("scale components returned error: %v", err)
+	}
+	sum := 0.0
+	for _, item := range scaled {
+		sum += item.QuantityMG
+	}
+	if diff := math.Abs(sum - 1000); diff > 0.5 {
+		t.Fatalf("expected total near 1000 mg, got %.2f", sum)
+	}
+}
+
+func TestNormalizeIngredientNameHandlesHyphens(t *testing.T) {
+	if got := normalizeIngredientName(" Iso-E Super "); got != "isoesuper" {
+		t.Fatalf("expected normalised alias isoesuper, got %s", got)
+	}
+}
+
+func TestMatchChemicalByAliasesFindsSynonyms(t *testing.T) {
+	chem := &models.AromaChemical{IngredientName: "Ambroxan", OtherNames: []models.OtherName{{Name: "Ambrofix"}}}
+	match := matchChemicalByAliases([]*models.AromaChemical{chem}, "ambrofix", nil)
+	if match == nil || !strings.EqualFold(match.IngredientName, "Ambroxan") {
+		t.Fatalf("expected synonym lookup to return Ambroxan, got %+v", match)
 	}
 }

@@ -121,7 +121,7 @@ templ ToolsManagement(snapshot WorkspaceSnapshot) {
 
 templ ToolsPanel(snapshot WorkspaceSnapshot, status string, errorMessage string) {
 	<section class="space-y-8 w-full flex flex-col" data-module="tools" id="tools-panel">
-		<div class="app-card  w-full space-y-6 px-6 py-6">
+		<div class="app-card w-full space-y-6 px-6 py-6">
 			<div class="space-y-3">
 				<h2 class="text-lg font-semibold text-white">AI Ingredient Enricher</h2>
 				<p class="text-sm app-muted">Provide an ingredient name and Perfugo will draft a private profile using the OpenAI model configured for this workspace.</p>
@@ -162,6 +162,63 @@ templ ToolsPanel(snapshot WorkspaceSnapshot, status string, errorMessage string)
 				<p>Perfugo stores AI-enriched ingredients as private records. They do not overwrite public catalog entries and remain visible only to you.</p>
 				<p>Review the generated data before promoting it to the shared library.</p>
 			</div>
+		</div>
+		<div class="app-card w-full space-y-6 px-6 py-6">
+			<div class="space-y-3">
+				<h2 class="text-lg font-semibold text-white">Import Formula (Beta)</h2>
+				<p class="text-sm app-muted">
+					Paste a formula reference or upload a PDF/image. Perfugo will OCR the document, reconcile synonyms, and scale the composition to 1000 mg.
+				</p>
+			</div>
+			<form
+				class="space-y-5"
+				hx-post="/app/sections/tools/import-formula"
+				hx-target="#tools-panel"
+				hx-swap="outerHTML"
+				enctype="multipart/form-data"
+				hx-encoding="multipart/form-data"
+			>
+				<div class="space-y-2">
+					<label class="text-xs uppercase tracking-[0.35em] app-muted" for="formula-name-hint">
+						Formula name hint
+					</label>
+					<input
+						id="formula-name-hint"
+						name="formula_name_hint"
+						type="text"
+						class="app-input w-full"
+						placeholder="eg. Ambre Gris 1976"
+					/>
+				</div>
+				<div class="space-y-2">
+					<label class="text-xs uppercase tracking-[0.35em] app-muted" for="formula-text-input">
+						Formula text
+					</label>
+					<textarea
+						id="formula-text-input"
+						name="formula_text"
+						class="app-input w-full min-h-[8rem]"
+						placeholder="Paste ingredient lines, percentages, or notes..."
+					></textarea>
+				</div>
+				<div class="space-y-2">
+					<label class="text-xs uppercase tracking-[0.35em] app-muted" for="formula-file">
+						Upload reference (optional)
+					</label>
+					<input
+						id="formula-file"
+						name="formula_file"
+						type="file"
+						class="app-input w-full"
+						accept=".txt,.pdf,.png,.jpg,.jpeg,.webp"
+					/>
+					<p class="text-xs app-muted">Max 5 MB. Images and PDFs are automatically OCR'd.</p>
+				</div>
+				<div class="flex items-center justify-between text-xs app-muted">
+					<span>Missing materials are auto-created and final totals equal 1000 mg.</span>
+					<button type="submit" class="app-button">Import formula</button>
+				</div>
+			</form>
 		</div>
 	</section>
 }

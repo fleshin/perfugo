@@ -133,43 +133,10 @@ func (c *Client) FetchAromaProfile(ctx context.Context, ingredient string, opts 
 		return Profile{}, fmt.Errorf("ai: encode request: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+"/chat/completions", bytes.NewReader(body))
+	content, err := c.performChatCompletion(ctx, payload, body)
 	if err != nil {
-		return Profile{}, fmt.Errorf("ai: build request: %w", err)
+		return Profile{}, err
 	}
-	req.Header.Set("Authorization", "Bearer "+c.apiKey)
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return Profile{}, fmt.Errorf("ai: call openai: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode >= http.StatusMultipleChoices {
-		return Profile{}, fmt.Errorf("ai: openai returned status %s", resp.Status)
-	}
-
-	var responseData struct {
-		Choices []struct {
-			Message struct {
-				Content string `json:"content"`
-			} `json:"message"`
-		} `json:"choices"`
-	}
-
-	if err := json.NewDecoder(resp.Body).Decode(&responseData); err != nil {
-		return Profile{}, fmt.Errorf("ai: decode response: %w", err)
-	}
-
-	if len(responseData.Choices) == 0 {
-		return Profile{}, errors.New("ai: openai returned no choices")
-	}
-
-	content := strings.TrimSpace(responseData.Choices[0].Message.Content)
-	content = strings.Trim(content, "`")
-	content = strings.TrimSpace(content)
-
 	var parsed aiAromaResponse
 	decoder := json.NewDecoder(strings.NewReader(content))
 	decoder.UseNumber()
@@ -401,4 +368,54 @@ func sanitiseOtherNames(raw any, canonical string) []string {
 	}
 
 	return result
+}
+
+func (c *Client) performChatCompletion(ctx context.Context, payload map[string]any, preEncoded ...[]byte) (string, error) {
+	var body []byte
+	var err error
+	if len(preEncoded) > 0 && preEncoded[0] != nil {
+		body = preEncoded[0]
+	} else {
+		body, err = json.Marshal(payload)
+		if err != nil {
+			return "", fmt.Errorf("ai: encode request: %w", err)
+		}
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+"/chat/completions", bytes.NewReader(body))
+	if err != nil {
+		return "", fmt.Errorf("ai: build request: %w", err)
+	}
+	req.Header.Set("Authorization", "Bearer "+c.apiKey)
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("ai: call openai: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= http.StatusMultipleChoices {
+		return "", fmt.Errorf("ai: openai returned status %s", resp.Status)
+	}
+
+	var responseData struct {
+		Choices []struct {
+			Message struct {
+				Content string `json:"content"`
+			} `json:"message"`
+		} `json:"choices"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&responseData); err != nil {
+		return "", fmt.Errorf("ai: decode response: %w", err)
+	}
+
+	if len(responseData.Choices) == 0 {
+		return "", errors.New("ai: openai returned no choices")
+	}
+
+	content := strings.TrimSpace(responseData.Choices[0].Message.Content)
+	content = strings.Trim(content, "`")
+	return strings.TrimSpace(content), nil
 }
