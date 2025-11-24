@@ -1,0 +1,13 @@
+.git
+.github
+Dockerfile
+.dockerignore
+README.md
+AGENTS.md
+setenv.sh
+**/*_test.go
+docs
+tmp
+.env
+.vscode
+.idea
