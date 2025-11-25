@@ -34,7 +34,8 @@ func NormalizeTheme(value string) string {
 // User represents an application account that can authenticate with the platform.
 type User struct {
 	gorm.Model
-	Email        string `gorm:"uniqueIndex;not null"`
+	// Email        string `gorm:"uniqueIndex:idx_users_email;not null"`
+	Email        string `gorm:"not null"`
 	PasswordHash string `gorm:"not null"`
 	Name         string
 	Theme        string `gorm:"not null;default:nocturne"`

@@ -6,7 +6,8 @@ import (
 
 type AromaChemical struct {
 	gorm.Model
-	IngredientName      string      `gorm:"uniqueIndex;not null" json:"ingredient_name"`
+	// IngredientName      string      `gorm:"uniqueIndex;not null" json:"ingredient_name"`
+	IngredientName      string      `gorm:"not null"`
 	CASNumber           string      `gorm:"index" json:"cas_number"`
 	OtherNames          []OtherName `gorm:"foreignKey:AromaChemicalID" json:"other_names"`
 	Notes               string      `gorm:"type:text" json:"notes"`
